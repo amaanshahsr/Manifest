@@ -18,6 +18,9 @@ export default function HomeScreen() {
     >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
+        <Text className="bg-pink-300 font-inter  font-semibold text-2xl">
+          Hellow World
+        </Text>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
@@ -62,6 +65,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
+    fontFamily: "SpaceMono",
     alignItems: "center",
     gap: 8,
   },
