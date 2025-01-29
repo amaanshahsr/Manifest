@@ -7,19 +7,16 @@ import {
 } from "@react-navigation/native";
 import React from "react";
 import { Text, PlatformPressable } from "@react-navigation/elements";
+import { TabProps } from "@/types";
+import { tabBarIcons } from "@/constants";
+import { View } from "react-native";
 
-const Tab = ({
+const Tab: React.FC<TabProps> = ({
   navigation,
   route,
   index,
   state,
   descriptors,
-}: {
-  state: BottomTabBarProps["state"];
-  navigation: BottomTabBarProps["navigation"];
-  route: NavigationRoute<ParamListBase, string>;
-  descriptors: BottomTabBarProps["descriptors"];
-  index: number;
 }) => {
   const { colors } = useTheme();
 
@@ -63,15 +60,24 @@ const Tab = ({
       onPress={onPress}
       onLongPress={onLongPress}
       style={{ flex: 1 }}
-      className="items-center justify-center border-2 p-5"
+      className="items-center justify-center p-3 flex "
     >
+      {/* <View> */}
+      {tabBarIcons[label as keyof typeof tabBarIcons]({
+        color: isFocused ? colors.primary : colors.text,
+        size: 16,
+      })}
+      {/* </View> */}
       <Text
+        className="font-inter"
         style={{
+          fontSize: 14,
+          //   fontWeight: "800",
           color: isFocused ? colors.primary : colors.text,
           fontFamily: "Inter-Variable",
         }}
       >
-        {label ?? "hellow"}
+        {label as string}
       </Text>
     </PlatformPressable>
   );

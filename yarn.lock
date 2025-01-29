@@ -1157,7 +1157,7 @@
   dependencies:
     cross-spawn "^7.0.3"
 
-"@expo/vector-icons@^14.0.0", "@expo/vector-icons@^14.0.2":
+"@expo/vector-icons@^14.0.0", "@expo/vector-icons@^14.0.4":
   version "14.0.4"
   resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-14.0.4.tgz#fa9d4351877312badf91a806598b2f0bab16039a"
   integrity sha512-+yKshcbpDfbV4zoXOgHxCwh7lkE9VVTT5T03OUlBsqfze1PLy6Hi4jp1vSb1GVbY6eskvMIivGVc9SKzIv0oEQ==
@@ -3440,6 +3440,14 @@ expo-modules-core@2.2.0:
   integrity sha512-mOFEHIe6jZ7G5pYUVSQ2Ghs3CUr9Uz6DOh4JI+4PsTf0gmEvMmMEOrxirS89jRWQjXPJ7QaGBK0CJrZlj/Sdeg==
   dependencies:
     invariant "^2.2.4"
+
+expo-navigation-bar@^4.0.7:
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/expo-navigation-bar/-/expo-navigation-bar-4.0.7.tgz#d7640b223ed9dec899d46c799a332ec7ec2f928d"
+  integrity sha512-0dU6nU4XzLBFfkX7KTeYj6qX/3W/peYV9LjKymBsRPY0/uVgEcgFgS+omQAZE6DVD4Duy3GcT+91ozCUmvEEdA==
+  dependencies:
+    "@react-native/normalize-colors" "0.76.6"
+    debug "^4.3.2"
 
 expo-router@~4.0.17:
   version "4.0.17"
