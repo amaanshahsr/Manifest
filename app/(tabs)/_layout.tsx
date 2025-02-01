@@ -1,28 +1,63 @@
 import { View, StyleSheet } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Tabs } from "expo-router";
+import { Tabs, usePathname } from "expo-router";
 import "../../globals.css";
 import Tab from "@/components/common/tab";
 import * as NavigationBar from "expo-navigation-bar";
 import { useRef } from "react";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   NavigationBar.setBackgroundColorAsync("white"); // ** This turns the bg of the navbar on andoid to white to match app theme
-
   const bottomTabRef = useRef<number>(0);
+  const pathname = usePathname();
+  console.log("route is", pathname);
+
+  const left = useSharedValue(0);
+  const animatedLeftStyle = useAnimatedStyle(() => {
+    left.value =
+      pathname === "/"
+        ? 0
+        : pathname === "/trucks"
+        ? 2
+        : pathname === "/users"
+        ? 1
+        : 0;
+
+    return {
+      transform: [
+        {
+          translateX: withSpring((bottomTabRef?.current / 3) * left.value, {
+            damping: 15,
+            stiffness: 250,
+            mass: 1,
+          }),
+        },
+      ],
+    };
+  });
+
   return (
     <View
       onLayout={(e) => (bottomTabRef.current = e?.nativeEvent?.layout?.width)}
       style={styles?.shadowProp}
       className=" bg-pink-400 border-t-[0.5px] border-t-neutral-300 relative  flex flex-row  " // Styles for BottomTab Container
     >
-      {/* <View
-        style={{
-          width: bottomTabRef?.current / 2,
-          left: 0,
-        }}
-        className="h-[4] bg-red-500  absolute top-0"
-      ></View> */}
+      <Animated.View
+        style={[
+          {
+            width: bottomTabRef?.current / 3,
+          },
+          animatedLeftStyle,
+        ]}
+        className={`h-full rounded-full   bg-neutral-800  absolute top-0 `}
+      ></Animated.View>
       {state.routes.map((route, index: number) => {
         return (
           <Tab

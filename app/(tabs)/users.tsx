@@ -15,13 +15,13 @@ const Users = () => {
   return (
     <View className="h-screen">
       <Text>udjhabsjhd</Text>
-      <GestureHandlerRootView style={styles.container}>
+      {/* <GestureHandlerRootView style={styles.container}>
         <BottomSheet ref={bottomSheetRef} onChange={handleSheetChanges}>
           <BottomSheetView style={styles.contentContainer}>
             <Text className="font-inter text-3xl">Awesome 🎉</Text>
           </BottomSheetView>
         </BottomSheet>
-      </GestureHandlerRootView>
+      </GestureHandlerRootView> */}
     </View>
   );
 };

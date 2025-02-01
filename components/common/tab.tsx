@@ -13,6 +13,7 @@ import { View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 
@@ -61,10 +62,10 @@ const Tab: React.FC<TabProps> = ({
     transform: [
       {
         scale: isFocused
-          ? (scale.value = withTiming(isFocused ? 1.5 : 1, {
+          ? (scale.value = withSpring(isFocused ? 1.5 : 1, {
               duration: 100,
             }))
-          : withTiming(1, {
+          : withSpring(1, {
               duration: 100,
             }),
       },
@@ -90,7 +91,7 @@ const Tab: React.FC<TabProps> = ({
     >
       <Animated.View style={[animatedStyles]}>
         {tabBarIcons[label as keyof typeof tabBarIcons]({
-          color: isFocused ? colors.primary : colors.text,
+          color: isFocused ? "white" : "black",
           size: 18,
         })}
       </Animated.View>
@@ -98,8 +99,8 @@ const Tab: React.FC<TabProps> = ({
         className="font-inter"
         style={{
           fontSize: 14,
-          //   fontWeight: "800",
-          color: isFocused ? colors.primary : colors.text,
+          fontWeight: isFocused ? "700" : "400",
+          color: isFocused ? "white" : "black",
           fontFamily: "Inter-Variable",
         }}
       >
