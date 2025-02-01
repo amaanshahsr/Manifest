@@ -10,6 +10,11 @@ import { Text, PlatformPressable } from "@react-navigation/elements";
 import { TabProps } from "@/types";
 import { tabBarIcons } from "@/constants";
 import { View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 const Tab: React.FC<TabProps> = ({
   navigation,
@@ -51,6 +56,21 @@ const Tab: React.FC<TabProps> = ({
     }
   };
 
+  const scale = useSharedValue(2);
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      {
+        scale: isFocused
+          ? (scale.value = withTiming(isFocused ? 1.5 : 1, {
+              duration: 100,
+            }))
+          : withTiming(1, {
+              duration: 100,
+            }),
+      },
+    ],
+  }));
+
   return (
     <PlatformPressable
       href={buildHref(route.name, route.params)}
@@ -59,15 +79,21 @@ const Tab: React.FC<TabProps> = ({
       testID={options.tabBarButtonTestID}
       onPress={onPress}
       onLongPress={onLongPress}
-      style={{ flex: 1 }}
-      className="items-center justify-center p-3 flex "
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 12,
+        gap: 4,
+      }}
+      className="items-center justify-center p-3 flex gap-1 bg-blue-500 "
     >
-      {/* <View> */}
-      {tabBarIcons[label as keyof typeof tabBarIcons]({
-        color: isFocused ? colors.primary : colors.text,
-        size: 16,
-      })}
-      {/* </View> */}
+      <Animated.View style={[animatedStyles]}>
+        {tabBarIcons[label as keyof typeof tabBarIcons]({
+          color: isFocused ? colors.primary : colors.text,
+          size: 18,
+        })}
+      </Animated.View>
       <Text
         className="font-inter"
         style={{

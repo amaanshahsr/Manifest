@@ -1,12 +1,20 @@
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "../globals.css";
+import * as SQLite from "expo-sqlite";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import { drizzle } from "drizzle-orm/expo-sqlite";
+
+const expo = SQLite.openDatabaseSync("data.db");
+
+const db = drizzle(expo);
 
 const RootLayout = () => {
+  console.log("exposadasd", expo);
   SplashScreen.preventAutoHideAsync();
-
+  useDrizzleStudio(expo);
   const [loaded] = useFonts({
     "Inter-Variable": require("../assets/fonts/Inter-VariableFont_opsz,wght.ttf"),
   });

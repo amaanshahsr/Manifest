@@ -1,4 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Feather from "@expo/vector-icons/Feather";
 import { TabIconStyle } from "./types";
 
 const defaultIconStyle = { size: 24, color: "black" };
@@ -15,6 +16,12 @@ export const tabBarIcons = {
   users: (customStyles?: TabIconStyle) => (
     <Ionicons
       name="people-outline"
+      {...(customStyles ? customStyles : defaultIconStyle)}
+    />
+  ),
+  trucks: (customStyles?: TabIconStyle) => (
+    <Feather
+      name="truck"
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),

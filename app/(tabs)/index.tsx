@@ -1,5 +1,7 @@
 import { Link, router } from "expo-router";
+import { useEffect } from "react";
 import { Text, View, Pressable } from "react-native";
+import * as SQLite from "expo-sqlite";
 
 export default function Index() {
   return (
