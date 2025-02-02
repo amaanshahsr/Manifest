@@ -1,21 +1,17 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import {
-  NavigationRoute,
-  ParamListBase,
-  useLinkBuilder,
-  useTheme,
-} from "@react-navigation/native";
+import { useLinkBuilder, useTheme } from "@react-navigation/native";
 import React from "react";
 import { Text, PlatformPressable } from "@react-navigation/elements";
 import { TabProps } from "@/types";
 import { tabBarIcons } from "@/constants";
-import { View } from "react-native";
+import { LayoutChangeEvent, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { capitalizeWord } from "@/utils/utils";
 
 const Tab: React.FC<TabProps> = ({
   navigation,
@@ -23,6 +19,7 @@ const Tab: React.FC<TabProps> = ({
   index,
   state,
   descriptors,
+  setTabDimensions,
 }) => {
   const { colors } = useTheme();
 
@@ -58,6 +55,7 @@ const Tab: React.FC<TabProps> = ({
   };
 
   const scale = useSharedValue(2);
+
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
@@ -72,6 +70,14 @@ const Tab: React.FC<TabProps> = ({
     ],
   }));
 
+  const passTabDimensionsToParent = (e: LayoutChangeEvent) => {
+    const dimensions = e?.nativeEvent?.layout;
+    setTabDimensions((prev) => ({
+      ...prev,
+      [route.name]: dimensions, // Store dimensions for the tab in the dimensions object
+    }));
+  };
+
   return (
     <PlatformPressable
       href={buildHref(route.name, route.params)}
@@ -84,27 +90,28 @@ const Tab: React.FC<TabProps> = ({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        padding: 12,
+        padding: 10,
         gap: 4,
       }}
-      className="items-center justify-center p-3 flex gap-1 bg-blue-500 "
+      onLayout={passTabDimensionsToParent}
     >
       <Animated.View style={[animatedStyles]}>
         {tabBarIcons[label as keyof typeof tabBarIcons]({
-          color: isFocused ? "white" : "black",
-          size: 18,
+          color: isFocused ? "#1c1917" : "#737373",
+          size: 16,
         })}
       </Animated.View>
       <Text
         className="font-inter"
         style={{
           fontSize: 14,
-          fontWeight: isFocused ? "700" : "400",
-          color: isFocused ? "white" : "black",
+          fontWeight: isFocused ? "600" : "400",
+          color: isFocused ? "#1c1917" : "#737373",
           fontFamily: "Inter-Variable",
+          opacity: 1,
         }}
       >
-        {label as string}
+        {capitalizeWord(label as string)}
       </Text>
     </PlatformPressable>
   );

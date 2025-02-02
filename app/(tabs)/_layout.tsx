@@ -4,7 +4,7 @@ import { Tabs, usePathname } from "expo-router";
 import "../../globals.css";
 import Tab from "@/components/common/tab";
 import * as NavigationBar from "expo-navigation-bar";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -12,32 +12,36 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { TabDimensions } from "@/types";
+import { useNavigationState } from "@react-navigation/native";
 
 function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   NavigationBar.setBackgroundColorAsync("white"); // ** This turns the bg of the navbar on andoid to white to match app theme
-  const bottomTabRef = useRef<number>(0);
-  const pathname = usePathname();
-  console.log("route is", pathname);
+
+  const [tabDimensions, setTabDimensions] = useState<
+    //** */ Store the x and y position of each tab to animate a sliding object across it
+    Record<string, TabDimensions>
+  >({ index: { x: 0, y: 0, width: 0, height: 0 } });
 
   const left = useSharedValue(0);
+
   const animatedLeftStyle = useAnimatedStyle(() => {
-    left.value =
-      pathname === "/"
-        ? 0
-        : pathname === "/trucks"
-        ? 2
-        : pathname === "/users"
-        ? 1
-        : 0;
+    const currentRouteName = state.routes[state.index].name;
 
     return {
       transform: [
         {
-          translateX: withSpring((bottomTabRef?.current / 3) * left.value, {
-            damping: 15,
-            stiffness: 250,
-            mass: 1,
-          }),
+          translateX: withSpring(
+            tabDimensions[currentRouteName]?.x +
+              tabDimensions[currentRouteName]?.width / 2 -
+              6 +
+              left.value,
+            {
+              damping: 20,
+              stiffness: 250,
+              mass: 1,
+            }
+          ),
         },
       ],
     };
@@ -45,22 +49,17 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
   return (
     <View
-      onLayout={(e) => (bottomTabRef.current = e?.nativeEvent?.layout?.width)}
       style={styles?.shadowProp}
-      className=" bg-pink-400 border-t-[0.5px] border-t-neutral-300 relative  flex flex-row  " // Styles for BottomTab Container
+      className=" border-t-[0.5px]  border-t-neutral-300 relative  flex flex-row  " // Styles for BottomTab Container
     >
       <Animated.View
-        style={[
-          {
-            width: bottomTabRef?.current / 3,
-          },
-          animatedLeftStyle,
-        ]}
-        className={`h-full rounded-full   bg-neutral-800  absolute top-0 `}
+        style={[animatedLeftStyle]}
+        className={`h-2 w-2 rounded-full   bg-neutral-800  absolute bottom-0 `}
       ></Animated.View>
       {state.routes.map((route, index: number) => {
         return (
           <Tab
+            setTabDimensions={setTabDimensions}
             key={route?.key}
             descriptors={descriptors}
             index={index}

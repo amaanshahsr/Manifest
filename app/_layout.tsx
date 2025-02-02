@@ -12,7 +12,6 @@ const expo = SQLite.openDatabaseSync("data.db");
 const db = drizzle(expo);
 
 const RootLayout = () => {
-  console.log("exposadasd", expo);
   SplashScreen.preventAutoHideAsync();
   useDrizzleStudio(expo);
   const [loaded] = useFonts({

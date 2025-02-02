@@ -1,5 +1,6 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { NavigationRoute, ParamListBase } from "@react-navigation/native";
+import { SharedValue } from "react-native-reanimated";
 
 // ** Navigation Types Go here
 
@@ -9,6 +10,16 @@ export type TabProps = Pick<
 > & {
   route: NavigationRoute<ParamListBase, string>;
   index: number;
+  setTabDimensions: React.Dispatch<
+    React.SetStateAction<Record<string, TabDimensions>>
+  >;
+};
+
+export type TabDimensions = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };
 
 // This is for passing styles incase of animating tab icons when it is focused

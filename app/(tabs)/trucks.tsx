@@ -119,7 +119,7 @@ export default function App() {
         <Text>Add DB</Text>
       </Pressable>
       {trucks.map((truck) => (
-        <Text key={truck.id}>
+        <Text key={truck.id} className="font-inter">
           {truck.registration} - {truck.driverName}
         </Text>
       ))}
