@@ -4,16 +4,20 @@ import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useRef, useCallback, useState, useEffect } from "react";
+import { useRef, useCallback, useState, useEffect, useMemo } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
 import { trucks as truck_table } from "@/db/schema";
 import InputField from "../common/inputField";
+import CustomBackdrop from "./backdrop";
 
-interface BottomSheetProps {
+interface TruckBottomSheetProps {
   handleUpdate: () => Promise<void>;
   truckId?: string;
 }
-export function BottomSheets({ handleUpdate, truckId }: BottomSheetProps) {
+export function TruckBottomSheet({
+  handleUpdate,
+  truckId,
+}: TruckBottomSheetProps) {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
 
@@ -113,9 +117,11 @@ export function BottomSheets({ handleUpdate, truckId }: BottomSheetProps) {
       setDriverName(result[0]?.driverName);
     });
   }, []);
-
+  const snapPoints = useMemo(() => [450, 450, 600], []);
   return (
     <BottomSheet
+      snapPoints={snapPoints}
+      backdropComponent={CustomBackdrop}
       onClose={() => router?.push("/trucks")}
       enablePanDownToClose={true}
       ref={bottomSheetRef}

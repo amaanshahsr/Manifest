@@ -10,7 +10,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSQLiteContext } from "expo-sqlite";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import CustomSearchBar from "@/components/common/searchBar";
-import { BottomSheets } from "@/components/bottomsheet/truckBottomSheet";
+import { TruckBottomSheet } from "@/components/bottomsheet/truckBottomSheet";
 
 export default function App() {
   const db = useSQLiteContext();
@@ -18,10 +18,8 @@ export default function App() {
 
   const [trucks, setTrucks] = useState<Truck[] | null>(null);
   const [search, setSearch] = useState("");
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const { truck } = useLocalSearchParams();
-  console.log("trucks", truck);
   const handleUpdate = async () => {
     try {
       const users = await drizzleDb.select().from(truck_table);
@@ -33,16 +31,31 @@ export default function App() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const users = await drizzleDb.select().from(truck_table);
         setTrucks(users);
       } catch (error) {
         console.log("Something went wrong:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    console.count("hellow world");
     fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <View className="flex-1 w-full h-full  ">
+        <FlashList
+          data={Array(10).fill(null)}
+          renderItem={() => <SkeletonLoader />}
+          estimatedItemSize={10}
+          keyExtractor={(_, index) => `skeleton-${index}`}
+        />
+      </View>
+    );
+  }
 
   if (trucks === null || trucks.length === 0) {
     return (
@@ -73,8 +86,7 @@ export default function App() {
           numColumns={1}
         />
         // Drawer for Adding and Editing trucks
-        <TruckSheet handleUpdate={handleUpdate} /> // This function updates the
-        flashlist after addition/edit
+        <TruckSheet handleUpdate={handleUpdate} />
       </View>
     </GestureHandlerRootView>
   );
@@ -89,7 +101,7 @@ const TruckSheet: React.FC<TruckSheetProps> = ({ handleUpdate }) => {
   const { truck } = params;
 
   return truck ? (
-    <BottomSheets truckId={truck as string} handleUpdate={handleUpdate} />
+    <TruckBottomSheet truckId={truck as string} handleUpdate={handleUpdate} />
   ) : null;
 };
 

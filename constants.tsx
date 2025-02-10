@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import { TabIconStyle } from "./types";
+import { Octicons } from "@expo/vector-icons";
 
 const defaultIconStyle = { size: 24, color: "black" };
 
@@ -13,9 +14,9 @@ export const tabBarIcons = {
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
-  users: (customStyles?: TabIconStyle) => (
-    <Ionicons
-      name="people-outline"
+  companies: (customStyles?: TabIconStyle) => (
+    <Octicons
+      name="people"
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),

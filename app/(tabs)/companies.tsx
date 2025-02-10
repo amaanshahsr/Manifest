@@ -3,7 +3,7 @@ import React, { useCallback, useRef } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-const Users = () => {
+const Companies = () => {
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -26,7 +26,7 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Companies;
 
 const styles = StyleSheet.create({
   container: {

@@ -45,7 +45,7 @@ const SkeletonLoader = () => {
 
         [animatedBackground],
       ]}
-      className="h-56 overflow-scroll w-11/12   rounded-md mt-5"
+      className="h-44 overflow-scroll w-11/12   rounded-md mt-5 mx-auto"
     ></Animated.View>
   );
 };
