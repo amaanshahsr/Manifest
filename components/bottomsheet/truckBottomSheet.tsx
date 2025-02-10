@@ -11,13 +11,10 @@ import InputField from "../common/inputField";
 import CustomBackdrop from "./backdrop";
 
 interface TruckBottomSheetProps {
-  handleUpdate: () => Promise<void>;
+  refresh: () => Promise<void>;
   truckId?: string;
 }
-export function TruckBottomSheet({
-  handleUpdate,
-  truckId,
-}: TruckBottomSheetProps) {
+export function TruckBottomSheet({ refresh, truckId }: TruckBottomSheetProps) {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
 
@@ -90,7 +87,7 @@ export function TruckBottomSheet({
       }
 
       // Refresh or update the truck list after saving
-      await handleUpdate();
+      await refresh();
       //route back to the List UI
       router?.push("/trucks");
     } catch (error) {

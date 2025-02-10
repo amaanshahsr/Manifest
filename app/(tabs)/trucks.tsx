@@ -11,38 +11,23 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import CustomSearchBar from "@/components/common/searchBar";
 import { TruckBottomSheet } from "@/components/bottomsheet/truckBottomSheet";
+import { useDataFetch } from "@/hooks/useDataFetch";
 
 export default function App() {
   const db = useSQLiteContext();
-  const drizzleDb = drizzle(db);
 
-  const [trucks, setTrucks] = useState<Truck[] | null>(null);
+  const {
+    data: trucks,
+    loading,
+    refresh,
+  } = useDataFetch<Truck>({
+    db,
+    table: truck_table,
+  });
+
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleUpdate = async () => {
-    try {
-      const users = await drizzleDb.select().from(truck_table);
-      setTrucks(users);
-    } catch (error) {
-      console.log("Something went wrong :", error);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const users = await drizzleDb.select().from(truck_table);
-        setTrucks(users);
-      } catch (error) {
-        console.log("Something went wrong:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  // This Component adds an early return to empty or loading state when data is not present yet.
 
   if (loading) {
     return (
@@ -64,6 +49,7 @@ export default function App() {
       </View>
     );
   }
+
   return (
     <GestureHandlerRootView>
       <View className=" flex-1 w-full h-full">
@@ -79,29 +65,29 @@ export default function App() {
               truck?.driverName?.includes(search?.trim())
           )}
           renderItem={({ item }) => (
-            <TruckInfoCard truck={item} handleUpdate={handleUpdate} />
+            <TruckInfoCard truck={item} handleUpdate={refresh} />
           )}
           estimatedItemSize={500}
           keyExtractor={(truck) => truck?.id?.toString()}
           numColumns={1}
         />
         // Drawer for Adding and Editing trucks
-        <TruckSheet handleUpdate={handleUpdate} />
+        <TruckSheet refresh={refresh} />
       </View>
     </GestureHandlerRootView>
   );
 }
 
 interface TruckSheetProps {
-  handleUpdate: () => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
-const TruckSheet: React.FC<TruckSheetProps> = ({ handleUpdate }) => {
+const TruckSheet: React.FC<TruckSheetProps> = ({ refresh }) => {
   const params = useLocalSearchParams();
   const { truck } = params;
 
   return truck ? (
-    <TruckBottomSheet truckId={truck as string} handleUpdate={handleUpdate} />
+    <TruckBottomSheet truckId={truck as string} refresh={refresh} />
   ) : null;
 };
 

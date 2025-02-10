@@ -17,8 +17,11 @@ export const manifests = table("manifests", {
 
 export const companies = table("companies", {
   id: int().primaryKey({ autoIncrement: true }),
-  companyName: int("company_name").notNull()?.unique(),
+  companyName: text("company_name").notNull()?.unique(),
 });
+
+//Table names used as types for hoooks
+export type TableTypes = typeof companies | typeof trucks | typeof manifests;
 
 // Export Types to use as an interface within the app
 export type Truck = typeof trucks.$inferSelect;

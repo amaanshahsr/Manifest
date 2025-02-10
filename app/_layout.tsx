@@ -10,6 +10,8 @@ import { NativeViewGestureHandler } from "react-native-gesture-handler";
 import { ActivityIndicator } from "react-native";
 import { SQLiteProvider } from "expo-sqlite";
 
+const expo = SQLite.openDatabaseSync("data.db");
+
 const RootLayout = () => {
   SplashScreen.preventAutoHideAsync();
   useDrizzleStudio(expo);
