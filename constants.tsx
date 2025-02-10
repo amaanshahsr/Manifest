@@ -19,7 +19,7 @@ export const tabBarIcons = {
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
-  "trucks/index": (customStyles?: TabIconStyle) => (
+  trucks: (customStyles?: TabIconStyle) => (
     <Feather
       name="truck"
       {...(customStyles ? customStyles : defaultIconStyle)}

@@ -96,10 +96,10 @@ const Tab: React.FC<TabProps> = ({
       onLayout={passTabDimensionsToParent}
     >
       <Animated.View style={[animatedStyles]}>
-        {/* {tabBarIcons[label as keyof typeof tabBarIcons]({
+        {tabBarIcons[label as keyof typeof tabBarIcons]({
           color: isFocused ? "#1c1917" : "#737373",
           size: 16,
-        })} */}
+        })}
       </Animated.View>
       <Text
         style={{

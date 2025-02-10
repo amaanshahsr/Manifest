@@ -4,7 +4,7 @@ import { Tabs, usePathname } from "expo-router";
 import "../../globals.css";
 import Tab from "@/components/common/tab";
 import * as NavigationBar from "expo-navigation-bar";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -13,7 +13,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { TabDimensions } from "@/types";
-import { useNavigationState } from "@react-navigation/native";
 
 function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   NavigationBar.setBackgroundColorAsync("white"); // ** This turns the bg of the navbar on andoid to white to match app theme
@@ -48,7 +47,7 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     };
   });
 
-  console.log("state?.routes", state?.routes);
+  // console.log("state?.routes", state?.routes);
   return (
     <View
       style={styles?.shadowProp}

@@ -11,7 +11,11 @@ import { capitalizeWord } from "@/utils/utils";
 import TruckInfoCard from "@/components/common/truckInfoCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSQLiteContext } from "expo-sqlite";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRoute } from "@react-navigation/native";
+import { eq } from "drizzle-orm";
+import { SearchBar } from "react-native-screens";
+import CustomSearchBar from "@/components/common/searchBar";
 
 export default function App() {
   const db = useSQLiteContext();
@@ -19,6 +23,8 @@ export default function App() {
 
   const [trucks, setTrucks] = useState<Truck[] | null>(null);
   const [search, setSearch] = useState("");
+  const { truck } = useLocalSearchParams();
+  console.log("trucks", truck);
   const handleUpdate = async () => {
     try {
       const users = await drizzleDb.select().from(truck_table);
@@ -37,9 +43,10 @@ export default function App() {
         console.log("Something went wrong:", error);
       }
     };
-
+    console.count("hellow world");
     fetchData();
-  }, []); // Empty dependency array ensures this runs only once
+  }, []);
+
   if (trucks === null || trucks.length === 0) {
     return (
       <View className="flex-1 f-full h-full  items-center">
@@ -50,21 +57,10 @@ export default function App() {
 
   return (
     <GestureHandlerRootView>
-      <View className=" flex-1 w-full h-full ">
-        <View className="py-2 px-6  ">
-          <View style={{ elevation: 4 }} className="relative  rounded-lg">
-            <TextInput
-              placeholder="Search..."
-              // style={styles.input}
-              className="border-[0.7px] relative rounded-lg p-4 h-14 border-zinc-300 bg-white placeholder:text-gray-400   font-geistMedium"
-              onChangeText={setSearch}
-              value={search}
-            ></TextInput>
-            <View className="absolute top-1/2 right-3 -translate-y-1/2">
-              <Ionicons name="search" size={24} color="black" />
-            </View>
-          </View>
-        </View>
+      <View className=" flex-1 w-full h-full">
+        // Search Bar
+        <CustomSearchBar search={search} setSearch={setSearch} />
+        //Truck List
         <FlashList
           className="mb-1"
           data={trucks?.filter(
@@ -79,16 +75,20 @@ export default function App() {
           keyExtractor={(truck) => truck?.id?.toString()}
           numColumns={1}
         />
+        // Drawer for Adding and Editing trucks
+        <TruckSheet handleUpdate={handleUpdate} />
       </View>
     </GestureHandlerRootView>
   );
 }
 interface BottomSheetProps {
   handleUpdate: () => Promise<void>;
+  truckId?: string;
 }
-export function BottomSheets({ handleUpdate }: BottomSheetProps) {
+export function BottomSheets({ handleUpdate, truckId }: BottomSheetProps) {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
+
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -103,7 +103,6 @@ export function BottomSheets({ handleUpdate }: BottomSheetProps) {
   const [status, setStatus] = useState<"active" | "repair">("active");
 
   const handleSave = async () => {
-    // Trim to remove unnecessary spaces
     const trimmedRegistration = registration.trim();
     const trimmedDriverName = driverName.trim();
 
@@ -113,10 +112,11 @@ export function BottomSheets({ handleUpdate }: BottomSheetProps) {
       return;
     }
 
-    if (!/^[A-Z]{2}\d{1,2}[A-Z]{0,2}\d{4}$/.test(trimmedRegistration)) {
-      alert("Registration format is invalid. Expected format: 'KL-43-P1234'.");
-      return;
-    }
+    //! TODO - add regex for License validation
+    // if (!/^[A-Z]{2}\d{1,2}[A-Z]{0,2}\d{4}$/.test(trimmedRegistration)) {
+    //   alert("Registration format is invalid. Expected format: 'KL-43-P1234'.");
+    //   return;
+    // }
 
     if (!trimmedDriverName) {
       alert("Please enter a valid driver name.");
@@ -133,31 +133,60 @@ export function BottomSheets({ handleUpdate }: BottomSheetProps) {
       return;
     }
 
-    // If all validations pass
-    console.log(
-      "handleTheSave",
-      trimmedRegistration,
-      trimmedDriverName,
-      status
-    );
-
     try {
-      await drizzleDb.insert(truck_table).values({
-        driverName: driverName,
-        registration: registration,
-        status: status,
-      });
-    } catch (error) {
-      console.log("Error while adding truck :", error);
-    } finally {
-      await handleUpdate();
+      if (truckId) {
+        // Update the existing truck
+        await drizzleDb
+          .update(truck_table)
+          .set({
+            driverName: trimmedDriverName,
+            registration: trimmedRegistration,
+            status: status,
+          })
+          .where(eq(truck_table.id, Number(truckId)));
 
-      alert("Truck info saved successfully!");
+        alert("Truck info updated successfully!");
+      } else {
+        // Insert a new truck
+        await drizzleDb.insert(truck_table).values({
+          driverName: trimmedDriverName,
+          registration: trimmedRegistration,
+          status: status,
+        });
+
+        alert("Truck info saved successfully!");
+      }
+
+      // Refresh or update the truck list after saving
+      await handleUpdate();
+      router?.push("/trucks");
+    } catch (error) {
+      console.error("Error while saving truck info:", error);
+      alert("An error occurred while saving the truck info.");
     }
   };
+  const router = useRouter();
+
+  const fetchActiveTruck = async (id: string) => {
+    const activeTruck = await drizzleDb
+      .select()
+      .from(truck_table)
+      .where(eq(truck_table?.id, Number(id)));
+    return activeTruck;
+  };
+
+  useEffect(() => {
+    if (!truckId) return;
+    fetchActiveTruck(truckId).then((result) => {
+      setRegistration(result[0]?.registration);
+      setStatus(result[0]?.status);
+      setDriverName(result[0]?.driverName);
+    });
+  }, []);
 
   return (
     <BottomSheet
+      onClose={() => router?.push("/trucks")}
       enablePanDownToClose={true}
       ref={bottomSheetRef}
       style={{
@@ -191,7 +220,7 @@ export function BottomSheets({ handleUpdate }: BottomSheetProps) {
         <TextInput
           placeholder="Name..."
           // style={styles.input}
-          className="border-[0.7px] rounded-lg p-4 h-14 border-zinc-300 placeholder:text-gray-400 placeholder:font-geistRegular mt-2 font-geistMedium"
+          className="border-[0.7px] rounded-lg p-4 h-14 border-zinc-300 placeholder:text-gray-400  mt-2 font-geistMedium"
           onChangeText={setDriverName}
           value={driverName}
         />
@@ -221,7 +250,10 @@ export function BottomSheets({ handleUpdate }: BottomSheetProps) {
         >
           <Text className="text-white font-geistSemiBold ">Save</Text>
         </Pressable>
-        <Pressable className="bg-gray-100 px-3 py-4 rounded-lg flex items-center justify-center mt-3">
+        <Pressable
+          onPress={() => router?.push("/trucks")}
+          className="bg-gray-100 px-3 py-4 rounded-lg flex items-center justify-center mt-3"
+        >
           <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
         </Pressable>
       </BottomSheetView>
@@ -229,9 +261,14 @@ export function BottomSheets({ handleUpdate }: BottomSheetProps) {
   );
 }
 
-const ID = () => {
+interface TruckSheetProps {
+  handleUpdate: () => Promise<void>;
+}
+const TruckSheet: React.FC<TruckSheetProps> = ({ handleUpdate }) => {
   const params = useLocalSearchParams();
-  const { id } = params;
-  const handleUpdate = async () => {};
-  return id ? <BottomSheets handleUpdate={handleUpdate} /> : null;
+  const { truck } = params;
+
+  return truck ? (
+    <BottomSheets truckId={truck as string} handleUpdate={handleUpdate} />
+  ) : null;
 };

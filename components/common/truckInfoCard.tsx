@@ -1,4 +1,4 @@
-import { BottomSheets } from "@/app/(tabs)/trucks/[id]";
+import { BottomSheets } from "@/app/(tabs)/trucks";
 import { Truck } from "@/db/schema";
 import { capitalizeWord } from "@/utils/utils";
 import Feather from "@expo/vector-icons/Feather";
@@ -29,8 +29,15 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
         <Text className="font-geistSemiBold text-2xl text-neutral-900">
           {registration}
         </Text>
-        <Pressable onPress={() => router.navigate(`/trucks/${id}`)}>
-          <Feather name="edit" size={20} color="#1e293b" /> {/* Edit Icon */}
+        <Pressable
+          onPress={() =>
+            router?.push({
+              pathname: "/trucks",
+              params: { truck: id },
+            })
+          }
+        >
+          <Feather name="edit" size={24} color="#1e293b" /> {/* Edit Icon */}
         </Pressable>
       </View>
 
@@ -42,7 +49,8 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
       {/* Assigned Manifests */}
       <View className="flex flex-row justify-between items-center pt-4">
         <Text className="font-geistMedium text-base  text-neutral-800">
-          Assigned Manifests: <Text className="font-geistSemiBold">{id}</Text>
+          <Text>Assigned Manifests:</Text>
+          <Text className="font-geistSemiBold">{id}</Text>
         </Text>
         <View className="bg-zinc-200 px-3 py-1 rounded-full w-auto self-start flex flex-row items-center  gap-2">
           <View
