@@ -96,18 +96,17 @@ const Tab: React.FC<TabProps> = ({
       onLayout={passTabDimensionsToParent}
     >
       <Animated.View style={[animatedStyles]}>
-        {tabBarIcons[label as keyof typeof tabBarIcons]({
+        {/* {tabBarIcons[label as keyof typeof tabBarIcons]({
           color: isFocused ? "#1c1917" : "#737373",
           size: 16,
-        })}
+        })} */}
       </Animated.View>
       <Text
-        className="font-inter"
         style={{
-          fontSize: 14,
+          fontFamily: "Geist-Medium",
+          fontSize: 13,
           fontWeight: isFocused ? "600" : "400",
           color: isFocused ? "#1c1917" : "#737373",
-          fontFamily: "Inter-Variable",
           opacity: 1,
         }}
       >

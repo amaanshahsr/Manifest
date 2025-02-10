@@ -6,7 +6,7 @@ const defaultIconStyle = { size: 24, color: "black" };
 
 export const tabBarIcons = {
   index: (
-    customStyles?: TabIconStyle // ? Swap the default styles for a Custom size and color recieved as arguements
+    customStyles?: TabIconStyle // ? Swap the default styles for a Custom size and color recieved as arguments
   ) => (
     <Ionicons
       name="home-outline"
@@ -19,7 +19,7 @@ export const tabBarIcons = {
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
-  trucks: (customStyles?: TabIconStyle) => (
+  "trucks/index": (customStyles?: TabIconStyle) => (
     <Feather
       name="truck"
       {...(customStyles ? customStyles : defaultIconStyle)}

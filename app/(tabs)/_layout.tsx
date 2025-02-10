@@ -25,16 +25,14 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
   const left = useSharedValue(0);
 
+  const currentRouteName = state.routes[state.index].name;
   const animatedLeftStyle = useAnimatedStyle(() => {
-    const currentRouteName = state.routes[state.index].name;
-
     return {
       transform: [
         {
           translateX: withSpring(
             tabDimensions[currentRouteName]?.x +
-              tabDimensions[currentRouteName]?.width / 2 -
-              6 +
+              tabDimensions[currentRouteName]?.width / 4 +
               left.value,
             {
               damping: 20,
@@ -43,18 +41,28 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             }
           ),
         },
+        {
+          translateY: -8,
+        },
       ],
     };
   });
 
+  console.log("state?.routes", state?.routes);
   return (
     <View
       style={styles?.shadowProp}
       className=" border-t-[0.5px]  border-t-neutral-300 relative  flex flex-row  " // Styles for BottomTab Container
     >
       <Animated.View
-        style={[animatedLeftStyle]}
-        className={`h-2 w-2 rounded-full   bg-neutral-800  absolute bottom-0 `}
+        style={[
+          [animatedLeftStyle],
+          {
+            width: tabDimensions[currentRouteName]?.width / 2,
+            height: tabDimensions[currentRouteName]?.height - 10,
+          },
+        ]}
+        className={` rounded-lg   bg-neutral-300  absolute bottom-0 `}
       ></Animated.View>
       {state.routes.map((route, index: number) => {
         return (
@@ -76,11 +84,12 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 function MyTabs() {
   return (
     <Tabs
-      // ** Enable this to add animations to screen changes
-      // screenOptions={{
-      //   animation: "shift",
-      // }}
-
+      screenOptions={
+        {
+          // ** Enable this to add animations to screen changes
+          // animation: "shift",
+        }
+      }
       tabBar={(props) => <MyTabBar {...props} />}
     ></Tabs>
   );
