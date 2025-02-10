@@ -1,6 +1,6 @@
 import React from "react";
-import { TextInput, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Pressable, TextInput, View } from "react-native";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 interface SearchBarProps {
   search: string;
@@ -14,7 +14,7 @@ const CustomSearchBar: React.FC<SearchBarProps> = ({
   placeholder = "Search...", // Default placeholder
 }) => {
   return (
-    <View className="py-2 px-6">
+    <View className="py-2 px-6 ">
       <View style={{ elevation: 4 }} className="relative rounded-lg">
         <TextInput
           placeholder={placeholder}
@@ -23,7 +23,13 @@ const CustomSearchBar: React.FC<SearchBarProps> = ({
           value={search}
         />
         <View className="absolute top-1/2 right-3 -translate-y-1/2">
-          <Ionicons name="search" size={24} color="black" />
+          {search?.length ? (
+            <Pressable onPress={() => setSearch("")}>
+              <AntDesign name="closecircle" size={24} color="black" />
+            </Pressable>
+          ) : (
+            <Ionicons name="search" size={24} color="black" />
+          )}
         </View>
       </View>
     </View>

@@ -1,4 +1,3 @@
-import { BottomSheets } from "@/app/(tabs)/trucks";
 import { Truck } from "@/db/schema";
 import { capitalizeWord } from "@/utils/utils";
 import Feather from "@expo/vector-icons/Feather";
@@ -33,7 +32,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
           onPress={() =>
             router?.push({
               pathname: "/trucks",
-              params: { truck: id },
+              params: { truck: id }, // Push a valid ID as searchParams so the TruckSheet Component knows we are editing truck details
             })
           }
         >
