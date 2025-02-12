@@ -1,27 +1,22 @@
 import { Pressable, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { drizzle } from "drizzle-orm/expo-sqlite";
+import React, { useState } from "react";
 import { Truck, trucks as truck_table } from "@/db/schema";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import TruckInfoCard from "@/components/common/truckInfoCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useSQLiteContext } from "expo-sqlite";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import CustomSearchBar from "@/components/common/searchBar";
 import { TruckBottomSheet } from "@/components/bottomsheet/truckBottomSheet";
 import { useDataFetch } from "@/hooks/useDataFetch";
 
 export default function App() {
-  const db = useSQLiteContext();
-
   const {
     data: trucks,
     loading,
     refresh,
   } = useDataFetch<Truck>({
-    db,
     table: truck_table,
   });
 

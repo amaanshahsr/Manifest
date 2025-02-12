@@ -13,7 +13,6 @@ import { Pressable, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Companies = () => {
-  const db = useSQLiteContext();
   const [search, setSearch] = useState("");
   const { id } = useLocalSearchParams();
   console.log("ajdnkasjndasdna", id);
@@ -22,7 +21,6 @@ const Companies = () => {
     loading,
     refresh,
   } = useDataFetch<Company>({
-    db,
     table: company_table,
   });
   if (loading) {

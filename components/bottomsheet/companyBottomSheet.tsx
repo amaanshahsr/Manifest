@@ -84,7 +84,7 @@ export function CompanyBottomSheet({
   };
 
   useEffect(() => {
-    if (!companyId) return;
+    if (!companyId || companyId === "new") return;
     fetchActiveCompany(companyId).then((result) => {
       setCompanyName(result[0]?.companyName);
     });

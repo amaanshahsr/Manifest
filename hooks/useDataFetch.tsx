@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { SQLiteDatabase } from "expo-sqlite";
+import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { TableTypes } from "@/db/schema";
 
 type UseDataFetchParams<T> = {
-  db: SQLiteDatabase;
   table: TableTypes; // Use the correct type for your table
 };
 
-export function useDataFetch<T>({ db, table }: UseDataFetchParams<T>) {
+export function useDataFetch<T>({ table }: UseDataFetchParams<T>) {
+  const db = useSQLiteContext();
+
   const drizzleDb = drizzle(db);
   const [data, setData] = useState<T[] | null>(null);
   const [loading, setLoading] = useState(false);

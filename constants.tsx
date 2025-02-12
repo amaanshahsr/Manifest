@@ -26,4 +26,10 @@ export const tabBarIcons = {
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
+  manifests: (customStyles?: TabIconStyle) => (
+    <Ionicons
+      name="clipboard-outline"
+      {...(customStyles ? customStyles : defaultIconStyle)}
+    />
+  ),
 };

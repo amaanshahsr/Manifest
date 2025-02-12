@@ -107,7 +107,7 @@ export function TruckBottomSheet({ refresh, truckId }: TruckBottomSheetProps) {
   };
 
   useEffect(() => {
-    if (!truckId) return;
+    if (!truckId || truckId === "new") return;
     fetchActiveTruck(truckId).then((result) => {
       setRegistration(result[0]?.registration);
       setStatus(result[0]?.status);
