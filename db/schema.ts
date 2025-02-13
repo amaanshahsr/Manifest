@@ -27,3 +27,11 @@ export type TableTypes = typeof companies | typeof trucks | typeof manifests;
 export type Truck = typeof trucks.$inferSelect;
 export type Manifest = typeof manifests.$inferSelect;
 export type Company = typeof companies.$inferSelect;
+
+//Enum type
+
+export type FetchDataType<T extends TableTypes> = T extends typeof trucks
+  ? Truck
+  : T extends typeof manifests
+  ? Manifest
+  : Company;

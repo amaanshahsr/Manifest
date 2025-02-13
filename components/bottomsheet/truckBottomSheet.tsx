@@ -6,9 +6,10 @@ import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useRef, useCallback, useState, useEffect, useMemo } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
-import { trucks as truck_table } from "@/db/schema";
+import { trucks as truck_table, trucks } from "@/db/schema";
 import InputField from "../common/inputField";
 import CustomBackdrop from "./backdrop";
+import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
 
 interface TruckBottomSheetProps {
   refresh: () => Promise<void>;
@@ -17,6 +18,7 @@ interface TruckBottomSheetProps {
 export function TruckBottomSheet({ refresh, truckId }: TruckBottomSheetProps) {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
+  const { addToDatabase } = useSaveToDatabase();
 
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -77,12 +79,15 @@ export function TruckBottomSheet({ refresh, truckId }: TruckBottomSheetProps) {
         alert("Truck info updated successfully!");
       } else {
         // Insert a new truck
-        await drizzleDb.insert(truck_table).values({
-          driverName: trimmedDriverName,
-          registration: trimmedRegistration,
-          status: status,
+        await addToDatabase({
+          actionType: "new",
+          item: {
+            driverName: trimmedDriverName,
+            registration: trimmedRegistration,
+            status: status,
+          },
+          table: trucks,
         });
-
         alert("Truck info saved successfully!");
       }
 

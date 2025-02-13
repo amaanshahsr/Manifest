@@ -9,7 +9,6 @@ import { Pressable, Text, View } from "react-native";
 import { Manifest, manifests } from "@/db/schema";
 import InputField from "../common/inputField";
 import CustomBackdrop from "./backdrop";
-import CompanySelect from "../common/companySelect";
 import Animated, {
   Easing,
   FadeIn,
@@ -94,7 +93,6 @@ export function ManifestBottomSheet({
         key="end"
         label="End Manifest Number"
       />
-      <CompanySelect handleSelect={changeCompanyRef} />
 
       <Pressable
         onPress={handleSave}

@@ -4,7 +4,7 @@ import { drizzle } from "drizzle-orm/expo-sqlite";
 import { TableTypes } from "@/db/schema";
 
 type UseDataFetchParams<T> = {
-  table: TableTypes; // Use the correct type for your table
+  table: TableTypes;
 };
 
 export function useDataFetch<T>({ table }: UseDataFetchParams<T>) {

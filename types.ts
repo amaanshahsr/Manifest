@@ -1,6 +1,7 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { NavigationRoute, ParamListBase } from "@react-navigation/native";
 import { SharedValue } from "react-native-reanimated";
+import { Company, Manifest, Truck } from "./db/schema";
 
 // ** Navigation Types Go here
 
@@ -27,3 +28,6 @@ export type TabIconStyle = {
   size: number;
   color: string;
 };
+
+// Table types
+export type TableItem = Company | Manifest | Truck;

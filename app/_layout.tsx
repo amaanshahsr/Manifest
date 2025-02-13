@@ -6,7 +6,10 @@ import "../globals.css";
 import * as SQLite from "expo-sqlite";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { NativeViewGestureHandler } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  NativeViewGestureHandler,
+} from "react-native-gesture-handler";
 import { ActivityIndicator } from "react-native";
 import { SQLiteProvider } from "expo-sqlite";
 
@@ -40,23 +43,25 @@ const RootLayout = () => {
   }
 
   return (
-    <Suspense fallback={<ActivityIndicator size="large" />}>
-      <SQLiteProvider
-        databaseName="data.db"
-        options={{ enableChangeListener: true }}
-        useSuspense
-      >
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
-      </SQLiteProvider>
-      <StatusBar style="inverted" />
-    </Suspense>
+    <GestureHandlerRootView>
+      <Suspense fallback={<ActivityIndicator size="large" />}>
+        <SQLiteProvider
+          databaseName="data.db"
+          options={{ enableChangeListener: true }}
+          useSuspense
+        >
+          <Stack>
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </SQLiteProvider>
+        <StatusBar style="inverted" />
+      </Suspense>
+    </GestureHandlerRootView>
   );
 };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, TextInput, View } from "react-native";
+import { Pressable, TextInput, View, Text } from "react-native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 interface SearchBarProps {
@@ -25,10 +25,14 @@ const CustomSearchBar: React.FC<SearchBarProps> = ({
         <View className="absolute top-1/2 right-3 -translate-y-1/2">
           {search?.length ? (
             <Pressable onPress={() => setSearch("")}>
-              <AntDesign name="closecircle" size={24} color="black" />
+              <Text>
+                <AntDesign name="closecircle" size={24} color="black" />
+              </Text>
             </Pressable>
           ) : (
-            <Ionicons name="search" size={24} color="black" />
+            <Text>
+              <Ionicons name="search" size={24} color="black" />
+            </Text>
           )}
         </View>
       </View>

@@ -7,7 +7,6 @@ import { View, Text, Pressable } from "react-native";
 
 interface TruckInfoCardProps {
   truck: Truck;
-  handleUpdate: () => Promise<void>;
 }
 const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
   const { driverName, id, registration, status } = truck;
@@ -31,12 +30,14 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
         <Pressable
           onPress={() =>
             router?.push({
-              pathname: "/trucks",
-              params: { truck: id }, // Push a valid ID as searchParams so the TruckSheet Component knows we are editing truck details
+              pathname: `/trucks/[id]`,
+              params: { id: id?.toString() },
             })
           }
         >
-          <Feather name="edit" size={24} color="#1e293b" /> {/* Edit Icon */}
+          <Text>
+            <Feather name="edit" size={24} color="#1e293b" /> {/* Edit Icon */}
+          </Text>
         </Pressable>
       </View>
 
