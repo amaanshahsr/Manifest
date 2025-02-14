@@ -40,7 +40,11 @@ const Tab: React.FC<TabProps> = ({
       target: route.key,
     });
   };
+  const filteredRoutes = state?.routes.filter(
+    (route) => !route.name.includes("new") && !route.name.includes("[id]")
+  );
   const isFocused = state.index === index;
+  console.log("isFocues", state.index, state);
 
   const onPress = () => {
     const event = navigation.emit({
@@ -81,6 +85,10 @@ const Tab: React.FC<TabProps> = ({
   const slicedLabel = String(label)?.includes("/")
     ? String(label)?.split("/")[0]
     : String(label);
+
+  const isHiddenRoute =
+    String(label)?.split("/")[1] === "new" ||
+    String(label)?.split("/")[1] === "[id]";
   return (
     <PlatformPressable
       href={buildHref(route.name, route.params)}
@@ -95,6 +103,7 @@ const Tab: React.FC<TabProps> = ({
         justifyContent: "center",
         padding: 10,
         gap: 4,
+        display: isHiddenRoute ? "none" : "flex",
       }}
       onLayout={passTabDimensionsToParent}
     >

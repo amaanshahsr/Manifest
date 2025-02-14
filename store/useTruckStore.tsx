@@ -21,7 +21,6 @@ export const useTruckStore = create<TruckState>((set) => ({
   fetchTrucks: async (filter = "") => {
     set({ loading: true });
     let copyData: Truck[] = [];
-    console.log("herehedas");
     try {
       try {
         const result = await drizzleDb.select().from(trucks);
