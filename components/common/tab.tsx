@@ -78,6 +78,9 @@ const Tab: React.FC<TabProps> = ({
     }));
   };
 
+  const slicedLabel = String(label)?.includes("/")
+    ? String(label)?.split("/")[0]
+    : String(label);
   return (
     <PlatformPressable
       href={buildHref(route.name, route.params)}
@@ -95,12 +98,12 @@ const Tab: React.FC<TabProps> = ({
       }}
       onLayout={passTabDimensionsToParent}
     >
-      {/* <Animated.View style={[animatedStyles]}>
-        {tabBarIcons[label as keyof typeof tabBarIcons]({
+      <Animated.View style={[animatedStyles]}>
+        {tabBarIcons[slicedLabel as keyof typeof tabBarIcons]({
           color: isFocused ? "#1c1917" : "#737373",
           size: 16,
         })}
-      </Animated.View> */}
+      </Animated.View>
       <Text
         style={{
           fontFamily: "Geist-Medium",
@@ -110,7 +113,7 @@ const Tab: React.FC<TabProps> = ({
           opacity: 1,
         }}
       >
-        {capitalizeWord(label as string)}
+        {capitalizeWord(slicedLabel)}
       </Text>
     </PlatformPressable>
   );

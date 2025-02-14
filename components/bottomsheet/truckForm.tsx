@@ -95,7 +95,7 @@ const TruckForm = () => {
     }
   };
 
-  // Fetch the truck details using the truckId in LocalSearchParams (passed as props)
+  // Fetch the truck details using the truckId in LocalSearchParams
   const fetchActiveTruck = async (id: string) => {
     const activeTruck = trucks?.filter((truck) => truck?.id === Number(id));
     return activeTruck;

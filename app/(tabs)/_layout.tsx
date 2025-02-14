@@ -48,6 +48,10 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   });
 
   // console.log("state?.routes", state?.routes);
+  const filteredRoutes = state?.routes.filter(
+    (route) => !route.name.includes("new") && !route.name.includes("[id]")
+  );
+
   return (
     <View
       style={styles?.shadowProp}
@@ -63,7 +67,7 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         ]}
         className={` rounded-lg   bg-neutral-300  absolute bottom-0 `}
       ></Animated.View>
-      {state.routes.map((route, index: number) => {
+      {filteredRoutes.map((route, index: number) => {
         return (
           <Tab
             setTabDimensions={setTabDimensions}

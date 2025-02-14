@@ -36,7 +36,7 @@ export const useSaveToDatabase = <T extends Omit<TableItem, "id">>() => {
           .set(item)
           .where(eq(table.id, Number(id)));
       } catch (error) {
-        console.log("Error while updating to DB :", error);
+        console.error("Error while updating to DB :", error);
         return { status: "error" };
       } finally {
         return { status: "success" };
