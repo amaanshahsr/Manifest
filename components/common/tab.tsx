@@ -6,6 +6,7 @@ import { TabProps } from "@/types";
 import { tabBarIcons } from "@/constants";
 import { LayoutChangeEvent, View } from "react-native";
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -59,20 +60,41 @@ const Tab: React.FC<TabProps> = ({
   };
 
   const scale = useSharedValue(2);
+  const translateYDistance = useSharedValue(10);
+  const labelScale = useSharedValue(1);
 
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
         scale: isFocused
-          ? (scale.value = withSpring(isFocused ? 1.5 : 1, {
+          ? (scale.value = withSpring(isFocused ? 1.8 : 1, {
               duration: 100,
             }))
           : withSpring(1, {
               duration: 100,
             }),
       },
+      {
+        translateY: isFocused
+          ? (translateYDistance.value = withSpring(isFocused ? 5 : 1, {
+              duration: 100,
+            }))
+          : withSpring(1, {
+              duration: 150,
+            }),
+      },
     ],
   }));
+
+  const animatedScaleStyle = useAnimatedStyle(() => {
+    const scaleX = withTiming(isFocused ? 0 : 1, {
+      duration: 100,
+      easing: Easing.out(Easing.exp), // Smooth exponential easing
+    });
+    return {
+      transform: [{ scaleX }],
+    };
+  });
 
   const passTabDimensionsToParent = (e: LayoutChangeEvent) => {
     const dimensions = e?.nativeEvent?.layout;
@@ -91,6 +113,7 @@ const Tab: React.FC<TabProps> = ({
     String(label)?.split("/")[1] === "[id]";
   return (
     <PlatformPressable
+      android_ripple={{ color: "transparent" }} // No ripple effect on Android
       href={buildHref(route.name, route.params)}
       accessibilityState={isFocused ? { selected: true } : {}}
       accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -113,17 +136,20 @@ const Tab: React.FC<TabProps> = ({
           size: 16,
         })}
       </Animated.View>
-      <Text
-        style={{
-          fontFamily: "Geist-Medium",
-          fontSize: 13,
-          fontWeight: isFocused ? "600" : "400",
-          color: isFocused ? "#1c1917" : "#737373",
-          opacity: 1,
-        }}
-      >
-        {capitalizeWord(slicedLabel)}
-      </Text>
+      <Animated.View style={[animatedScaleStyle]}>
+        <Text
+          style={[
+            {
+              fontFamily: "Geist-Medium",
+              fontSize: 13,
+              fontWeight: isFocused ? "600" : "400",
+              color: isFocused ? "#1c1917" : "#737373",
+            },
+          ]}
+        >
+          {capitalizeWord(slicedLabel)}
+        </Text>
+      </Animated.View>
     </PlatformPressable>
   );
 };
