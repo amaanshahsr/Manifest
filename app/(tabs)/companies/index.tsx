@@ -1,9 +1,7 @@
-import { CompanyBottomSheet } from "@/components/bottomsheet/companyBottomSheet";
 import AddNewButton from "@/components/common/addNewButton";
 import CustomSearchBar from "@/components/common/searchBar";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import { Company, companies as company_table } from "@/db/schema";
-import { useDataFetch } from "@/hooks/useDataFetch";
 import { useCompanyStore } from "@/store/useCompanyStore";
 import { Feather } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
@@ -45,10 +43,8 @@ const Companies = () => {
   }
   return (
     <View className=" flex-1 w-full h-full">
-      // Search Bar
       <CustomSearchBar search={search} setSearch={setSearch} />
       <AddNewButton text="Company" route="/companies/new" />
-      //Truck List
       <FlashList
         className="mb-1"
         data={companies?.filter((company) =>

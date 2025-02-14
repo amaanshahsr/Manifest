@@ -43,14 +43,14 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
 
       {/* Driver Name */}
       <Text className="font-geistMedium text-base mt-1 mb-2 text-neutral-600">
-        Driver: {driverName}
+        Driver: {driverName as string}
       </Text>
 
       {/* Assigned Manifests */}
       <View className="flex flex-row justify-between items-center pt-4">
         <Text className="font-geistMedium text-base  text-neutral-800">
           <Text>Assigned Manifests:</Text>
-          <Text className="font-geistSemiBold">{id}</Text>
+          <Text className="font-geistSemiBold">{id as number}</Text>
         </Text>
         <View className="bg-zinc-200 px-3 py-1 rounded-full w-auto self-start flex flex-row items-center  gap-2">
           <View
@@ -59,7 +59,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
             } h-2 w-2 rounded-full`}
           ></View>
           <Text className="font-geistSemiBold text-sm text-neutral-700">
-            {capitalizeWord(status)}
+            {capitalizeWord(status) as string}
           </Text>
         </View>
       </View>

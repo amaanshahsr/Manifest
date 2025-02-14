@@ -42,10 +42,8 @@ export default function App() {
 
   return (
     <View className=" flex-1 w-full h-full">
-      // Search Bar
       <CustomSearchBar search={search} setSearch={setSearch} />
       <AddNewButton route="/trucks/new" text="Truck" />
-      //Truck List
       <FlashList
         className="mb-1"
         data={trucks?.filter(
@@ -58,12 +56,6 @@ export default function App() {
         keyExtractor={(truck) => truck?.id?.toString()}
         numColumns={1}
       />
-      // Drawer for Adding and Editing trucks
-      {/* <TruckSheet /> */}
     </View>
   );
-}
-
-interface TruckSheetProps {
-  refresh: () => Promise<void>;
 }

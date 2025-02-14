@@ -20,7 +20,9 @@ const AddNewButton = ({ text, route }: AddNewButtonProps) => {
       }}
       className="bg-neutral-900 px-3 py-4 rounded-lg w-11/12 mx-auto flex flex-row gap-2 items-center justify-center "
     >
-      <Text className="text-white font-geistSemiBold ">Add New {text}</Text>
+      <Text className="text-white font-geistSemiBold ">
+        Add New {text as string}
+      </Text>
       <Text>
         <Ionicons name="add-circle-sharp" size={18} color="white" />
       </Text>
