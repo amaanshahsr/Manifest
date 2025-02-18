@@ -1,20 +1,44 @@
-import { Manifest } from "@/db/schema";
-import { useTruckStore } from "@/store/useTruckStore";
+import { Company, Manifest, companies as company_table } from "@/db/schema";
 import { Feather } from "@expo/vector-icons";
+import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useRouter } from "expo-router";
-import React from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import { eq } from "drizzle-orm";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 
 interface ManifestInfoCardProps {
   manifest: Manifest;
 }
 const ManifestInfoCard: React.FC<ManifestInfoCardProps> = ({ manifest }) => {
-  const router = useRouter();
-  const { trucks } = useTruckStore();
+  const db = useSQLiteContext();
 
-  //   const assignedCompany = trucks?.filter(
-  //     (truck) => truck?.id === manifest?.companyId
-  //   );
+  const drizzleDb = drizzle(db);
+  const router = useRouter();
+
+  const [assignedCompany, setAssignedCompany] = useState<Company | null>(null);
+  useEffect(() => {
+    selectCompany(manifest?.companyId ?? 0)?.then((result) => {
+      setAssignedCompany(result[0]);
+    });
+  }, [manifest]);
+
+  // Memoize the database query function
+  const selectCompany = useCallback(
+    async (withId: number) => {
+      return await drizzleDb
+        .select()
+        .from(company_table)
+        .where(eq(company_table.id, withId));
+    },
+    [drizzleDb]
+  );
+
+  // Fallback incase of manifest not being assigned to a company
+  const companyName = useMemo(
+    () => assignedCompany?.companyName ?? "None",
+    [assignedCompany]
+  );
 
   return (
     <View
@@ -29,11 +53,11 @@ const ManifestInfoCard: React.FC<ManifestInfoCardProps> = ({ manifest }) => {
     >
       <View className="flex-row justify-between items-center">
         <Text className="font-geistSemiBold text-2xl text-neutral-900">
-          {manifest?.id}
+          {manifest?.manifestId}
         </Text>
-        {/* <Text className="font-geistSemiBold text-2xl text-neutral-900">
-          {assignedCompany[0]?.driverName}
-        </Text> */}
+        <Text className="font-geistSemiBold text-2xl text-neutral-900">
+          {companyName}
+        </Text>
         <Pressable
           onPress={() =>
             router?.push({
