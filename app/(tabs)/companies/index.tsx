@@ -12,7 +12,6 @@ import { Pressable, Text, View } from "react-native";
 const Companies = () => {
   const [search, setSearch] = useState("");
   const { id } = useLocalSearchParams();
-  console.log("ajdnkasjndasdna", id);
   const { companies, fetchCompanies, loading } = useCompanyStore();
 
   useEffect(() => {

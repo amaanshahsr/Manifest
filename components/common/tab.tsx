@@ -41,11 +41,8 @@ const Tab: React.FC<TabProps> = ({
       target: route.key,
     });
   };
-  const filteredRoutes = state?.routes.filter(
-    (route) => !route.name.includes("new") && !route.name.includes("[id]")
-  );
+
   const isFocused = state.index === index;
-  console.log("isFocues", state.index, state);
 
   const onPress = () => {
     const event = navigation.emit({

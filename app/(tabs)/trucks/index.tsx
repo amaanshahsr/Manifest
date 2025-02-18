@@ -16,7 +16,6 @@ export default function App() {
     fetchTrucks();
   }, []);
 
-  console.log("trucks", trucks);
   // This Component adds an early return to empty or loading state when data is not present yet.
 
   if (loading) {

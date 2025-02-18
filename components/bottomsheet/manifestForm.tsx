@@ -5,9 +5,9 @@ import React, { useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { View, Text } from "react-native";
 import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
-import useReturnToHome from "@/hooks/useReturnToHome";
 import { useManifestStore } from "@/store/useManifestStore";
 import { DropDown } from "../common/dropdown";
+import useReturnToHome from "@/hooks/useReturnToHome";
 
 const ManifestForm = () => {
   useReturnToHome({ route: "/manifests" });
@@ -31,7 +31,6 @@ const ManifestForm = () => {
       return;
     }
     if (!companyIdRef?.current) {
-      console.log("companyIdRef?", companyIdRef.current);
       alert("Please Select a company to Assign manifests to.");
       return;
     }
@@ -39,7 +38,6 @@ const ManifestForm = () => {
     let newManifests: Omit<Manifest, "id">[] = [];
 
     for (let i = start; i <= end; i++) {
-      console.log(i);
       newManifests?.push({
         manifestId: i,
         status: "active",

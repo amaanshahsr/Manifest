@@ -13,12 +13,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { TabDimensions } from "@/types";
+import useReturnToHome from "@/hooks/useReturnToHome";
 
 function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   NavigationBar.setBackgroundColorAsync("white"); // ** This turns the bg of the navbar on andoid to white to match app theme
-
   const [tabDimensions, setTabDimensions] = useState<
-    //** */ Store the x and y position of each tab to animate a sliding object across it
+    //**  Store the x and y position of each tab to animate a sliding object across it
     Record<string, TabDimensions>
   >({ index: { x: 0, y: 0, width: 0, height: 0 } });
 
@@ -47,7 +47,6 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     };
   });
 
-  // console.log("state?.routes", state?.routes);
   return (
     <View
       style={styles?.shadowProp}

@@ -6,8 +6,10 @@ import { companies as company_table } from "@/db/schema";
 import { useCompanyStore } from "@/store/useCompanyStore";
 import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
 import InputField from "@/components/common/inputField";
+import useReturnToHome from "@/hooks/useReturnToHome";
 
 export default function CompanyForm() {
+  useReturnToHome({ route: "/companies" });
   const router = useRouter();
   const pathname = usePathname();
   const companyId = pathname?.split("/")[2];

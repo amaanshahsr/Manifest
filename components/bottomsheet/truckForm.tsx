@@ -1,5 +1,4 @@
 import InputField from "@/components/common/inputField";
-import useReturnToHome from "@/hooks/useReturnToHome";
 import { capitalizeWord } from "@/utils/utils";
 import { usePathname, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -7,9 +6,15 @@ import { View, Text, Pressable } from "react-native";
 import { useTruckStore } from "@/store/useTruckStore";
 import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
 import { trucks as truck_table } from "@/db/schema";
+import useReturnToHome from "@/hooks/useReturnToHome";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 
 const TruckForm = () => {
-  useReturnToHome({ route: "/companies" });
+  useReturnToHome({ route: "/trucks" });
   const truckStatus = ["active", "repair"];
   const [registration, setRegistration] = useState("");
   const [driverName, setDriverName] = useState("");
@@ -108,7 +113,26 @@ const TruckForm = () => {
       setStatus(result[0]?.status);
       setDriverName(result[0]?.driverName);
     });
-  }, []);
+  }, [truckId]);
+
+  const translateXValue = useSharedValue(0);
+  const animatedLeftStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: withSpring(status === "active" ? 0 : "100%", {
+            damping: 100,
+            stiffness: 500,
+            mass: 1,
+          }),
+        },
+        {
+          translateY: -8,
+        },
+      ],
+    };
+  });
+
   return (
     <View className="px-6 min-h-[50vh] z-50">
       <InputField
@@ -123,7 +147,11 @@ const TruckForm = () => {
         key="name"
         label="Name"
       />
-      <View className="flex flex-row gap-4 justify-stretch  mt-6">
+      <View className="flex flex-row gap-4 justify-stretch relative mt-6">
+        <Animated.View
+          // style={[animatedLeftStyle]}
+          className="absolute top-2 left-0  w-1/2 rounded-md   bg-red-400/40 h-full z-50"
+        ></Animated.View>
         {truckStatus?.map((stat) => {
           return (
             <Pressable
