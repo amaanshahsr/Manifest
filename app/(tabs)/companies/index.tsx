@@ -1,11 +1,15 @@
 import AddNewButton from "@/components/common/addNewButton";
 import CustomSearchBar from "@/components/common/searchBar";
 import SkeletonLoader from "@/components/common/skeletonLoader";
-import { Company, companies as company_table } from "@/db/schema";
+import { Company, companies as company_table, Manifest } from "@/db/schema";
 import { useCompanyStore } from "@/store/useCompanyStore";
+import { useManifestStore } from "@/store/useManifestStore";
 import { Feather } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { drizzle } from "drizzle-orm/expo-sqlite";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
@@ -13,10 +17,13 @@ const Companies = () => {
   const [search, setSearch] = useState("");
   const { id } = useLocalSearchParams();
   const { companies, fetchCompanies, loading } = useCompanyStore();
+  const db = useSQLiteContext(); // ✅ Move hook inside function before using
 
   useEffect(() => {
-    fetchCompanies();
+    fetchCompanies(db);
   }, []);
+
+  console.log("comaapanies", companies);
 
   if (loading) {
     return (
@@ -69,6 +76,7 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
 }) => {
   const { companyName, id } = company;
   const router = useRouter();
+
   return (
     <View
       style={{
@@ -87,6 +95,18 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
         <Pressable
           onPress={() => {
             router?.push({
+              pathname: `/companies/view/[id]`,
+              params: { id: id?.toString() },
+            });
+          }}
+        >
+          <Text>
+            <Feather name="edit" size={24} color="#1e293b" /> {/* Edit Icon */}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            router?.push({
               pathname: `/companies/[id]`,
               params: { id: id?.toString() },
             });
@@ -97,6 +117,38 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
           </Text>
         </Pressable>
       </View>
+      <ActiveManifests companyId={Number(id)} />
     </View>
+  );
+};
+
+interface ActiveManifestsProps {
+  companyId: number;
+}
+
+export const ActiveManifests: React.FC<ActiveManifestsProps> = ({
+  companyId,
+}) => {
+  const db = useSQLiteContext();
+  const { manifests, fetchManifests } = useManifestStore();
+  const [activeManifests, setActiveManifests] = useState<Manifest[]>([]);
+
+  useEffect(() => {
+    if (!manifests?.length) {
+      fetchManifests(db);
+      return;
+    }
+
+    const filteredManifests = manifests.filter(
+      (manifest) =>
+        manifest.companyId === companyId && manifest?.status === "active"
+    );
+    setActiveManifests(filteredManifests);
+  }, [companyId, manifests?.length]);
+
+  return (
+    <Text className="font-geistSemiBold text-lg text-neutral-900">
+      Active Manifests: {activeManifests.length}
+    </Text>
   );
 };

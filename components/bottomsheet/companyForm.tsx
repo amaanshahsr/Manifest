@@ -42,7 +42,7 @@ export default function CompanyForm() {
           },
           id: companyId,
         });
-        await fetchCompanies();
+        // await fetchCompanies();
         alert("Company info updated successfully!");
       } else {
         // Insert a new Company
@@ -58,7 +58,7 @@ export default function CompanyForm() {
       }
 
       // Refresh or update the company list after saving
-      await fetchCompanies();
+      // fetchCompanies();
       setCompanyName("");
       //route back to the List UI
       router?.push("/companies");

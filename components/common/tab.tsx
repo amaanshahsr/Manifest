@@ -60,28 +60,22 @@ const Tab: React.FC<TabProps> = ({
   const translateYDistance = useSharedValue(10);
   const labelScale = useSharedValue(1);
 
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [
-      {
-        scale: isFocused
-          ? (scale.value = withSpring(isFocused ? 1.8 : 1, {
-              duration: 100,
-            }))
-          : withSpring(1, {
-              duration: 100,
-            }),
-      },
-      {
-        translateY: isFocused
-          ? (translateYDistance.value = withSpring(isFocused ? 5 : 1, {
-              duration: 100,
-            }))
-          : withSpring(1, {
-              duration: 150,
-            }),
-      },
-    ],
-  }));
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: withSpring(isFocused ? 1.8 : 1, {
+            duration: 100,
+          }),
+        },
+        {
+          translateY: withSpring(isFocused ? 5 : 1, {
+            duration: 150,
+          }),
+        },
+      ],
+    };
+  });
 
   const animatedScaleStyle = useAnimatedStyle(() => {
     const scaleX = withTiming(isFocused ? 0 : 1, {

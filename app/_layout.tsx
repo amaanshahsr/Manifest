@@ -5,19 +5,23 @@ import { Suspense, useEffect, useState } from "react";
 import "../globals.css";
 import * as SQLite from "expo-sqlite";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { drizzle } from "drizzle-orm/expo-sqlite";
 import {
   GestureHandlerRootView,
   NativeViewGestureHandler,
 } from "react-native-gesture-handler";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Text } from "react-native";
 import { SQLiteProvider } from "expo-sqlite";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import migrations from "../drizzle/migrations";
+import { drizzle } from "drizzle-orm/expo-sqlite";
 
-const expo = SQLite.openDatabaseSync("data.db");
-
+const db = SQLite.openDatabaseSync("data.db");
+const expo = drizzle(db, { logger: true });
 const RootLayout = () => {
   SplashScreen.preventAutoHideAsync();
-  useDrizzleStudio(expo);
+  const { success, error } = useMigrations(expo, migrations);
+
+  useDrizzleStudio(db);
   const [loaded] = useFonts({
     "Geist-Light": require("../assets/fonts/Geist-Light.ttf"),
     "Geist-Regular": require("../assets/fonts/Geist-Regular.ttf"),
@@ -40,6 +44,9 @@ const RootLayout = () => {
 
   if (!loaded) {
     return null;
+  }
+  if (error) {
+    return <Text>Error Migrating DB</Text>;
   }
 
   return (

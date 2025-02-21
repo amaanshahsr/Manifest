@@ -13,7 +13,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { TabDimensions } from "@/types";
-import useReturnToHome from "@/hooks/useReturnToHome";
 
 function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   NavigationBar.setBackgroundColorAsync("white"); // ** This turns the bg of the navbar on andoid to white to match app theme

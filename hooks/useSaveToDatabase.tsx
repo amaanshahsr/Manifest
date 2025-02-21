@@ -10,9 +10,9 @@ type UseSaveToDatabase<T extends Omit<TableItem, "id">> = {
   actionType: "new" | "edit";
   id?: string;
 };
+
 export const useSaveToDatabase = <T extends Omit<TableItem, "id">>() => {
   const db = useSQLiteContext();
-  const drizzleDb = drizzle(db);
 
   const addToDatabase = async ({
     table,
@@ -20,26 +20,26 @@ export const useSaveToDatabase = <T extends Omit<TableItem, "id">>() => {
     actionType,
     id,
   }: UseSaveToDatabase<T>) => {
+    const drizzleDb = drizzle(db, { logger: true });
     if (actionType === "new") {
       try {
         await drizzleDb.insert(table).values(item);
       } catch (error) {
         console.log("Error while adding to DB :", error);
         return { status: "error" };
-      } finally {
-        return { status: "success" };
       }
     } else {
       try {
         await drizzleDb
           .update(table)
           .set(item)
-          .where(eq(table.id, Number(id)));
+          .where(eq(table.id, Number(id)))
+          .then(() => {
+            return { status: "success" };
+          });
       } catch (error) {
         console.error("Error while updating to DB :", error);
         return { status: "error" };
-      } finally {
-        return { status: "success" };
       }
     }
   };

@@ -3,22 +3,22 @@ import { create } from "zustand";
 import { TableTypes } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import * as SQLite from "expo-sqlite";
+import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
 
 export interface TruckState {
   trucks: Truck[];
   loading: boolean;
-  fetchTrucks: () => Promise<void>;
+  fetchTrucks: (db: SQLiteDatabase) => Promise<void>;
   addTruck: (newTruck: Truck) => void;
 }
-
-const expo = SQLite.openDatabaseSync("data.db");
-const drizzleDb = drizzle(expo);
 
 export const useTruckStore = create<TruckState>((set) => ({
   trucks: [],
   loading: false,
 
-  fetchTrucks: async (filter = "") => {
+  fetchTrucks: async (db, filter = "") => {
+    const expo = useSQLiteContext();
+    const drizzleDb = drizzle(expo, { logger: true });
     set({ loading: true });
     let copyData: Truck[] = [];
     try {

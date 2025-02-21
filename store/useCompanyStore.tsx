@@ -1,43 +1,39 @@
-import { companies, Company, Manifest, manifests } from "@/db/schema";
-import { useDataFetch } from "@/hooks/useDataFetch";
+import { companies, Company } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { create } from "zustand";
-import * as SQLite from "expo-sqlite";
+import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite"; // ✅ Correct Hook Usage
 
 export interface CompanyState {
   companies: Company[];
   loading: boolean;
-  fetchCompanies: () => Promise<void>;
+  fetchCompanies: (db: SQLiteDatabase, id?: number) => Promise<void>;
   addCompany: (newCompany: Company) => void;
 }
-const expo = SQLite.openDatabaseSync("data.db");
-const drizzleDb = drizzle(expo);
 
-export const useCompanyStore = create<CompanyState>((set) => ({
+export const useCompanyStore = create<CompanyState>((set, get) => ({
   companies: [],
   loading: false,
 
-  fetchCompanies: async (id = 0) => {
+  fetchCompanies: async (db, id) => {
+    const drizzleDb = drizzle(db, { logger: true });
+
     set({ loading: true });
-    let copyData: Company[] = [];
+
     try {
-      try {
-        const result = await drizzleDb.select().from(companies);
-        copyData = result ? [...result] : [];
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (id) {
-          copyData = copyData.filter((company) => company?.id === id);
-        }
-      }
-      set({ companies: copyData });
+      const result = await drizzleDb.select().from(companies);
+      console.log("result", result);
+
+      const filteredCompanies = id
+        ? result.filter((company) => company.id === id)
+        : result;
+      set({ companies: filteredCompanies });
     } catch (error) {
-      console.error("Failed to fetch manifests", error);
+      console.error("Failed to fetch companies", error);
     } finally {
       set({ loading: false });
     }
   },
+
   addCompany: (newCompany) =>
     set((state) => ({ companies: [...state.companies, newCompany] })),
 }));
