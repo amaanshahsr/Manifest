@@ -1,14 +1,18 @@
 import AddNewButton from "@/components/common/addNewButton";
 import CustomSearchBar from "@/components/common/searchBar";
 import SkeletonLoader from "@/components/common/skeletonLoader";
-import { Company, companies as company_table, Manifest } from "@/db/schema";
-import { useCompanyStore } from "@/store/useCompanyStore";
-import { useManifestStore } from "@/store/useManifestStore";
+import {
+  Company,
+  companies as company_table,
+  Manifest,
+  manifests as manifest_table,
+} from "@/db/schema";
+import { useDataFetch } from "@/hooks/useDataFetch";
+import { eq, and } from "drizzle-orm";
 import { Feather } from "@expo/vector-icons";
-import { useIsFocused } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
@@ -16,12 +20,14 @@ import { Pressable, Text, View } from "react-native";
 const Companies = () => {
   const [search, setSearch] = useState("");
   const { id } = useLocalSearchParams();
-  const { companies, fetchCompanies, loading } = useCompanyStore();
-  const db = useSQLiteContext(); // ✅ Move hook inside function before using
 
-  useEffect(() => {
-    fetchCompanies(db);
-  }, []);
+  const {
+    data: companies,
+    loading,
+    refresh,
+  } = useDataFetch<Company>({
+    table: company_table,
+  });
 
   console.log("comaapanies", companies);
 
@@ -130,20 +136,35 @@ export const ActiveManifests: React.FC<ActiveManifestsProps> = ({
   companyId,
 }) => {
   const db = useSQLiteContext();
-  const { manifests, fetchManifests } = useManifestStore();
-  const [activeManifests, setActiveManifests] = useState<Manifest[]>([]);
+  const drizzleDb = drizzle(db);
+  const {
+    data: manifests,
+    loading,
+    refresh,
+  } = useDataFetch<Manifest>({
+    table: manifest_table,
+  });
 
+  const [activeManifests, setActiveManifests] = useState<Manifest[]>([]);
+  const fetchFilteredManifests = async () => {
+    const results = await drizzleDb
+      .select()
+      .from(manifest_table)
+      .where(
+        and(
+          eq(manifest_table.companyId, companyId),
+          eq(manifest_table.status, "active")
+        )
+      );
+    setActiveManifests(results); // ✅ Now setting state with actual data
+  };
   useEffect(() => {
     if (!manifests?.length) {
-      fetchManifests(db);
+      refresh();
       return;
     }
 
-    const filteredManifests = manifests.filter(
-      (manifest) =>
-        manifest.companyId === companyId && manifest?.status === "active"
-    );
-    setActiveManifests(filteredManifests);
+    fetchFilteredManifests();
   }, [companyId, manifests?.length]);
 
   return (

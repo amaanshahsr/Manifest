@@ -1,27 +1,26 @@
 import AddNewButton from "@/components/common/addNewButton";
 import ManifestInfoCard from "@/components/common/manifestInfoCard";
-import SkeletonLoader from "@/components/common/skeletonLoader";
-import { Company, Manifest, manifests as manifests_table } from "@/db/schema";
-import { useManifestStore } from "@/store/useManifestStore";
+import { Manifest, manifests as manifests_table } from "@/db/schema";
+import { useDataFetch } from "@/hooks/useDataFetch";
 import { FlashList } from "@shopify/flash-list";
 import { eq, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useRef, useState } from "react";
 import { View, ActivityIndicator, Button } from "react-native";
-import { DebugInstructions } from "react-native/Libraries/NewAppScreen";
 
 const Manifests = () => {
   const [search, setSearch] = useState("");
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
 
-  const { fetchManifests, manifests, loading } = useManifestStore();
-
-  useEffect(() => {
-    fetchManifests(db);
-  }, []);
+  const {
+    data: manifests,
+    loading,
+    refresh,
+  } = useDataFetch<Manifest>({
+    table: manifests_table,
+  });
 
   console.log("manifestssss", manifests);
 
@@ -44,7 +43,7 @@ const Manifests = () => {
       console.log(`Updated ${transformedIds.length} rows successfully.`);
 
       // Clear the checked items AFTER fetchManifests to avoid race conditions
-      await fetchManifests(db);
+      await refresh();
       checkedItemsRef.current = [];
     } catch (error) {
       console.error("Failed to update manifests:", error);

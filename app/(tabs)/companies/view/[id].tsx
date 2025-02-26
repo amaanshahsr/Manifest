@@ -1,6 +1,6 @@
 import ManifestInfoCard from "@/components/common/manifestInfoCard";
 import { Manifest, manifests as manifests_table } from "@/db/schema";
-import { useManifestStore } from "@/store/useManifestStore";
+import { useDataFetch } from "@/hooks/useDataFetch";
 import { FlashList } from "@shopify/flash-list";
 import { inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
@@ -13,7 +13,13 @@ const ViewCompany = () => {
   const { id } = useLocalSearchParams();
   const db = useSQLiteContext();
 
-  const { manifests, fetchManifests } = useManifestStore();
+  const {
+    data: manifests,
+    loading,
+    refresh,
+  } = useDataFetch<Manifest>({
+    table: manifests_table,
+  });
 
   const [assignedManifests, setAssignedManifests] = useState<Manifest[]>([]);
   const checkedItemsRef = useRef<string[]>([]);

@@ -7,15 +7,20 @@ import CustomSearchBar from "@/components/common/searchBar";
 import { useTruckStore } from "@/store/useTruckStore";
 import AddNewButton from "@/components/common/addNewButton";
 import { useSQLiteContext } from "expo-sqlite";
+import { useDataFetch } from "@/hooks/useDataFetch";
+import { Truck, trucks as truck_table } from "../../../db/schema";
 
 export default function App() {
-  const { fetchTrucks, trucks, loading } = useTruckStore();
   const db = useSQLiteContext();
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    fetchTrucks(db);
-  }, []);
+  const {
+    data: trucks,
+    loading,
+    refresh,
+  } = useDataFetch<Truck>({
+    table: truck_table,
+  });
 
   // This Component adds an early return to empty or loading state when data is not present yet.
 
