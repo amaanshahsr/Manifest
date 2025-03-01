@@ -1,4 +1,4 @@
-import TruckForm from "@/components/bottomsheet/truckForm";
+import TruckForm from "@/components/forms/truckForm";
 import React from "react";
 
 const Id = () => {

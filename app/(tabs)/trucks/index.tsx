@@ -2,7 +2,7 @@ import { View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
-import TruckInfoCard from "@/components/common/truckInfoCard";
+import TruckInfoCard from "@/components/cards/truckInfoCard";
 import CustomSearchBar from "@/components/common/searchBar";
 import { useTruckStore } from "@/store/useTruckStore";
 import AddNewButton from "@/components/common/addNewButton";

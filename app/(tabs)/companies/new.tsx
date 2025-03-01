@@ -1,4 +1,4 @@
-import CompanyForm from "@/components/bottomsheet/companyForm";
+import CompanyForm from "@/components/forms/companyForm";
 import React from "react";
 
 const New = () => {

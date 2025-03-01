@@ -1,3 +1,4 @@
+import { CompanyInfoCard } from "@/components/cards/companyInfoCard";
 import AddNewButton from "@/components/common/addNewButton";
 import CustomSearchBar from "@/components/common/searchBar";
 import SkeletonLoader from "@/components/common/skeletonLoader";
@@ -12,7 +13,6 @@ import { Pressable, Text, View } from "react-native";
 
 const Companies = () => {
   const [search, setSearch] = useState("");
-  const { id } = useLocalSearchParams();
   const db = useSQLiteContext();
   const { companies, fetchCompanies, loading } = useCompanyStore();
 
@@ -37,8 +37,6 @@ const Companies = () => {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
         <AddNewButton text="Company" route="/companies/new" />
-
-        {/* <CompanySheet refresh={refresh} /> */}
       </View>
     );
   }
@@ -61,44 +59,3 @@ const Companies = () => {
 };
 
 export default Companies;
-
-interface CompanyInfoCardProps {
-  company: Company;
-}
-
-export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
-  company,
-}) => {
-  const { companyName, id } = company;
-  const router = useRouter();
-  return (
-    <View
-      style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-        elevation: 3,
-      }}
-      className="bg-white h-auto w-[92.5%] mt-5 rounded-xl p-6 mx-auto"
-    >
-      <View className="flex-row justify-between items-center">
-        <Text className="font-geistSemiBold text-2xl text-neutral-900">
-          {companyName}
-        </Text>
-        <Pressable
-          onPress={() => {
-            router?.push({
-              pathname: `/companies/[id]`,
-              params: { id: id?.toString() },
-            });
-          }}
-        >
-          <Text>
-            <Feather name="edit" size={24} color="#1e293b" /> {/* Edit Icon */}
-          </Text>
-        </Pressable>
-      </View>
-    </View>
-  );
-};

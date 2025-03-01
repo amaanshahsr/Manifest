@@ -16,7 +16,7 @@ const expo = SQLite.openDatabaseSync("data.db");
 const db = drizzle(expo);
 const RootLayout = () => {
   SplashScreen.preventAutoHideAsync();
-  const { success, error } = useMigrations(db, migrations);
+  const { success, error } = useMigrations(db, migrations); // ! TODO  - Make better use of this
   useDrizzleStudio(expo);
   const [loaded] = useFonts({
     "Geist-Light": require("../assets/fonts/Geist-Light.ttf"),

@@ -1,4 +1,4 @@
-import ManifestForm from "@/components/bottomsheet/manifestForm";
+import ManifestForm from "@/components/forms/manifestForm";
 import React from "react";
 
 const New = () => {

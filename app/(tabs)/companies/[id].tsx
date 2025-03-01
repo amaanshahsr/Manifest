@@ -1,5 +1,5 @@
 import React from "react";
-import CompanyForm from "@/components/bottomsheet/companyForm";
+import CompanyForm from "@/components/forms/companyForm";
 
 const Id = () => {
   return <CompanyForm />;
