@@ -1,11 +1,9 @@
 import AddNewButton from "@/components/common/addNewButton";
-import ManifestInfoCard from "@/components/common/manifestInfoCard";
+import ManifestInfoCard from "@/components/cards/manifestInfoCard";
 import SkeletonLoader from "@/components/common/skeletonLoader";
-import { Company, Manifest, manifests as manifests_table } from "@/db/schema";
 import { useManifestStore } from "@/store/useManifestStore";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
@@ -52,12 +50,7 @@ const Manifests = () => {
       <FlashList
         className="mb-1"
         data={manifests}
-        renderItem={({ item }) => (
-          // <View>
-          //   <Text>{item?.id}</Text>
-          // </View>
-          <ManifestInfoCard manifest={item} />
-        )}
+        renderItem={({ item }) => <ManifestInfoCard manifest={item} />}
         estimatedItemSize={200}
         keyExtractor={(manifest) => manifest?.id?.toString()}
         numColumns={1}

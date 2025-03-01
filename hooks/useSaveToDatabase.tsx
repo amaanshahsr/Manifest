@@ -23,11 +23,10 @@ export const useSaveToDatabase = <T extends Omit<TableItem, "id">>() => {
     if (actionType === "new") {
       try {
         await drizzleDb.insert(table).values(item);
+        return { status: "success" };
       } catch (error) {
         console.log("Error while adding to DB :", error);
         return { status: "error" };
-      } finally {
-        return { status: "success" };
       }
     } else {
       try {
@@ -35,11 +34,10 @@ export const useSaveToDatabase = <T extends Omit<TableItem, "id">>() => {
           .update(table)
           .set(item)
           .where(eq(table.id, Number(id)));
+        return { status: "success" };
       } catch (error) {
         console.error("Error while updating to DB :", error);
         return { status: "error" };
-      } finally {
-        return { status: "success" };
       }
     }
   };

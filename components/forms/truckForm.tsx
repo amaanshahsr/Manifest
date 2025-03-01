@@ -28,77 +28,83 @@ const TruckForm = () => {
   const { addToDatabase } = useSaveToDatabase();
   const { trucks, fetchTrucks } = useTruckStore();
 
-  const handleSave = async () => {
+  const validateInputs = (
+    registration: string,
+    driverName: string,
+    status: string
+  ): boolean => {
     const trimmedRegistration = registration.trim();
     const trimmedDriverName = driverName.trim();
 
-    // Validation checks
     if (!trimmedRegistration) {
       alert("Please enter a valid registration number.");
-      return;
+      return false;
     }
 
     //! TODO - add regex for License validation
     // if (!/^[A-Z]{2}\d{1,2}[A-Z]{0,2}\d{4}$/.test(trimmedRegistration)) {
     //   alert("Registration format is invalid. Expected format: 'KL-43-P1234'.");
-    //   return;
+    //   return false;
     // }
 
     if (!trimmedDriverName) {
       alert("Please enter a valid driver name.");
-      return;
+      return false;
     }
 
     if (trimmedDriverName.length < 3) {
       alert("Driver name must be at least 3 characters long.");
-      return;
+      return false;
     }
 
     if (!["active", "repair"].includes(status)) {
       alert("Please select a valid status.");
-      return;
+      return false;
     }
 
+    return true;
+  };
+
+  const handleDatabaseAction = async (
+    actionType: "new" | "edit",
+    item: object,
+    id?: string
+  ) => {
+    await addToDatabase({ actionType, item, table: truck_table, id });
+  };
+
+  const handleSave = async () => {
+    if (!validateInputs(registration, driverName, status)) return;
+
+    const trimmedRegistration = registration.trim();
+    const trimmedDriverName = driverName.trim();
+
     try {
+      const truckData = {
+        driverName: trimmedDriverName,
+        registration: trimmedRegistration,
+        status,
+      };
+
       if (truckId && truckId !== "new") {
-        // Update the existing truck
-        await addToDatabase({
-          actionType: "edit",
-          item: {
-            driverName: trimmedDriverName,
-            registration: trimmedRegistration,
-            status: status,
-          },
-          table: truck_table,
-          id: truckId,
-        });
+        await handleDatabaseAction("edit", truckData, truckId);
         alert("Truck info updated successfully!");
       } else {
-        // Insert a new truck
-        await addToDatabase({
-          actionType: "new",
-          item: {
-            driverName: trimmedDriverName,
-            registration: trimmedRegistration,
-            status: status,
-          },
-          table: truck_table,
-        });
+        await handleDatabaseAction("new", truckData);
         alert("Truck info saved successfully!");
       }
 
+      // Reset form fields
       setDriverName("");
       setRegistration("");
       setStatus("active");
-      //route back to the List UI
+
+      // Refresh and navigate
+      await fetchTrucks(db);
+      router?.push("/trucks");
     } catch (error) {
       console.error("Error while saving truck info:", error);
       alert("An error occurred while saving the truck info.");
-    } finally {
-      // Refresh or update the truck list after saving
-
-      await fetchTrucks(db);
-      router?.push("/trucks");
     }
   };
 
@@ -115,6 +121,13 @@ const TruckForm = () => {
       setStatus(result[0]?.status);
       setDriverName(result[0]?.driverName);
     });
+
+    return () => {
+      // Reset form fields
+      setDriverName("");
+      setRegistration("");
+      setStatus("active");
+    };
   }, [truckId]);
 
   const translateXValue = useSharedValue(0);
