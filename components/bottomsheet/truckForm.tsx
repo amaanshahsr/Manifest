@@ -12,9 +12,12 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useSQLiteContext } from "expo-sqlite";
 
 const TruckForm = () => {
   useReturnToHome({ route: "/trucks" });
+  const db = useSQLiteContext();
+
   const truckStatus = ["active", "repair"];
   const [registration, setRegistration] = useState("");
   const [driverName, setDriverName] = useState("");
@@ -88,15 +91,14 @@ const TruckForm = () => {
       setRegistration("");
       setStatus("active");
       //route back to the List UI
-
-      router?.push("/trucks");
     } catch (error) {
       console.error("Error while saving truck info:", error);
       alert("An error occurred while saving the truck info.");
     } finally {
       // Refresh or update the truck list after saving
 
-      await fetchTrucks();
+      await fetchTrucks(db);
+      router?.push("/trucks");
     }
   };
 

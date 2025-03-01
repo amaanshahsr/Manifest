@@ -6,15 +6,17 @@ import { useManifestStore } from "@/store/useManifestStore";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
 
 const Manifests = () => {
   const [search, setSearch] = useState("");
+  const db = useSQLiteContext();
 
   const { fetchManifests, manifests, loading } = useManifestStore();
   useEffect(() => {
-    fetchManifests();
+    fetchManifests(db);
   }, []);
 
   // for debugging

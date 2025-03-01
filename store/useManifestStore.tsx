@@ -7,17 +7,16 @@ import * as SQLite from "expo-sqlite";
 export interface ManifestState {
   manifests: Manifest[];
   loading: boolean;
-  fetchManifests: () => Promise<void>;
+  fetchManifests: (db: SQLite.SQLiteDatabase, id?: number) => Promise<void>;
   addManifest: (newManifest: Manifest) => void;
 }
-const expo = SQLite.openDatabaseSync("data.db");
-const drizzleDb = drizzle(expo);
 
 export const useManifestStore = create<ManifestState>((set) => ({
   manifests: [],
   loading: false,
 
-  fetchManifests: async (id = 0) => {
+  fetchManifests: async (db, id = 0) => {
+    const drizzleDb = drizzle(db);
     set({ loading: true });
     let copyData: Manifest[] = [];
     try {

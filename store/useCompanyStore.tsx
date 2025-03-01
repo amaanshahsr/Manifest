@@ -7,17 +7,17 @@ import * as SQLite from "expo-sqlite";
 export interface CompanyState {
   companies: Company[];
   loading: boolean;
-  fetchCompanies: () => Promise<void>;
+  fetchCompanies: (db: SQLite.SQLiteDatabase, id?: number) => Promise<void>;
   addCompany: (newCompany: Company) => void;
 }
-const expo = SQLite.openDatabaseSync("data.db");
-const drizzleDb = drizzle(expo);
 
 export const useCompanyStore = create<CompanyState>((set) => ({
   companies: [],
   loading: false,
 
-  fetchCompanies: async (id = 0) => {
+  fetchCompanies: async (db, id = 0) => {
+    const drizzleDb = drizzle(db);
+
     set({ loading: true });
     let copyData: Company[] = [];
     try {

@@ -6,14 +6,16 @@ import TruckInfoCard from "@/components/common/truckInfoCard";
 import CustomSearchBar from "@/components/common/searchBar";
 import { useTruckStore } from "@/store/useTruckStore";
 import AddNewButton from "@/components/common/addNewButton";
+import { useSQLiteContext } from "expo-sqlite";
 
 export default function App() {
   const { fetchTrucks, trucks, loading } = useTruckStore();
+  const db = useSQLiteContext();
 
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetchTrucks();
+    fetchTrucks(db);
   }, []);
 
   // This Component adds an early return to empty or loading state when data is not present yet.

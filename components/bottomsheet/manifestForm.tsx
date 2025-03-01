@@ -8,6 +8,7 @@ import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
 import { useManifestStore } from "@/store/useManifestStore";
 import { DropDown } from "../common/dropdown";
 import useReturnToHome from "@/hooks/useReturnToHome";
+import { useSQLiteContext } from "expo-sqlite";
 
 const ManifestForm = () => {
   useReturnToHome({ route: "/manifests" });
@@ -15,6 +16,8 @@ const ManifestForm = () => {
   const [start, setStart] = useState<number>(0);
   const [end, setEnd] = useState<number>(0);
   const companyIdRef = useRef<number | null>(null);
+  const db = useSQLiteContext();
+
   const { fetchManifests } = useManifestStore();
 
   const { addToDatabase } = useSaveToDatabase();
@@ -61,7 +64,7 @@ const ManifestForm = () => {
       setEnd(0);
       companyIdRef.current = null;
       // Fetch the updated lists from DB and update store
-      await fetchManifests();
+      await fetchManifests(db);
       router?.push("/manifests");
     }
   };

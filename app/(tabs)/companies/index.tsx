@@ -6,16 +6,18 @@ import { useCompanyStore } from "@/store/useCompanyStore";
 import { Feather } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
 const Companies = () => {
   const [search, setSearch] = useState("");
   const { id } = useLocalSearchParams();
+  const db = useSQLiteContext();
   const { companies, fetchCompanies, loading } = useCompanyStore();
 
   useEffect(() => {
-    fetchCompanies();
+    fetchCompanies(db);
   }, []);
 
   if (loading) {

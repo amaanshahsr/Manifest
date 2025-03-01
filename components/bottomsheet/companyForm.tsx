@@ -7,6 +7,7 @@ import { useCompanyStore } from "@/store/useCompanyStore";
 import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
 import InputField from "@/components/common/inputField";
 import useReturnToHome from "@/hooks/useReturnToHome";
+import { useSQLiteContext } from "expo-sqlite";
 
 export default function CompanyForm() {
   useReturnToHome({ route: "/companies" });
@@ -14,6 +15,8 @@ export default function CompanyForm() {
   const pathname = usePathname();
   const companyId = pathname?.split("/")[2];
   const { addToDatabase } = useSaveToDatabase();
+  const db = useSQLiteContext();
+
   const { companies, fetchCompanies } = useCompanyStore();
 
   const [companyName, setCompanyName] = useState("");
@@ -42,7 +45,7 @@ export default function CompanyForm() {
           },
           id: companyId,
         });
-        await fetchCompanies();
+        await fetchCompanies(db);
         alert("Company info updated successfully!");
       } else {
         // Insert a new Company
@@ -58,7 +61,7 @@ export default function CompanyForm() {
       }
 
       // Refresh or update the company list after saving
-      await fetchCompanies();
+      await fetchCompanies(db);
       setCompanyName("");
       //route back to the List UI
       router?.push("/companies");

@@ -1,22 +1,22 @@
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import "../globals.css";
 import * as SQLite from "expo-sqlite";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import {
-  GestureHandlerRootView,
-  NativeViewGestureHandler,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ActivityIndicator } from "react-native";
 import { SQLiteProvider } from "expo-sqlite";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import migrations from "../drizzle/migrations";
+import { drizzle } from "drizzle-orm/expo-sqlite";
 
 const expo = SQLite.openDatabaseSync("data.db");
-
+const db = drizzle(expo);
 const RootLayout = () => {
   SplashScreen.preventAutoHideAsync();
+  const { success, error } = useMigrations(db, migrations);
   useDrizzleStudio(expo);
   const [loaded] = useFonts({
     "Geist-Light": require("../assets/fonts/Geist-Light.ttf"),
