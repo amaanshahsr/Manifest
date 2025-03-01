@@ -8,6 +8,7 @@ import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
 import InputField from "@/components/common/inputField";
 import useReturnToHome from "@/hooks/useReturnToHome";
 import { useSQLiteContext } from "expo-sqlite";
+import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 
 export default function CompanyForm() {
   useReturnToHome({ route: "/companies" });
@@ -16,10 +17,16 @@ export default function CompanyForm() {
   const companyId = pathname?.split("/")[2];
   const { addToDatabase } = useSaveToDatabase();
   const db = useSQLiteContext();
+  useCleanupOnExit(cleanUp);
 
+  // This funtion will run on unfocus
+  function cleanUp() {
+    setCompanyName("");
+  }
   const { companies, fetchCompanies } = useCompanyStore();
 
   const [companyName, setCompanyName] = useState("");
+
   const handleSave = async () => {
     const trimmedCompanyName = companyName.trim();
 
@@ -36,7 +43,6 @@ export default function CompanyForm() {
     try {
       if (companyId && companyId !== "new") {
         // Update the existing truck
-
         await addToDatabase({
           table: company_table,
           actionType: "edit",
@@ -49,7 +55,6 @@ export default function CompanyForm() {
         alert("Company info updated successfully!");
       } else {
         // Insert a new Company
-
         await addToDatabase({
           table: company_table,
           actionType: "new",
@@ -62,7 +67,6 @@ export default function CompanyForm() {
 
       // Refresh or update the company list after saving
       await fetchCompanies(db);
-      setCompanyName("");
       //route back to the List UI
       router?.push("/companies");
     } catch (error) {

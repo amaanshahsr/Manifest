@@ -20,25 +20,29 @@ export const useSaveToDatabase = <T extends Omit<TableItem, "id">>() => {
     actionType,
     id,
   }: UseSaveToDatabase<T>) => {
-    if (actionType === "new") {
-      try {
-        await drizzleDb.insert(table).values(item);
-        return { status: "success" };
-      } catch (error) {
-        console.log("Error while adding to DB :", error);
-        return { status: "error" };
+    try {
+      switch (actionType) {
+        case "new":
+          await drizzleDb.insert(table).values(item);
+          return { status: "success" };
+
+        case "edit":
+          if (!id) throw new Error("ID is required for updating records.");
+          await drizzleDb
+            .update(table)
+            .set(item)
+            .where(eq(table.id, Number(id)));
+          return { status: "success" };
+
+        default:
+          throw new Error("Invalid action type.");
       }
-    } else {
-      try {
-        await drizzleDb
-          .update(table)
-          .set(item)
-          .where(eq(table.id, Number(id)));
-        return { status: "success" };
-      } catch (error) {
-        console.error("Error while updating to DB :", error);
-        return { status: "error" };
-      }
+    } catch (error) {
+      console.error(
+        `Error while ${actionType === "new" ? "adding" : "updating"} to DB:`,
+        error
+      );
+      return { status: "error" };
     }
   };
 

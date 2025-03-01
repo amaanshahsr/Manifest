@@ -1,7 +1,7 @@
 import InputField from "@/components/common/inputField";
 import { companies, Manifest, manifests } from "@/db/schema";
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { View, Text } from "react-native";
 import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
@@ -9,45 +9,71 @@ import { useManifestStore } from "@/store/useManifestStore";
 import { DropDown } from "../common/dropdown";
 import useReturnToHome from "@/hooks/useReturnToHome";
 import { useSQLiteContext } from "expo-sqlite";
+import { useCompanyStore } from "@/store/useCompanyStore";
+import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 
 const ManifestForm = () => {
   useReturnToHome({ route: "/manifests" });
-
   const [start, setStart] = useState<number>(0);
   const [end, setEnd] = useState<number>(0);
   const companyIdRef = useRef<number | null>(null);
   const db = useSQLiteContext();
 
   const { fetchManifests } = useManifestStore();
+  const { companies } = useCompanyStore();
+
+  // This function will reset inputs when screen goes out of focus
+  function cleanUp() {
+    setStart(0);
+    setEnd(0);
+    companyIdRef.current = null;
+  }
+
+  useCleanupOnExit(cleanUp);
 
   const { addToDatabase } = useSaveToDatabase();
 
-  const handleSave = async () => {
-    if (end === 0 && start === 0) {
+  const validateInputs = (
+    start: number,
+    end: number,
+    companyId: number | null
+  ): boolean => {
+    if (start === 0 && end === 0) {
       alert("Please enter a valid range.");
-      return;
+      return false;
     }
     if (end < start) {
       alert(
         "The start number must be less than the end number. Please enter a valid range."
       );
-      return;
+      return false;
     }
-    if (!companyIdRef?.current) {
-      alert("Please Select a company to Assign manifests to.");
-      return;
+    if (!companyId) {
+      alert("Please select a company to assign manifests to.");
+      return false;
     }
+    return true;
+  };
 
-    let newManifests: Omit<Manifest, "id">[] = [];
+  const generateManifestList = (
+    start: number,
+    end: number,
+    companyId: number
+  ): Omit<Manifest, "id">[] => {
+    return Array.from({ length: end - start + 1 }, (_, index) => ({
+      manifestId: start + index,
+      status: "active",
+      assignedTo: null,
+      companyId,
+    }));
+  };
 
-    for (let i = start; i <= end; i++) {
-      newManifests?.push({
-        manifestId: i,
-        status: "active",
-        assignedTo: null,
-        companyId: companyIdRef?.current,
-      });
-    }
+  const handleSave = async () => {
+    const companyId = companyIdRef?.current;
+
+    if (!validateInputs(start, end, companyId)) return;
+    if (!companyId) return;
+    const newManifests = generateManifestList(start, end, companyId);
 
     try {
       await addToDatabase({
@@ -55,15 +81,17 @@ const ManifestForm = () => {
         item: newManifests,
         table: manifests,
       });
-      alert("Manifests added Succesfully !");
+
+      alert("Manifests added successfully!");
     } catch (error) {
-      console.log("Error While Adding Manifests", error);
+      console.error("Error while adding manifests:", error);
     } finally {
       // Reset states after addition
       setStart(0);
       setEnd(0);
       companyIdRef.current = null;
-      // Fetch the updated lists from DB and update store
+
+      // Refresh and navigate
       await fetchManifests(db);
       router?.push("/manifests");
     }
@@ -92,7 +120,7 @@ const ManifestForm = () => {
       />
 
       <DropDown
-        table={companies}
+        data={companies}
         handleUpdate={handleUpdate}
         schema={{ label: "companyName", value: "id" }}
       />

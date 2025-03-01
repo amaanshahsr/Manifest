@@ -13,6 +13,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useSQLiteContext } from "expo-sqlite";
+import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 
 const TruckForm = () => {
   useReturnToHome({ route: "/trucks" });
@@ -27,6 +28,13 @@ const TruckForm = () => {
   const truckId = pathname?.split("/")[2];
   const { addToDatabase } = useSaveToDatabase();
   const { trucks, fetchTrucks } = useTruckStore();
+  useCleanupOnExit(cleanUp);
+
+  function cleanUp() {
+    setDriverName("");
+    setRegistration("");
+    setStatus("active");
+  }
 
   const validateInputs = (
     registration: string,

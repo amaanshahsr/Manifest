@@ -1,11 +1,12 @@
 import { Truck, Company, Manifest, TableTypes } from "@/db/schema";
+import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 import { useDataFetch } from "@/hooks/useDataFetch";
 import { useState, useEffect } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 
 interface DropDownProps<T extends Truck | Company | Manifest> {
   handleUpdate: (value: string) => void;
-  table: TableTypes;
+  data: T[];
   schema: {
     label: keyof T;
     value: keyof T;
@@ -14,10 +15,9 @@ interface DropDownProps<T extends Truck | Company | Manifest> {
 
 export const DropDown = <T extends Truck | Company | Manifest>({
   handleUpdate,
-  table,
+  data,
   schema,
 }: DropDownProps<T>) => {
-  const { data } = useDataFetch<T>({ table });
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | null>(null);
   const [items, setItems] = useState<{ label: string; value: string }[]>([]);
