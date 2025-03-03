@@ -49,8 +49,12 @@ export default function App() {
         className="mb-1"
         data={trucks?.filter(
           (truck) =>
-            truck?.registration?.includes(search?.trim()) || // ! TODO - Switch to direct DB search?
-            truck?.driverName?.includes(search?.trim())
+            truck?.registration
+              ?.toLowerCase()
+              .includes(search?.trim().toLowerCase()) || // ! TODO - Switch to direct DB search?
+            truck?.driverName
+              ?.toLowerCase()
+              .includes(search?.trim().toLowerCase())
         )}
         renderItem={({ item }) => <TruckInfoCard truck={item} />}
         estimatedItemSize={500}

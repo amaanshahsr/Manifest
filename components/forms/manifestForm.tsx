@@ -62,7 +62,7 @@ const ManifestForm = () => {
   ): Omit<Manifest, "id">[] => {
     return Array.from({ length: end - start + 1 }, (_, index) => ({
       manifestId: start + index,
-      status: "active",
+      status: "unassigned",
       assignedTo: null,
       companyId,
     }));
@@ -103,7 +103,7 @@ const ManifestForm = () => {
   };
 
   return (
-    <View className="px-6 z-50 min-h-[50vh] ">
+    <View className="px-6 z-50 mt-5 ">
       <InputField
         value={start}
         onChangeText={setStart}
@@ -118,12 +118,13 @@ const ManifestForm = () => {
         key="end"
         label="End Manifest Number"
       />
-
-      <DropDown
-        data={companies}
-        handleUpdate={handleUpdate}
-        schema={{ label: "companyName", value: "id" }}
-      />
+      <View className="mt-4">
+        <DropDown
+          data={companies}
+          handleUpdate={handleUpdate}
+          schema={{ label: "companyName", value: "id" }}
+        />
+      </View>
 
       <Pressable
         onPress={handleSave}

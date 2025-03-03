@@ -34,7 +34,7 @@ export const DropDown = <T extends Truck | Company | Manifest>({
 
   return (
     <DropDownPicker
-      style={{ marginBlock: 20 }}
+      style={{ marginBottom: 20 }}
       open={open}
       value={value}
       items={items}
@@ -42,7 +42,7 @@ export const DropDown = <T extends Truck | Company | Manifest>({
       setOpen={setOpen}
       setValue={setValue}
       setItems={setItems}
-      placeholder="Select an option"
+      placeholder="Select a Company"
       onChangeValue={(val) => (val ? handleUpdate(val) : null)}
     />
   );

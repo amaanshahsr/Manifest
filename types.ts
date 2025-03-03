@@ -31,3 +31,7 @@ export type TabIconStyle = {
 
 // Table types
 export type TableItem = Company | Manifest | Truck;
+export type ManifestWithCompanies = {
+  manifests: Manifest;
+  companies: Company | null;
+};

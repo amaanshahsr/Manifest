@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { usePathname, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { companies as company_table } from "@/db/schema";
 import { useCompanyStore } from "@/store/useCompanyStore";
 import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
@@ -90,7 +90,7 @@ export default function CompanyForm() {
     });
   }, []);
   return (
-    <>
+    <View className="mt-5 px-6">
       <InputField
         value={companyName}
         onChangeText={setCompanyName}
@@ -110,6 +110,6 @@ export default function CompanyForm() {
       >
         <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
       </Pressable>
-    </>
+    </View>
   );
 }

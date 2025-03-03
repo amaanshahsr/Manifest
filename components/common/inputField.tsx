@@ -22,14 +22,12 @@ const InputField = <T extends string | number>({
   };
   return (
     <View className="mb-4">
-      <Text className="text-base text-neutral-800 font-geistMedium">
-        {label}
-      </Text>
+      <Text className="text-lg text-neutral-800 font-geistMedium">{label}</Text>
       <View className="relative rounded-lg">
         <TextInput
           keyboardType={keyboardType}
           placeholder={placeholder}
-          className="border-[0.7px] relative rounded-lg p-4 h-14 border-zinc-300 bg-white mt-2 placeholder:text-gray-400 font-geistMedium"
+          className="border-[0.7px] relative text-base rounded-lg p-4 h-14 border-zinc-300 bg-white mt-2 placeholder:text-gray-400 font-geistMedium"
           onChangeText={handleTextChange}
           value={String(value)}
         />

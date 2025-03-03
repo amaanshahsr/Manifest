@@ -1,4 +1,4 @@
-import { Manifest, manifests } from "@/db/schema";
+import { Company, Manifest, manifests } from "@/db/schema";
 import { useDataFetch } from "@/hooks/useDataFetch";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { create } from "zustand";
@@ -9,11 +9,13 @@ export interface ManifestState {
   loading: boolean;
   fetchManifests: (db: SQLite.SQLiteDatabase, id?: number) => Promise<void>;
   addManifest: (newManifest: Manifest) => void;
+  manifestsWithCompany: { manifests: Manifest; companies: Company }[];
 }
 
 export const useManifestStore = create<ManifestState>((set) => ({
   manifests: [],
   loading: false,
+  manifestsWithCompany: [],
 
   fetchManifests: async (db, id = 0) => {
     const drizzleDb = drizzle(db);

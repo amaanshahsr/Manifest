@@ -14,7 +14,7 @@ const CustomSearchBar: React.FC<SearchBarProps> = ({
   placeholder = "Search...", // Default placeholder
 }) => {
   return (
-    <View className="py-2 ">
+    <View className="py-2 mx-6">
       <View style={{ elevation: 4 }} className="relative rounded-lg">
         <TextInput
           placeholder={placeholder}

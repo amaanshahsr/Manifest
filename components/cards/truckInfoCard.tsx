@@ -63,6 +63,28 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
           </Text>
         </View>
       </View>
+      {/* Buttons for Assign Manifest & Edit Status */}
+      <View className="flex-row justify-start gap-3 mt-4">
+        <Pressable
+          // onPress={() => router?.push(`/assign-manifest/${id}`)}
+          className="bg-blue-600 px-4 py-2 rounded-lg flex flex-row items-center gap-2"
+        >
+          <Text className="text-white font-geistSemiBold p-1 text-sm">
+            Assign Manifest
+          </Text>
+          <Feather name="plus-circle" size={18} color="white" />
+        </Pressable>
+
+        <Pressable
+          // onPress={() => router?.push(`/edit-status/${id}`)}
+          className="bg-gray-700 px-4 py-2 rounded-lg flex flex-row items-center gap-2"
+        >
+          <Text className="text-white font-geistSemiBold text-sm">
+            Edit Status
+          </Text>
+          <Feather name="pen-tool" size={18} color="white" />
+        </Pressable>
+      </View>
     </View>
   );
 };

@@ -157,7 +157,7 @@ const TruckForm = () => {
   });
 
   return (
-    <View className="px-6 min-h-[50vh] z-50">
+    <View className="px-6 z-50 mt-5">
       <InputField
         value={registration}
         onChangeText={setRegistration}
@@ -170,7 +170,7 @@ const TruckForm = () => {
         key="name"
         label="Name"
       />
-      <View className="flex flex-row gap-4 justify-stretch relative mt-6">
+      <View className="flex flex-row gap-4 justify-stretch relative my-6">
         <Animated.View
           // style={[animatedLeftStyle]}
           className="absolute top-2 left-0  w-1/2 rounded-md   bg-red-400/40 h-full z-50"

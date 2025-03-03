@@ -10,7 +10,7 @@ export const trucks = table("trucks", {
 export const manifests = table("manifests", {
   id: int().primaryKey({ autoIncrement: true }),
   manifestId: int("manifest_id").notNull()?.unique(),
-  status: text({ enum: ["completed", "active"] }).notNull(),
+  status: text({ enum: ["completed", "active", "unassigned"] }).notNull(),
   assignedTo: int("assigned_to").references(() => trucks?.id), //? Foreign Key for relation between truck and manifests, one truck can have multiple assigned manifests or none at all.
   companyId: int("company_id").references(() => companies.id), //? Foreign key for companies
 });
