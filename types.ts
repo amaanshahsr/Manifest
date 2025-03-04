@@ -35,3 +35,10 @@ export type ManifestWithCompanies = {
   manifests: Manifest;
   companies: Company | null;
 };
+export type TruckWithActiveManifests = {
+  id: number;
+  driverName: string;
+  manifestCount: number | null;
+  registration: string;
+  status: "active" | "repair";
+};

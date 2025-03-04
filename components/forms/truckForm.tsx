@@ -27,7 +27,7 @@ const TruckForm = () => {
   const pathname = usePathname();
   const truckId = pathname?.split("/")[2];
   const { addToDatabase } = useSaveToDatabase();
-  const { trucks, fetchTrucks } = useTruckStore();
+  const { trucksWithActiveManifests: trucks, fetchTrucks } = useTruckStore();
   useCleanupOnExit(cleanUp);
 
   function cleanUp() {

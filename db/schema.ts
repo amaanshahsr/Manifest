@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { int, sqliteTable as table, text } from "drizzle-orm/sqlite-core";
 
 export const trucks = table("trucks", {
@@ -13,6 +14,9 @@ export const manifests = table("manifests", {
   status: text({ enum: ["completed", "active", "unassigned"] }).notNull(),
   assignedTo: int("assigned_to").references(() => trucks?.id), //? Foreign Key for relation between truck and manifests, one truck can have multiple assigned manifests or none at all.
   companyId: int("company_id").references(() => companies.id), //? Foreign key for companies
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(), // ✅ Auto-filled timestamp
 });
 
 export const companies = table("companies", {

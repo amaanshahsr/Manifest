@@ -7,18 +7,25 @@ import CustomSearchBar from "@/components/common/searchBar";
 import { useTruckStore } from "@/store/useTruckStore";
 import AddNewButton from "@/components/common/addNewButton";
 import { useSQLiteContext } from "expo-sqlite";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function App() {
-  const { fetchTrucks, trucks, loading } = useTruckStore();
+  const {
+    fetchTrucks,
+    trucksWithActiveManifests: trucks,
+    fetchTrucksWithActiveManifests,
+    loading,
+  } = useTruckStore();
   const db = useSQLiteContext();
 
   const [search, setSearch] = useState("");
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    fetchTrucks(db);
-  }, []);
+    fetchTrucksWithActiveManifests(db);
+  }, [isFocused]);
 
-  // This Component adds an early return to empty or loading state when data is not present yet.
+  console.log("trucks", trucks);
 
   if (loading) {
     return (

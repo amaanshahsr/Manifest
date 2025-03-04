@@ -1,4 +1,3 @@
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useLinkBuilder, useTheme } from "@react-navigation/native";
 import React from "react";
 import { Text, PlatformPressable } from "@react-navigation/elements";
@@ -13,6 +12,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { capitalizeWord } from "@/utils/utils";
+import * as Haptics from "expo-haptics";
 
 const Tab: React.FC<TabProps> = ({
   navigation,
@@ -50,7 +50,6 @@ const Tab: React.FC<TabProps> = ({
       target: route.key,
       canPreventDefault: true,
     });
-
     if (!isFocused && !event.defaultPrevented) {
       navigation.navigate(route.name, route.params);
     }
@@ -60,28 +59,18 @@ const Tab: React.FC<TabProps> = ({
   const translateYDistance = useSharedValue(10);
   const labelScale = useSharedValue(1);
 
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [
-      {
-        scale: isFocused
-          ? (scale.value = withSpring(isFocused ? 1.8 : 1, {
-              duration: 100,
-            }))
-          : withSpring(1, {
-              duration: 100,
-            }),
-      },
-      {
-        translateY: isFocused
-          ? (translateYDistance.value = withSpring(isFocused ? 5 : 1, {
-              duration: 100,
-            }))
-          : withSpring(1, {
-              duration: 150,
-            }),
-      },
-    ],
-  }));
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: withSpring(isFocused ? 1.8 : 1, { duration: 100 }),
+        },
+        {
+          translateY: withSpring(isFocused ? 5 : 1, { duration: 150 }),
+        },
+      ],
+    };
+  });
 
   const animatedScaleStyle = useAnimatedStyle(() => {
     const scaleX = withTiming(isFocused ? 0 : 1, {
