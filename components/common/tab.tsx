@@ -94,9 +94,11 @@ const Tab: React.FC<TabProps> = ({
     ? String(label)?.split("/")[0]
     : String(label);
 
+  // Hide sub routes eg :- trucks/new,trucks/manage from the bottom navigator
   const isHiddenRoute =
     String(label)?.split("/")[1] === "new" ||
-    String(label)?.split("/")[1] === "[id]";
+    String(label)?.split("/")[1] === "[id]" ||
+    String(label)?.split("/")[1] === "manage";
   return (
     <PlatformPressable
       android_ripple={{ color: "transparent" }} // No ripple effect on Android

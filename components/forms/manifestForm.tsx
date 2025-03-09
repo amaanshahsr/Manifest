@@ -1,7 +1,7 @@
 import InputField from "@/components/common/inputField";
-import { companies, Manifest, manifests } from "@/db/schema";
+import { Manifest, manifests } from "@/db/schema";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { View, Text } from "react-native";
 import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
@@ -59,7 +59,7 @@ const ManifestForm = () => {
     start: number,
     end: number,
     companyId: number
-  ): Omit<Manifest, "id">[] => {
+  ): Omit<Manifest, "id" | "createdAt">[] => {
     return Array.from({ length: end - start + 1 }, (_, index) => ({
       manifestId: start + index,
       status: "unassigned",

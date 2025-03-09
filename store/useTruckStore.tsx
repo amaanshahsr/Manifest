@@ -1,6 +1,5 @@
 import { Truck, trucks, manifests, Manifest } from "@/db/schema";
 import { create } from "zustand";
-import { TableTypes } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import * as SQLite from "expo-sqlite";
 import { eq, sql } from "drizzle-orm";

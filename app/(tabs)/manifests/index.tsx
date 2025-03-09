@@ -81,19 +81,6 @@ const Manifests = () => {
     },
     { result: [], companyPositions: {} }
   ).result;
-  // console.log("manifests", formattedResult);
-
-  // for debugging
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     fetchManifests();
-  //     // Do something when the screen is focused
-  //     return () => {
-  //       // Do something when the screen is unfocused
-  //       // Useful for cleanup functions
-  //     };
-  //   }, [])
-  // );
 
   if (loading) {
     return (
@@ -118,9 +105,11 @@ const Manifests = () => {
         data={formattedResult}
         renderItem={({ item }) => {
           return typeof item === "string" ? (
-            <Text className="mx-6 border-b text-2xl font-geistSemiBold w-3/4">
-              {item}
-            </Text>
+            <View className="mt-5 bg-stone-300 py-3 flex items-center justify-center rounded-md">
+              <Text className="text-2xl font-geistSemiBold text-stone-900 ">
+                {item}
+              </Text>
+            </View>
           ) : (
             <ManifestInfoCard manifest={item} />
           );

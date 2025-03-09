@@ -25,8 +25,6 @@ export default function App() {
     fetchTrucksWithActiveManifests(db);
   }, [isFocused]);
 
-  console.log("trucks", trucks);
-
   if (loading) {
     return (
       <View className="flex-1 w-full h-full  ">

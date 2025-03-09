@@ -4,7 +4,7 @@ import { capitalizeWord } from "@/utils/utils";
 import Feather from "@expo/vector-icons/Feather";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { useRouter } from "expo-router";
+import { Route, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
@@ -15,7 +15,7 @@ interface TruckInfoCardProps {
 const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
   const { driverName, id, registration, status, manifestCount } = truck;
   const router = useRouter();
-  console.log("lasdnkjasndj", truck);
+
   return (
     <View
       style={{
@@ -69,7 +69,15 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
         </View>
       </View>
       <View className="w-full border-t border-zinc-300 mt-5">
-        <Pressable className="flex flex-row  justify-center bg-stone-950 mt-3 p-3 gap-2 rounded-lg">
+        <Pressable
+          onPress={() =>
+            router?.push({
+              pathname: `/trucks/manage/assign` as Route,
+              params: { id: id?.toString() },
+            })
+          }
+          className="flex flex-row  justify-center bg-stone-950 mt-3 p-3 gap-2 rounded-lg"
+        >
           <Text className="text-white font-geistSemiBold text-base">
             Manage
           </Text>
@@ -81,30 +89,3 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
 };
 
 export default TruckInfoCard;
-
-{
-  /* Buttons for Assign Manifest & Edit Status */
-}
-{
-  /* <View className="flex-row justify-start gap-3 mt-4">
-  <Pressable
-    // onPress={() => router?.push(`/assign-manifest/${id}`)}
-    className="bg-blue-600 px-4 py-2 rounded-lg flex flex-row items-center gap-2"
-  >
-    <Text className="text-white font-geistSemiBold p-1 text-sm">
-      Assign Manifest
-    </Text>
-    <Feather name="plus-circle" size={18} color="white" />
-  </Pressable>
-
-  <Pressable
-    // onPress={() => router?.push(`/edit-status/${id}`)}
-    className="bg-gray-700 px-4 py-2 rounded-lg flex flex-row items-center gap-2"
-  >
-    <Text className="text-white font-geistSemiBold text-sm">
-      Edit Status
-    </Text>
-    <Feather name="pen-tool" size={18} color="white" />
-  </Pressable>
-</View> */
-}
