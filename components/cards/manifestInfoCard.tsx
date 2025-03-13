@@ -16,29 +16,29 @@ const ManifestInfoCard: React.FC<ManifestInfoCardProps> = ({ manifest }) => {
   const drizzleDb = drizzle(db);
   const router = useRouter();
 
-  const [assignedCompany, setAssignedCompany] = useState<Company | null>(null);
-  useEffect(() => {
-    selectCompany(manifest?.companyId ?? 0)?.then((result) => {
-      setAssignedCompany(result[0]);
-    });
-  }, [manifest]);
+  // const [assignedCompany, setAssignedCompany] = useState<Company | null>(null);
+  // useEffect(() => {
+  //   selectCompany(manifest?.companyId ?? 0)?.then((result) => {
+  //     setAssignedCompany(result[0]);
+  //   });
+  // }, [manifest]);
 
   // Memoize the database query function
-  const selectCompany = useCallback(
-    async (withId: number) => {
-      return await drizzleDb
-        .select()
-        .from(company_table)
-        .where(eq(company_table.id, withId));
-    },
-    [drizzleDb]
-  );
+  // const selectCompany = useCallback(
+  //   async (withId: number) => {
+  //     return await drizzleDb
+  //       .select()
+  //       .from(company_table)
+  //       .where(eq(company_table.id, withId));
+  //   },
+  //   [drizzleDb]
+  // );
 
   // Fallback incase of manifest not being assigned to a company
-  const companyName = useMemo(
-    () => assignedCompany?.companyName ?? "None",
-    [assignedCompany]
-  );
+  // const companyName = useMemo(
+  //   () => assignedCompany?.companyName ?? "None",
+  //   [assignedCompany]
+  // );
 
   return (
     <View
@@ -55,9 +55,9 @@ const ManifestInfoCard: React.FC<ManifestInfoCardProps> = ({ manifest }) => {
         <Text className="font-geistSemiBold text-2xl text-neutral-900">
           {manifest?.manifestId}
         </Text>
-        <Text className="font-geistSemiBold text-2xl text-neutral-900">
+        {/* <Text className="font-geistSemiBold text-2xl text-neutral-900">
           {companyName}
-        </Text>
+        </Text> */}
         <Pressable
           onPress={() =>
             router?.push({

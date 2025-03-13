@@ -39,11 +39,8 @@ const ManifestSelectableCard = ({
       <View className="flex-row justify-between items-center">
         {/* Manifest Details */}
         <View className="flex flex-row items-center space-x-2">
-          <Text className="font-geistMedium text-base text-neutral-500">
-            Manifest :
-          </Text>
-          <Text className="font-geistSemiBold text-2xl text-neutral-900">
-            {manifest?.manifestId}
+          <Text className="text-lg font-geistSemiBold text-neutral-900">
+            Manifest ID: {manifest?.manifestId}
           </Text>
         </View>
 

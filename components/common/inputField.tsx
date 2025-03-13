@@ -1,3 +1,4 @@
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import React from "react";
 import { Text, TextInput, TextInputProps, View } from "react-native";
 

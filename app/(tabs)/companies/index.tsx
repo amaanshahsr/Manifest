@@ -4,19 +4,31 @@ import CustomSearchBar from "@/components/common/searchBar";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import { useCompanyStore } from "@/store/useCompanyStore";
 import { FlashList } from "@shopify/flash-list";
+import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 
+import { useIsFocused } from "@react-navigation/native";
+
 const Companies = () => {
   const [search, setSearch] = useState("");
   const db = useSQLiteContext();
-  const { companies, fetchCompanies, loading } = useCompanyStore();
+  const {
+    companies,
+    fetchCompanies,
+    loading,
+    fetchCompanyWithActiveManifests,
+    comapaniesWithActiveManifests,
+  } = useCompanyStore();
 
+  const isFocused = useIsFocused();
   useEffect(() => {
     fetchCompanies(db);
-  }, []);
+    fetchCompanyWithActiveManifests(db);
+  }, [isFocused]);
 
+  console.log("comapaniesWithActiveManifests", comapaniesWithActiveManifests);
   if (loading) {
     return (
       <View className="flex-1 w-full h-full  ">
@@ -30,7 +42,10 @@ const Companies = () => {
     );
   }
 
-  if (companies === null || companies.length === 0) {
+  if (
+    comapaniesWithActiveManifests === null ||
+    comapaniesWithActiveManifests.length === 0
+  ) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
         <AddNewButton text="Company" route="/companies/new" />
@@ -43,7 +58,7 @@ const Companies = () => {
       <AddNewButton text="Company" route="/companies/new" />
       <FlashList
         className="mb-1"
-        data={companies?.filter((company) =>
+        data={comapaniesWithActiveManifests?.filter((company) =>
           company?.companyName?.includes(search?.trim())
         )}
         renderItem={({ item }) => <CompanyInfoCard company={item} />}

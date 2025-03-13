@@ -29,58 +29,22 @@ const Manifests = () => {
   const [search, setSearch] = useState("");
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
-  const [manifestsWithCompany, setManifestsWithCompany] = useState<
-    ManifestWithCompanies[]
-  >([]);
-  const { fetchManifests, manifests, loading } = useManifestStore();
+
+  const {
+    fetchManifests,
+    manifests,
+    loading,
+    manifestsSortedByCompany,
+    fetchManifestsSortedByCompany,
+  } = useManifestStore();
   useEffect(() => {
     fetchManifests(db);
-    fetchManifestsWithCompany().then((result) => {
-      setManifestsWithCompany(result);
-    });
+    fetchManifestsSortedByCompany(db);
   }, []);
-
-  const fetchManifestsWithCompany = async () => {
-    const result = await drizzleDb
-      .select()
-      .from(manifest_table)
-      .leftJoin(company_table, eq(manifest_table.companyId, company_table.id)) // Join companies table
-      .execute();
-
-    return result;
-  };
-
-  const formattedResult = manifestsWithCompany?.reduce<{
-    result: (string | Manifest)[];
-    companyPositions: Record<string, number>;
-  }>(
-    (acc, record) => {
-      if (!record?.companies) return acc;
-
-      const { manifests, companies } = record;
-      const companyName = companies.companyName;
-
-      // Check if the company exists in the positions map
-      if (!(companyName in acc.companyPositions)) {
-        acc.result.push(companyName);
-        acc.companyPositions[companyName] = acc.result.length - 1;
-      }
-
-      // Insert the manifest after the company name
-      const companyPosition = acc.companyPositions[companyName];
-      acc.result.splice(companyPosition + 1, 0, manifests);
-
-      // Update positions of subsequent companies
-      Object.keys(acc.companyPositions).forEach((name) => {
-        if (acc.companyPositions[name] > companyPosition) {
-          acc.companyPositions[name] += 1;
-        }
-      });
-
-      return acc;
-    },
-    { result: [], companyPositions: {} }
-  ).result;
+  const sortedHeaderIndices = Object?.values(
+    manifestsSortedByCompany?.companyPositions
+  )?.sort((a, b) => a - b);
+  console.log("manifeasdas", sortedHeaderIndices);
 
   if (loading) {
     return (
@@ -102,10 +66,11 @@ const Manifests = () => {
     <View className="flex-1 w-full relative">
       <FlashList
         className="mb-1"
-        data={formattedResult}
+        stickyHeaderIndices={sortedHeaderIndices}
+        data={manifestsSortedByCompany?.result}
         renderItem={({ item }) => {
           return typeof item === "string" ? (
-            <View className="mt-5 bg-stone-300 py-3 flex items-center justify-center rounded-md">
+            <View className=" bg-stone-300 py-3 flex items-center justify-center rounded-md">
               <Text className="text-2xl font-geistSemiBold text-stone-900 ">
                 {item}
               </Text>

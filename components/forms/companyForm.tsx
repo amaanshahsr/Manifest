@@ -23,7 +23,8 @@ export default function CompanyForm() {
   function cleanUp() {
     setCompanyName("");
   }
-  const { companies, fetchCompanies } = useCompanyStore();
+  const { companies, fetchCompanies, fetchCompanyWithActiveManifests } =
+    useCompanyStore();
 
   const [companyName, setCompanyName] = useState("");
 
@@ -66,7 +67,7 @@ export default function CompanyForm() {
       }
 
       // Refresh or update the company list after saving
-      await fetchCompanies(db);
+      await fetchCompanyWithActiveManifests(db);
       //route back to the List UI
       router?.push("/companies");
     } catch (error) {

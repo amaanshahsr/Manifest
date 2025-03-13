@@ -22,12 +22,14 @@ export type TabDimensions = {
   width: number;
   height: number;
 };
+export type GenericRecord = Record<string, any>;
 
 // This is for passing styles incase of animating tab icons when it is focused
 export type TabIconStyle = {
   size: number;
   color: string;
 };
+export type ManifestStatus = "unassigned" | "active" | "completed";
 
 // Table types
 export type TableItem = Company | Manifest | Truck;
@@ -42,3 +44,7 @@ export type TruckWithActiveManifests = {
   registration: string;
   status: "active" | "repair";
 };
+
+export interface CompanyWithActiveManifests extends Company {
+  manifests: Manifest[];
+}

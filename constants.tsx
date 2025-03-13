@@ -36,3 +36,5 @@ export const tabBarIcons = {
     />
   ),
 };
+
+export const manifestStatus = ["unassigned", "active", "completed"];

@@ -1,11 +1,13 @@
 import { Company } from "@/db/schema";
 import { useManifestStore } from "@/store/useManifestStore";
+import { CompanyWithActiveManifests } from "@/types";
 import { Feather } from "@expo/vector-icons";
+import { CommonActions } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { View, Text, Pressable } from "react-native";
 
 interface CompanyInfoCardProps {
-  company: Company;
+  company: CompanyWithActiveManifests;
 }
 
 export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
@@ -13,7 +15,7 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
 }) => {
   const { companyName, id } = company;
   const router = useRouter();
-
+  const activeManifestCount = company?.manifests?.length;
   return (
     <View
       style={{
@@ -42,28 +44,20 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
           </Text>
         </Pressable>
       </View>
-      <ManifestCount id={id} />
+      <ManifestCount count={activeManifestCount} />
     </View>
   );
 };
 
 interface ManifestCountProps {
-  id: number;
+  count: number;
 }
 
-function ManifestCount({ id }: ManifestCountProps) {
-  const { manifests } = useManifestStore();
-
-  const manifestCount = manifests?.filter(
-    (manifest) =>
-      manifest?.companyId?.toString() === id?.toString() &&
-      manifest?.status === "active"
-  );
-
+function ManifestCount({ count }: ManifestCountProps) {
   return (
     <Text className="font-geistSemiBold text-base mt-2  text-neutral-900">
       <Text className="text-neutral-500">Active Manifests: </Text>
-      <Text className="text-xl"> {manifestCount?.length}</Text>
+      <Text className="text-xl"> {count}</Text>
     </Text>
   );
 }
