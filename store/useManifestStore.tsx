@@ -3,16 +3,22 @@ import { useDataFetch } from "@/hooks/useDataFetch";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { create } from "zustand";
 import * as SQLite from "expo-sqlite";
-import { ManifestWithCompanies } from "@/types";
+import { ManifestWithCompanies, UnassignedManifests } from "@/types";
 import { eq, and } from "drizzle-orm";
 
 export interface ManifestState {
   manifests: Manifest[];
   loading: boolean;
-  fetchManifests: (db: SQLite.SQLiteDatabase, id?: number) => Promise<void>;
+  unassignedManifests: {
+    result: (string | UnassignedManifests)[];
+    companyPositions: Record<string, number>;
+  };
+  fetchManifests: (db: SQLite.SQLiteDatabase) => Promise<void>;
   addManifest: (newManifest: Manifest) => void;
-  manifestsWithCompany: { manifests: Manifest; companies: Company }[];
   fetchManifestsSortedByCompany: (db: SQLite.SQLiteDatabase) => Promise<void>;
+  fetchUnassignedManifestsSortedByCompany: (
+    db: SQLite.SQLiteDatabase
+  ) => Promise<void>;
   manifestsSortedByCompany: {
     result: (string | Manifest)[];
     companyPositions: Record<string, number>;
@@ -21,9 +27,58 @@ export interface ManifestState {
 
 export const useManifestStore = create<ManifestState>((set) => ({
   manifests: [],
+  unassignedManifests: { result: [], companyPositions: {} },
   loading: false,
-  manifestsWithCompany: [],
   manifestsSortedByCompany: { result: [], companyPositions: {} },
+  fetchUnassignedManifestsSortedByCompany: async (db) => {
+    const drizzleDb = drizzle(db);
+    const result = await drizzleDb
+      .select()
+      .from(manifests)
+      .leftJoin(companies, eq(manifests.companyId, companies.id)) // Join companies table
+      .where(
+        and(
+          eq(manifests.status, "unassigned") // Filter by status = "unassigned"
+        )
+      )
+      .execute();
+
+    // pass result to format for use with flatlist
+
+    const formattedResult = result?.reduce<{
+      result: (string | Manifest)[];
+      companyPositions: Record<string, number>;
+    }>(
+      (acc, record) => {
+        if (!record?.companies) return acc;
+
+        const { manifests, companies } = record;
+        const companyName = companies.companyName;
+
+        // Check if the company exists in the positions map
+        if (!(companyName in acc.companyPositions)) {
+          acc.result.push(companyName);
+          acc.companyPositions[companyName] = acc.result.length - 1;
+        }
+
+        // Insert the manifest after the company name
+        const companyPosition = acc.companyPositions[companyName];
+        acc.result.splice(companyPosition + 1, 0, manifests);
+
+        // Update positions of subsequent companies
+        Object.keys(acc.companyPositions).forEach((name) => {
+          if (acc.companyPositions[name] > companyPosition) {
+            acc.companyPositions[name] += 1;
+          }
+        });
+
+        return acc;
+      },
+      { result: [], companyPositions: {} }
+    );
+
+    set({ unassignedManifests: formattedResult });
+  },
   fetchManifestsSortedByCompany: async (db) => {
     set({ loading: true });
 

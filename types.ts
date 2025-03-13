@@ -48,3 +48,14 @@ export type TruckWithActiveManifests = {
 export interface CompanyWithActiveManifests extends Company {
   manifests: Manifest[];
 }
+
+export type UnassignedManifests =
+  | string
+  | {
+      id: number;
+      manifestId: number;
+      status: "completed" | "active" | "unassigned";
+      assignedTo: number | null;
+      companyId: number | null;
+      createdAt: string;
+    };

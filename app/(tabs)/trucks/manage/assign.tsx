@@ -1,5 +1,6 @@
 import ManifestSelectableCard from "@/components/cards/manifestSelectableCard";
 import { Manifest, manifests, companies as company_table } from "@/db/schema";
+import { useManifestStore } from "@/store/useManifestStore";
 import { FlashList } from "@shopify/flash-list";
 import { eq, and, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
@@ -11,19 +12,9 @@ import { Pressable, Text, View } from "react-native";
 const AssignTrucks = () => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
-  const [unassignedManifests, setUnassignedManifests] = useState<
-    (
-      | string
-      | {
-          id: number;
-          manifestId: number;
-          status: "completed" | "active" | "unassigned";
-          assignedTo: number | null;
-          companyId: number | null;
-          createdAt: string;
-        }
-    )[]
-  >([]);
+
+  const { fetchUnassignedManifestsSortedByCompany, unassignedManifests } =
+    useManifestStore();
 
   const { id } = useLocalSearchParams();
 
@@ -31,59 +22,8 @@ const AssignTrucks = () => {
   // const isFocused = useIsFocused();
 
   useEffect(() => {
-    fetchUnassignedManifestsWithCompany()?.then((result) => {
-      const formattedResult = result?.reduce<{
-        result: (string | Manifest)[];
-        companyPositions: Record<string, number>;
-      }>(
-        (acc, record) => {
-          if (!record?.companies) return acc;
-
-          const { manifests, companies } = record;
-          const companyName = companies.companyName;
-
-          // Check if the company exists in the positions map
-          if (!(companyName in acc.companyPositions)) {
-            acc.result.push(companyName);
-            acc.companyPositions[companyName] = acc.result.length - 1;
-          }
-
-          // Insert the manifest after the company name
-          const companyPosition = acc.companyPositions[companyName];
-          acc.result.splice(companyPosition + 1, 0, manifests);
-
-          // Update positions of subsequent companies
-          Object.keys(acc.companyPositions).forEach((name) => {
-            if (acc.companyPositions[name] > companyPosition) {
-              acc.companyPositions[name] += 1;
-            }
-          });
-
-          return acc;
-        },
-        { result: [], companyPositions: {} }
-      );
-      setUnassignedManifests(formattedResult?.result);
-      console.log("headerindices", formattedResult?.companyPositions);
-    });
+    fetchUnassignedManifestsSortedByCompany(db);
   }, []);
-
-  console.log("unassignedmanifeszrts", id);
-
-  const fetchUnassignedManifestsWithCompany = async () => {
-    const result = await drizzleDb
-      .select()
-      .from(manifests)
-      .leftJoin(company_table, eq(manifests.companyId, company_table.id)) // Join companies table
-      .where(
-        and(
-          eq(manifests.status, "unassigned") // Filter by status = "Active"
-        )
-      )
-      .execute();
-
-    return result;
-  };
 
   const toggleItemSelect = (id: number) => {
     if (selectedIds.includes(id)) {
@@ -94,62 +34,40 @@ const AssignTrucks = () => {
   };
 
   const handleSave = async () => {
-    const result = await drizzleDb
-      .update(manifests)
-      .set({
-        status: "active",
-        assignedTo: Number(id),
-      })
-      .where(inArray(manifests.manifestId, selectedIds));
+    try {
+      // Attempt to update the manifests in the database
+      const result = await drizzleDb
+        .update(manifests)
+        .set({
+          status: "active", // Set the status to "active"
+          assignedTo: Number(id), // Assign the manifest to the user with the specified ID
+        })
+        .where(inArray(manifests.manifestId, selectedIds)); // Only update manifests with IDs in the selectedIds array
 
-    fetchUnassignedManifestsWithCompany()?.then((result) => {
-      const formattedResult = result?.reduce<{
-        result: (string | Manifest)[];
-        companyPositions: Record<string, number>;
-      }>(
-        (acc, record) => {
-          if (!record?.companies) return acc;
-
-          const { manifests, companies } = record;
-          const companyName = companies.companyName;
-
-          // Check if the company exists in the positions map
-          if (!(companyName in acc.companyPositions)) {
-            acc.result.push(companyName);
-            acc.companyPositions[companyName] = acc.result.length - 1;
-          }
-
-          // Insert the manifest after the company name
-          const companyPosition = acc.companyPositions[companyName];
-          acc.result.splice(companyPosition + 1, 0, manifests);
-
-          // Update positions of subsequent companies
-          Object.keys(acc.companyPositions).forEach((name) => {
-            if (acc.companyPositions[name] > companyPosition) {
-              acc.companyPositions[name] += 1;
-            }
-          });
-
-          return acc;
-        },
-        { result: [], companyPositions: {} }
-      );
-      setUnassignedManifests(formattedResult?.result);
-      console.log("headerindices", formattedResult?.companyPositions);
-    });
+      // Fetch the updated list of unassigned manifests sorted by company
+      await fetchUnassignedManifestsSortedByCompany(db);
+    } catch (error) {
+      // Handle any errors that occur during the update or fetch process
+      console.error("Error updating manifests:", error);
+    }
   };
+
+  // Extract and sort company position indices for sticky headers in FlashList
+  const sortedHeaderIndices = Object.values(
+    unassignedManifests?.companyPositions // Get company positions from manifests
+  ).sort((a, b) => a - b); // Sort indices in ascending order for proper header placement
 
   return (
     <View className="flex-1 w-full  relative">
       <FlashList
-        stickyHeaderIndices={[0, 7]}
+        stickyHeaderIndices={sortedHeaderIndices}
         // ListHeaderComponent={
         //   <View className="bg-blue-500 p-5 ">
         //     <Text className="font-geistMedium text-xl">Header</Text>
         //   </View>
         // }
         className="mb-1"
-        data={unassignedManifests}
+        data={unassignedManifests?.result}
         renderItem={({ item }) => {
           return typeof item === "string" ? (
             <Pressable onPress={handleSave}>
