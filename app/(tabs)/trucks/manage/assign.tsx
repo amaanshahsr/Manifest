@@ -1,8 +1,9 @@
 import ManifestSelectableCard from "@/components/cards/manifestSelectableCard";
 import { Manifest, manifests, companies as company_table } from "@/db/schema";
+import { useCompanyStore } from "@/store/useCompanyStore";
 import { useManifestStore } from "@/store/useManifestStore";
 import { FlashList } from "@shopify/flash-list";
-import { eq, and, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -15,6 +16,7 @@ const AssignTrucks = () => {
 
   const { fetchUnassignedManifestsSortedByCompany, unassignedManifests } =
     useManifestStore();
+  const { fetchCompanyWithActiveManifests } = useCompanyStore();
 
   const { id } = useLocalSearchParams();
 
@@ -46,6 +48,8 @@ const AssignTrucks = () => {
 
       // Fetch the updated list of unassigned manifests sorted by company
       await fetchUnassignedManifestsSortedByCompany(db);
+
+      await fetchCompanyWithActiveManifests(db);
     } catch (error) {
       // Handle any errors that occur during the update or fetch process
       console.error("Error updating manifests:", error);

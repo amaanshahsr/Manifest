@@ -1,44 +1,14 @@
-import { Company, Manifest, companies as company_table } from "@/db/schema";
+import { Manifest } from "@/db/schema";
 import { Feather } from "@expo/vector-icons";
-import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useRouter } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import { eq } from "drizzle-orm";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 import { View, Text, Pressable } from "react-native";
 
 interface ManifestInfoCardProps {
   manifest: Manifest;
 }
 const ManifestInfoCard: React.FC<ManifestInfoCardProps> = ({ manifest }) => {
-  const db = useSQLiteContext();
-
-  const drizzleDb = drizzle(db);
   const router = useRouter();
-
-  // const [assignedCompany, setAssignedCompany] = useState<Company | null>(null);
-  // useEffect(() => {
-  //   selectCompany(manifest?.companyId ?? 0)?.then((result) => {
-  //     setAssignedCompany(result[0]);
-  //   });
-  // }, [manifest]);
-
-  // Memoize the database query function
-  // const selectCompany = useCallback(
-  //   async (withId: number) => {
-  //     return await drizzleDb
-  //       .select()
-  //       .from(company_table)
-  //       .where(eq(company_table.id, withId));
-  //   },
-  //   [drizzleDb]
-  // );
-
-  // Fallback incase of manifest not being assigned to a company
-  // const companyName = useMemo(
-  //   () => assignedCompany?.companyName ?? "None",
-  //   [assignedCompany]
-  // );
 
   return (
     <View

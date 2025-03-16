@@ -1,5 +1,5 @@
 import { manifests, Truck } from "@/db/schema";
-import { TruckWithActiveManifests } from "@/types";
+import { TrucksWithActiveManifests } from "@/types";
 import { capitalizeWord } from "@/utils/utils";
 import Feather from "@expo/vector-icons/Feather";
 import { eq } from "drizzle-orm";
@@ -8,14 +8,39 @@ import { Route, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
+import Accordion from "../truck/accordion";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 interface TruckInfoCardProps {
-  truck: TruckWithActiveManifests;
+  truck: TrucksWithActiveManifests;
 }
 const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
-  const { driverName, id, registration, status, manifestCount } = truck;
+  const { driverName, id, registration, status, manifests } = truck;
+  const [isExpanded, setIsExpanded] = useState(false);
   const router = useRouter();
+  const manifestCount = manifests?.length;
 
+  // Shared value for rotation angle
+  const rotateValue = useSharedValue(180);
+
+  // Animated style for rotation
+  const animatedRotateStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotateValue.value}deg` }], // Rotate by the current value
+  }));
+
+  const spinChevron = () => {
+    setIsExpanded((old) => !old);
+    rotateValue.value = withTiming(
+      rotateValue?.value === 180 ? 0 : 180, // Toggle between 0 and 180 degrees
+      { duration: 150, easing: Easing.out(Easing.quad) } // Snappy transition
+    );
+  };
   return (
     <View
       style={{
@@ -51,23 +76,35 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
         Driver: {driverName as string}
       </Text>
 
-      {/* Assigned Manifests */}
-      <View className="flex flex-row justify-between items-center pt-4">
-        <Text className="font-geistMedium text-base  text-neutral-800">
+      <Pressable
+        onPress={() => {
+          spinChevron();
+        }}
+        className="flex flex-row justify-between items-center pt-4"
+      >
+        <Text className="font-geistMedium text-base text-neutral-800">
           <Text>Active Trips: </Text>
           <Text className="font-geistSemiBold text-lg">{manifestCount}</Text>
         </Text>
-        <View className="bg-zinc-200 px-3 py-1 rounded-full w-auto self-start flex flex-row items-center  gap-2">
+        <View className="bg-zinc-200 px-3 py-1 rounded-full flex flex-row items-center gap-2">
           <View
             className={`${
-              status === "active" ? "bg-green-600 " : "bg-orange-600"
+              status === "active" ? "bg-green-600" : "bg-orange-600"
             } h-2 w-2 rounded-full`}
-          ></View>
+          />
           <Text className="font-geistSemiBold text-sm text-neutral-700">
-            {capitalizeWord(status) as string}
+            {status.charAt(0).toUpperCase() + status.slice(1)}
           </Text>
+          {manifestCount > 0 ? (
+            <Animated.View style={[animatedRotateStyle]}>
+              <Feather name="chevron-up" size={20} color="#1e293b" />
+            </Animated.View>
+          ) : null}
         </View>
-      </View>
+      </Pressable>
+      {manifestCount > 0 ? (
+        <Accordion manifests={manifests} expanded={isExpanded} />
+      ) : null}
       <View className="w-full border-t border-zinc-300 mt-5">
         <Pressable
           onPress={() =>

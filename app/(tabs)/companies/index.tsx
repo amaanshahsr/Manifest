@@ -15,20 +15,16 @@ const Companies = () => {
   const [search, setSearch] = useState("");
   const db = useSQLiteContext();
   const {
-    companies,
-    fetchCompanies,
     loading,
     fetchCompanyWithActiveManifests,
     comapaniesWithActiveManifests,
   } = useCompanyStore();
 
-  const isFocused = useIsFocused();
   useEffect(() => {
-    fetchCompanies(db);
     fetchCompanyWithActiveManifests(db);
-  }, [isFocused]);
+  }, []);
 
-  console.log("comapaniesWithActiveManifests", comapaniesWithActiveManifests);
+  // console.log("comapaniesWithActiveManifests", comapaniesWithActiveManifests);
   if (loading) {
     return (
       <View className="flex-1 w-full h-full  ">

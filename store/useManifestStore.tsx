@@ -1,9 +1,8 @@
-import { companies, Company, Manifest, manifests } from "@/db/schema";
-import { useDataFetch } from "@/hooks/useDataFetch";
+import { companies, Manifest, manifests } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { create } from "zustand";
 import * as SQLite from "expo-sqlite";
-import { ManifestWithCompanies, UnassignedManifests } from "@/types";
+import { UnassignedManifests } from "@/types";
 import { eq, and } from "drizzle-orm";
 
 export interface ManifestState {
@@ -33,17 +32,17 @@ export const useManifestStore = create<ManifestState>((set) => ({
   fetchUnassignedManifestsSortedByCompany: async (db) => {
     const drizzleDb = drizzle(db);
     const result = await drizzleDb
-      .select()
-      .from(manifests)
-      .leftJoin(companies, eq(manifests.companyId, companies.id)) // Join companies table
+      .select() // Select data from the database
+      .from(manifests) // From the `manifests` table
+      .leftJoin(companies, eq(manifests.companyId, companies.id)) // Left join with the `companies` table on `companyId`
       .where(
         and(
-          eq(manifests.status, "unassigned") // Filter by status = "unassigned"
+          eq(manifests.status, "unassigned") // Filter rows where `status` is "unassigned"
         )
       )
-      .execute();
+      .execute(); // Execute the query and return the results
 
-    // pass result to format for use with flatlist
+    // Format the query result for FlatList: group manifests under their respective company headers
 
     const formattedResult = result?.reduce<{
       result: (string | Manifest)[];
@@ -79,6 +78,7 @@ export const useManifestStore = create<ManifestState>((set) => ({
 
     set({ unassignedManifests: formattedResult });
   },
+
   fetchManifestsSortedByCompany: async (db) => {
     set({ loading: true });
 

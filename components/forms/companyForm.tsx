@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { usePathname, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
@@ -68,6 +67,7 @@ export default function CompanyForm() {
 
       // Refresh or update the company list after saving
       await fetchCompanyWithActiveManifests(db);
+      await fetchCompanies(db);
       //route back to the List UI
       router?.push("/companies");
     } catch (error) {
@@ -78,6 +78,7 @@ export default function CompanyForm() {
 
   // Fetch the truck details using the ComanyId in LocalSearchParams (passed as props)
   const fetchActiveCompany = async (id: string) => {
+    console.log("activeCompany", companies);
     const activeCompany = companies?.filter(
       (company) => company?.id === Number(id)
     );
@@ -85,11 +86,15 @@ export default function CompanyForm() {
   };
 
   useEffect(() => {
+    if (!companies.length) {
+      fetchCompanies(db);
+    }
     if (!companyId || companyId === "new") return;
     fetchActiveCompany(companyId).then((result) => {
       setCompanyName(result[0]?.companyName);
     });
-  }, []);
+  }, [companyId, companies]);
+
   return (
     <View className="mt-5 px-6">
       <InputField

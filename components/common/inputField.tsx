@@ -26,6 +26,16 @@ const InputField = <T extends string | number>({
       <Text className="text-lg text-neutral-800 font-geistMedium">{label}</Text>
       <View className="relative rounded-lg">
         <TextInput
+          style={{
+            shadowColor: "",
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.2,
+
+            elevation: 2,
+          }}
           keyboardType={keyboardType}
           placeholder={placeholder}
           className="border-[0.7px] relative text-base rounded-lg p-4 h-14 border-zinc-300 bg-white mt-2 placeholder:text-gray-400 font-geistMedium"

@@ -49,7 +49,7 @@ export default function App() {
   return (
     <View className=" flex-1 w-full h-full">
       <CustomSearchBar search={search} setSearch={setSearch} />
-      <AddNewButton route="/trucks/new" text="Truck" />
+      {/* <AddNewButton route="/trucks/new" text="Truck" /> */}
       <FlashList
         className="mb-1"
         data={trucks?.filter(

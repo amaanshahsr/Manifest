@@ -8,18 +8,22 @@ import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
 import { trucks as truck_table } from "@/db/schema";
 import useReturnToHome from "@/hooks/useReturnToHome";
 import Animated, {
+  interpolateColor,
+  startMapper,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { useSQLiteContext } from "expo-sqlite";
 import useCleanupOnExit from "@/hooks/useCleanupOnExit";
+import { StatusBadge } from "../truck/truckStatusBadge";
+import { Switch } from "../truck/switch";
 
 const TruckForm = () => {
   useReturnToHome({ route: "/trucks" });
   const db = useSQLiteContext();
 
-  const truckStatus = ["active", "repair"];
   const [registration, setRegistration] = useState("");
   const [driverName, setDriverName] = useState("");
   const [status, setStatus] = useState<"active" | "repair">("active");
@@ -138,23 +142,11 @@ const TruckForm = () => {
     };
   }, [truckId]);
 
-  const translateXValue = useSharedValue(0);
-  const animatedLeftStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateX: withSpring(status === "active" ? 0 : "100%", {
-            damping: 100,
-            stiffness: 500,
-            mass: 1,
-          }),
-        },
-        {
-          translateY: -8,
-        },
-      ],
-    };
-  });
+  const truckStatus = ["active", "repair"];
+
+  const handleStatus = (status: string) => {
+    setStatus(status as "active" | "repair");
+  };
 
   return (
     <View className="px-6 z-50 mt-5">
@@ -170,34 +162,16 @@ const TruckForm = () => {
         key="name"
         label="Name"
       />
-      <View className="flex flex-row gap-4 justify-stretch relative my-6">
-        <Animated.View
-          // style={[animatedLeftStyle]}
-          className="absolute top-2 left-0  w-1/2 rounded-md   bg-red-400/40 h-full z-50"
-        ></Animated.View>
-        {truckStatus?.map((stat) => {
-          return (
-            <Pressable
-              key={stat}
-              onPress={() => setStatus(stat as "active" | "repair")}
-              className={` flex-1 border  rounded-md p-4 ${
-                status === stat ? "bg-black text-white" : ""
-              } `}
-            >
-              <Text
-                className={`font-geistMedium ${
-                  status === stat ? " text-white" : ""
-                } `}
-              >
-                {capitalizeWord(stat) as string}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+      <Switch
+        handleStatus={handleStatus}
+        status={status}
+        options={truckStatus as ("active" | "repair")[]}
+      >
+        <StatusBadge status={status} />
+      </Switch>
       <Pressable
         onPress={handleSave}
-        className="bg-neutral-900 px-3 py-4 rounded-lg flex items-center justify-center mt-auto"
+        className="bg-neutral-900 px-3 py-4 rounded-lg mt-56 flex items-center justify-center "
       >
         <Text className="text-white font-geistSemiBold ">Save</Text>
       </Pressable>

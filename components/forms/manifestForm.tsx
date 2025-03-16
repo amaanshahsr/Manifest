@@ -1,7 +1,7 @@
 import InputField from "@/components/common/inputField";
 import { Manifest, manifests } from "@/db/schema";
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { View, Text } from "react-native";
 import { useSaveToDatabase } from "@/hooks/useSaveToDatabase";
@@ -19,8 +19,13 @@ const ManifestForm = () => {
   const companyIdRef = useRef<number | null>(null);
   const db = useSQLiteContext();
 
-  const { fetchManifests } = useManifestStore();
-  const { companies } = useCompanyStore();
+  const { fetchManifests, fetchManifestsSortedByCompany } = useManifestStore();
+  const { companies, fetchCompanies } = useCompanyStore();
+
+  useEffect(() => {
+    if (companies?.length) return;
+    fetchCompanies(db);
+  }, [companies?.length]);
 
   // This function will reset inputs when screen goes out of focus
   function cleanUp() {
@@ -83,13 +88,12 @@ const ManifestForm = () => {
       });
 
       alert("Manifests added successfully!");
+      await fetchManifestsSortedByCompany(db);
     } catch (error) {
       console.error("Error while adding manifests:", error);
     } finally {
       // Reset states after addition
-      setStart(0);
-      setEnd(0);
-      companyIdRef.current = null;
+      cleanUp();
 
       // Refresh and navigate
       await fetchManifests(db);

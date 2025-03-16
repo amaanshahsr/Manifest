@@ -10,11 +10,6 @@ import { manifestStatus } from "@/constants";
 import { capitalizeWord } from "@/utils/utils";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { ManifestStatus } from "@/types";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import ManifestForm from "@/components/forms/manifestForm";
-import CustomBackdrop from "@/components/forms/backdrop";
-import { NativeViewGestureHandler } from "react-native-gesture-handler";
-import CustomBottomSheet from "@/components/common/CustomBottomSheet";
 
 const EditTruckStatus = () => {
   const { id } = useLocalSearchParams();
@@ -64,7 +59,7 @@ const EditTruckStatus = () => {
       setActiveManifests(updatedManifests);
     } catch (error) {
       console.error("Failed to mark manifests as completed:", error);
-      // Handle the error (e.g., show a notification to the user)
+      // Handle the error
     }
   };
 
@@ -147,7 +142,6 @@ interface StatusToggleProps {
 
 export const StatusToggle = ({ status }: StatusToggleProps) => {
   const [currentStatus, setCurrentStatus] = useState(status);
-  console.log("currenstats", currentStatus, status);
   return (
     <View className="flex flex-row flex-wrap gap-3 mt-2">
       {manifestStatus.map((status) => (

@@ -1,3 +1,4 @@
+import { manifests } from "@/db/schema";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { NavigationRoute, ParamListBase } from "@react-navigation/native";
 import { SharedValue } from "react-native-reanimated";
@@ -37,13 +38,13 @@ export type ManifestWithCompanies = {
   manifests: Manifest;
   companies: Company | null;
 };
-export type TruckWithActiveManifests = {
-  id: number;
-  driverName: string;
-  manifestCount: number | null;
-  registration: string;
-  status: "active" | "repair";
-};
+// export type TruckWithActiveManifests = {
+//   id: number;
+//   driverName: string;
+//   manifestCount: number | null;
+//   registration: string;
+//   status: "active" | "repair";
+// };
 
 export interface CompanyWithActiveManifests extends Company {
   manifests: Manifest[];
@@ -59,3 +60,10 @@ export type UnassignedManifests =
       companyId: number | null;
       createdAt: string;
     };
+
+export interface ManifestWithCompanyName extends Manifest {
+  companyName: string;
+}
+export interface TrucksWithActiveManifests extends Truck {
+  manifests: ManifestWithCompanyName[];
+}

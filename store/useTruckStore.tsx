@@ -1,13 +1,18 @@
-import { Truck, trucks, manifests, Manifest } from "@/db/schema";
+import {
+  Truck,
+  trucks,
+  manifests,
+  companies as companyTable,
+} from "@/db/schema";
 import { create } from "zustand";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import * as SQLite from "expo-sqlite";
-import { eq, sql } from "drizzle-orm";
-import { TruckWithActiveManifests } from "@/types";
+import { eq, sql, and } from "drizzle-orm";
+import { GenericRecord, TrucksWithActiveManifests } from "@/types";
 
 export interface TruckState {
   trucks: Truck[];
-  trucksWithActiveManifests: TruckWithActiveManifests[];
+  trucksWithActiveManifests: TrucksWithActiveManifests[];
   loading: boolean;
   fetchTrucks: (db: SQLite.SQLiteDatabase, filter?: string) => Promise<void>;
   fetchTrucksWithActiveManifests: (db: SQLite.SQLiteDatabase) => Promise<void>;
@@ -23,20 +28,35 @@ export const useTruckStore = create<TruckState>((set) => ({
     const drizzleDb = drizzle(db);
     try {
       const result = await drizzleDb
-        .select({
-          id: trucks.id,
-          driverName: trucks.driverName,
-          manifestId: manifests.id,
-          status: trucks?.status,
-          registration: trucks?.registration,
-          manifestCount: sql<number>`COUNT(${manifests.id})`, // Count the number of manifests
-        })
+        .select()
         .from(trucks)
-        .leftJoin(manifests, eq(trucks.id, manifests.assignedTo)) // Join companies table
-        .groupBy(trucks.id, trucks.registration) // Group by truck to get counts
+        .leftJoin(
+          manifests,
+          and(
+            eq(manifests.assignedTo, trucks?.id), // Filter by truck ID
+            eq(manifests.status, "active") // Filter by status = "Active"
+          )
+        )
+        .leftJoin(companyTable, eq(manifests.companyId, companyTable.id))
         .execute();
 
-      set({ trucksWithActiveManifests: result ? [...result] : [] });
+      const formattedResult = result?.reduce<GenericRecord>((acc, row) => {
+        // console.log("formateed result", row?.companies);
+        if (!acc[row?.trucks?.registration]) {
+          acc[row?.trucks?.registration] = { ...row?.trucks, manifests: [] };
+        }
+        if (row?.manifests) {
+          acc[row.trucks?.registration].manifests.push({
+            ...row?.manifests,
+            companyName: row?.companies?.companyName,
+          });
+        }
+
+        return acc;
+      }, {}) as TrucksWithActiveManifests[];
+
+      const transformedResult = Object.values(formattedResult);
+      set({ trucksWithActiveManifests: result ? transformedResult : [] });
     } catch (error) {
       console.error("Failed to fetch trucks with active manifests", error);
     } finally {
