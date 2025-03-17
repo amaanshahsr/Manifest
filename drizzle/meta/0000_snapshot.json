@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0831ac81-ad5f-4689-8238-d4b89ba7411b",
+  "id": "dd13bc6e-87cd-4bb4-b641-83af879527d9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "companies": {
@@ -73,6 +73,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {

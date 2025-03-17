@@ -41,7 +41,6 @@ export const useTruckStore = create<TruckState>((set) => ({
         .execute();
 
       const formattedResult = result?.reduce<GenericRecord>((acc, row) => {
-        // console.log("formateed result", row?.companies);
         if (!acc[row?.trucks?.registration]) {
           acc[row?.trucks?.registration] = { ...row?.trucks, manifests: [] };
         }

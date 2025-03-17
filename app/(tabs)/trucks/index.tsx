@@ -19,11 +19,10 @@ export default function App() {
   const db = useSQLiteContext();
 
   const [search, setSearch] = useState("");
-  const isFocused = useIsFocused();
 
   useEffect(() => {
     fetchTrucksWithActiveManifests(db);
-  }, [isFocused]);
+  }, []);
 
   if (loading) {
     return (

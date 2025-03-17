@@ -39,7 +39,6 @@ const ManageLayout = () => {
       params: { id },
     });
   };
-  console.log("oathskdjnlasd", optionsForSwitch);
 
   return (
     <View className="flex-1 bg-gray-100 p-2">
@@ -59,24 +58,3 @@ const ManageLayout = () => {
 };
 
 export default ManageLayout;
-
-interface SwitchButtonProps {
-  link: string;
-  text: string;
-  id: string | string[];
-}
-const SwitchButton = ({ link, text, id }: SwitchButtonProps) => {
-  return (
-    <Link
-      href={{
-        pathname: link as "/trucks/manage/assign" | "/trucks/manage/edit",
-        params: { id: id },
-      }}
-      asChild
-    >
-      <Pressable className="py-3 font-geistMedium flex items-center justify-center w-1/2 rounded-lg z-40 ">
-        <Text className="text-stone-900  text-base font-bold">{text}</Text>
-      </Pressable>
-    </Link>
-  );
-};

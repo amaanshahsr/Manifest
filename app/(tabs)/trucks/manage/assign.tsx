@@ -8,14 +8,17 @@ import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 const AssignTrucks = () => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
 
-  const { fetchUnassignedManifestsSortedByCompany, unassignedManifests } =
-    useManifestStore();
+  const {
+    fetchUnassignedManifestsSortedByCompany,
+    unassignedManifests,
+    loading,
+  } = useManifestStore();
   const { fetchCompanyWithActiveManifests } = useCompanyStore();
 
   const { id } = useLocalSearchParams();
@@ -60,6 +63,10 @@ const AssignTrucks = () => {
   const sortedHeaderIndices = Object.values(
     unassignedManifests?.companyPositions // Get company positions from manifests
   ).sort((a, b) => a - b); // Sort indices in ascending order for proper header placement
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
 
   return (
     <View className="flex-1 w-full  relative">

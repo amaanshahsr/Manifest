@@ -23,14 +23,13 @@ export const Switch = <T extends string>({
   const [width, setWidth] = useState(0);
 
   const value = useSharedValue(0);
-  console.log("ajsdlkasndlkansd", options, status);
 
   useEffect(() => {
     if (width > 0) {
       const index = options.indexOf(status); // Get the index of the active option
       value.value = withSpring(index * width, {
         damping: 305, // Adjusted for a snappier feel
-        stiffness: 750,
+        stiffness: 1000,
         mass: 1,
       });
     }

@@ -24,7 +24,6 @@ const Companies = () => {
     fetchCompanyWithActiveManifests(db);
   }, []);
 
-  // console.log("comapaniesWithActiveManifests", comapaniesWithActiveManifests);
   if (loading) {
     return (
       <View className="flex-1 w-full h-full  ">

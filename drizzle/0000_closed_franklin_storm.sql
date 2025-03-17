@@ -10,6 +10,7 @@ CREATE TABLE `manifests` (
 	`status` text NOT NULL,
 	`assigned_to` integer,
 	`company_id` integer,
+	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	FOREIGN KEY (`assigned_to`) REFERENCES `trucks`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`) ON UPDATE no action ON DELETE no action
 );

@@ -78,7 +78,6 @@ export default function CompanyForm() {
 
   // Fetch the truck details using the ComanyId in LocalSearchParams (passed as props)
   const fetchActiveCompany = async (id: string) => {
-    console.log("activeCompany", companies);
     const activeCompany = companies?.filter(
       (company) => company?.id === Number(id)
     );
@@ -93,7 +92,7 @@ export default function CompanyForm() {
     fetchActiveCompany(companyId).then((result) => {
       setCompanyName(result[0]?.companyName);
     });
-  }, [companyId, companies]);
+  }, [companyId, companies?.length]);
 
   return (
     <View className="mt-5 px-6">

@@ -6,7 +6,7 @@ import "../globals.css";
 import * as SQLite from "expo-sqlite";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View, Text } from "react-native";
 import { SQLiteProvider } from "expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "../drizzle/migrations";
@@ -41,6 +41,14 @@ const RootLayout = () => {
   if (!loaded) {
     return null;
   }
+  // if (error) {
+  //   console.log("error", error?.cause);
+  //   return (
+  //     <View>
+  //       <Text>Migration Error </Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <GestureHandlerRootView>
