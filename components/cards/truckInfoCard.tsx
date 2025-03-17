@@ -103,7 +103,12 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
         </View>
       </Pressable>
       {manifestCount > 0 ? (
-        <Accordion manifests={manifests} expanded={isExpanded} />
+        <Accordion
+          rows={manifests}
+          tableRowkeys={["manifestId", "companyName"]}
+          tableHeaders={["Manifest No.", "Company Name"]}
+          expanded={isExpanded}
+        />
       ) : null}
       <View className="w-full border-t border-zinc-300 mt-5">
         <Pressable

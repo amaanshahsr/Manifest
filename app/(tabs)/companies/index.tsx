@@ -9,8 +9,6 @@ import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 
-import { useIsFocused } from "@react-navigation/native";
-
 const Companies = () => {
   const [search, setSearch] = useState("");
   const db = useSQLiteContext();

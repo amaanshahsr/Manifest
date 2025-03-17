@@ -67,3 +67,14 @@ export interface ManifestWithCompanyName extends Manifest {
 export interface TrucksWithActiveManifests extends Truck {
   manifests: ManifestWithCompanyName[];
 }
+
+export interface ManifestWithAssignedVehicleRegistration {
+  vehicleRegistration: string;
+  id: number;
+  status: "active" | "completed" | "unassigned";
+  manifestId: number;
+  assignedTo: number | null;
+  companyId: number | null;
+  createdAt: string;
+}
+[];

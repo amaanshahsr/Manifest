@@ -1,16 +1,28 @@
-import { manifests } from "@/db/schema";
-import { ManifestWithCompanyName } from "@/types";
-import { Feather } from "@expo/vector-icons";
+import {
+  ManifestWithAssignedVehicleRegistration,
+  ManifestWithCompanyName,
+} from "@/types";
 import React, { useState } from "react";
 import { Pressable, View, Text, LayoutChangeEvent } from "react-native";
-import Animated, { SharedValue } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
-interface AccordionProps {
-  expanded: boolean;
-  manifests: ManifestWithCompanyName[];
+interface AccordionProps<
+  T extends ManifestWithCompanyName | ManifestWithAssignedVehicleRegistration
+> {
+  expanded?: boolean;
+  rows: T[];
+  tableRowkeys: [keyof T, keyof T];
+  tableHeaders: string[];
 }
 
-const Accordion = ({ expanded, manifests }: AccordionProps) => {
+const Accordion = <
+  T extends ManifestWithCompanyName | ManifestWithAssignedVehicleRegistration
+>({
+  expanded,
+  rows,
+  tableHeaders,
+  tableRowkeys,
+}: AccordionProps<T>) => {
   const handleLayout = (e: LayoutChangeEvent) => {};
   return (
     <Animated.View
@@ -30,36 +42,66 @@ const Accordion = ({ expanded, manifests }: AccordionProps) => {
       } bg-zinc-100 rounded-lg`}
     >
       <View onLayout={handleLayout} className="p-3 ">
-        {/* Table Header */}
-        <View className="flex-row border-b border-neutral-400 pb-2">
-          <Text className="font-geistSemiBold text-base flex-1 text-left">
-            Manifest No.
-          </Text>
-          <Text className="font-geistSemiBold text-base flex-1 text-right">
-            Company Name
-          </Text>
-        </View>
-        {/* Table Rows */}
-        {manifests.map((manifest, index) => (
-          <View
-            key={manifest?.manifestId ?? index}
-            className={`flex-row items-center py-2 ${
-              index === manifests.length - 1
-                ? ""
-                : "border-b border-neutral-300"
-            }`}
-          >
-            <Text className="text-neutral-800 font-geistMedium text-base flex-1 text-left">
-              {manifest?.manifestId}
-            </Text>
-            <Text className="text-neutral-800 font-geistMedium text-base flex-1 text-right">
-              {manifest?.companyName}
-            </Text>
-          </View>
-        ))}
+        <TableHeaders headers={tableHeaders} />
+        <TableRows rows={rows} rowKeys={tableRowkeys} />
       </View>
     </Animated.View>
   );
 };
 
 export default Accordion;
+
+interface TableHeadersProps {
+  headers: string[];
+}
+const TableHeaders = ({ headers }: TableHeadersProps) => {
+  return (
+    <View className="flex-row border-b border-neutral-400 pb-2">
+      {headers?.map((header, index) => {
+        return (
+          <Text
+            key={index + header}
+            className={`font-geistSemiBold text-base flex-1 ${
+              index === 0 ? "text-left" : "text-right"
+            } `}
+          >
+            {header}
+          </Text>
+        );
+      })}
+    </View>
+  );
+};
+
+interface TableRows<
+  T extends ManifestWithCompanyName | ManifestWithAssignedVehicleRegistration
+> {
+  rowKeys: [keyof T, keyof T];
+  rows: T[];
+}
+const TableRows = <
+  T extends ManifestWithCompanyName | ManifestWithAssignedVehicleRegistration
+>({
+  rows,
+  rowKeys,
+}: TableRows<T>) => {
+  return (
+    <>
+      {rows.map((row, index) => (
+        <View
+          key={row?.manifestId ?? index}
+          className={`flex-row items-center py-2 ${
+            index === rows.length - 1 ? "" : "border-b border-neutral-300"
+          }`}
+        >
+          <Text className="text-neutral-800 font-geistMedium text-base flex-1 text-left">
+            {row[rowKeys[0] as keyof typeof row] as string}
+          </Text>
+          <Text className="text-neutral-800 font-geistMedium text-base flex-1 text-right">
+            {row[rowKeys[1] as keyof typeof row] as string}
+          </Text>
+        </View>
+      ))}
+    </>
+  );
+};
