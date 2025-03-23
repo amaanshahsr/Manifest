@@ -15,14 +15,14 @@ const CustomSearchBar: React.FC<SearchBarProps> = ({
 }) => {
   return (
     <View className="py-2 mx-6">
-      <View style={{ elevation: 4 }} className="relative rounded-lg">
+      <View style={{ elevation: 4 }} className="relative min-h-14 rounded-lg">
         <TextInput
           placeholder={placeholder}
           className="border-[0.7px] relative rounded-lg p-4 h-14 border-zinc-300 bg-white placeholder:text-gray-400 font-geistMedium"
           onChangeText={setSearch}
           value={search}
         />
-        <View className="absolute top-1/2 right-3 -translate-y-1/2">
+        <View className="absolute top-1/4 right-3 ">
           {search?.length ? (
             <Pressable onPress={() => setSearch("")}>
               <Text>

@@ -64,7 +64,7 @@ const ManifestForm = () => {
     start: number,
     end: number,
     companyId: number
-  ): Omit<Manifest, "id" | "createdAt">[] => {
+  ): Omit<Manifest, "id" | "createdAt" | "completedOn">[] => {
     return Array.from({ length: end - start + 1 }, (_, index) => ({
       manifestId: start + index,
       status: "unassigned",

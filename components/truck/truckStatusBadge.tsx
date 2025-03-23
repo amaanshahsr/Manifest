@@ -30,8 +30,6 @@ export const StatusBadge = ({ status }: StatusBadgeProps) => {
     <Animated.View
       style={animatedBadgeColor}
       className=" w-2 h-2 absolute  rounded-md right-2 top-2"
-    >
-      bkbhbjbhjb
-    </Animated.View>
+    ></Animated.View>
   );
 };

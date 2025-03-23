@@ -80,17 +80,7 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 }
 
 function MyTabs() {
-  return (
-    <Tabs
-      screenOptions={
-        {
-          // ** Enable this to add animations to screen changes
-          // animation: "shift",
-        }
-      }
-      tabBar={(props) => <MyTabBar {...props} />}
-    ></Tabs>
-  );
+  return <Tabs tabBar={(props) => <MyTabBar {...props} />}></Tabs>;
 }
 
 export default MyTabs;

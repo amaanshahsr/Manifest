@@ -9,6 +9,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import Accordion from "../truck/accordion";
+import * as Haptics from "expo-haptics";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -16,6 +17,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { Gesture } from "react-native-gesture-handler";
 
 interface TruckInfoCardProps {
   truck: TrucksWithActiveManifests;
@@ -41,6 +43,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
       { duration: 150, easing: Easing.out(Easing.quad) } // Snappy transition
     );
   };
+
   return (
     <View
       style={{
@@ -112,12 +115,13 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
       ) : null}
       <View className="w-full border-t border-zinc-300 mt-5">
         <Pressable
-          onPress={() =>
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             router?.push({
               pathname: `/trucks/manage/assign` as Route,
               params: { id: id?.toString() },
-            })
-          }
+            });
+          }}
           className="flex flex-row  justify-center bg-stone-950 mt-3 p-3 gap-2 rounded-lg"
         >
           <Text className="text-white font-geistSemiBold text-base">

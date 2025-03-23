@@ -2,14 +2,13 @@ import { companies, Manifest, manifests } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { create } from "zustand";
 import * as SQLite from "expo-sqlite";
-import { UnassignedManifests } from "@/types";
 import { eq, and } from "drizzle-orm";
 
 export interface ManifestState {
   manifests: Manifest[];
   loading: boolean;
   unassignedManifests: {
-    result: (string | UnassignedManifests)[];
+    result: (string | Omit<Manifest, "createdAt" | "completedOn">)[];
     companyPositions: Record<string, number>;
   };
   fetchManifests: (db: SQLite.SQLiteDatabase) => Promise<void>;
@@ -30,6 +29,7 @@ export const useManifestStore = create<ManifestState>((set) => ({
   loading: false,
   manifestsSortedByCompany: { result: [], companyPositions: {} },
   fetchUnassignedManifestsSortedByCompany: async (db) => {
+    set({ loading: true });
     const drizzleDb = drizzle(db);
     const result = await drizzleDb
       .select() // Select data from the database
@@ -75,7 +75,7 @@ export const useManifestStore = create<ManifestState>((set) => ({
       },
       { result: [], companyPositions: {} }
     );
-
+    set({ loading: false });
     set({ unassignedManifests: formattedResult });
   },
 
@@ -89,9 +89,10 @@ export const useManifestStore = create<ManifestState>((set) => ({
         .select()
         .from(manifests)
         .leftJoin(companies, eq(manifests.companyId, companies.id)) // Join companies table
+        .limit(1000)
         .execute();
 
-      // Pass  the result for formatting if successful
+      // Pass  the result for formatting used in flashlist
 
       const formattedResult = result?.reduce<{
         result: (string | Manifest)[];

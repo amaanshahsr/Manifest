@@ -1,18 +1,12 @@
+import { Manifest } from "@/db/schema";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 
 interface ManifestSelectableCardProps {
-  manifest: {
-    id: number;
-    manifestId: number;
-    status: "completed" | "active" | "unassigned";
-    assignedTo: number | null;
-    companyId: number | null;
-    createdAt: string;
-  };
+  manifest: Omit<Manifest, "createdAt" | "completedOn">;
   selectedIds: number[];
-  handleSelect: (id: number) => void;
+  handleSelect: (id: number, action: "select" | "remove") => void;
 }
 const ManifestSelectableCard = ({
   manifest,
@@ -33,7 +27,9 @@ const ManifestSelectableCard = ({
       className={`${
         isSelected ? "bg-neutral-100  " : "bg-white"
       } h-auto w-full  px-5 py-7 mx-auto  border-b border-neutral-400 `}
-      onPress={() => handleSelect(manifest?.manifestId)}
+      onPress={() =>
+        handleSelect(manifest?.manifestId, isSelected ? "remove" : "select")
+      }
     >
       {/* Row: Manifest Info + Checkbox */}
       <View className="flex-row justify-between items-center">
@@ -45,7 +41,11 @@ const ManifestSelectableCard = ({
         </View>
 
         {/* Selection Checkbox */}
-        <Pressable onPress={() => handleSelect(manifest?.manifestId)}>
+        <Pressable
+          onPress={() =>
+            handleSelect(manifest?.manifestId, isSelected ? "remove" : "select")
+          }
+        >
           <MaterialCommunityIcons
             name={
               isSelected

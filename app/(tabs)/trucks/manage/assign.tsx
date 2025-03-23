@@ -1,14 +1,16 @@
 import ManifestSelectableCard from "@/components/cards/manifestSelectableCard";
-import { Manifest, manifests, companies as company_table } from "@/db/schema";
+import { AssignStickyHeader } from "@/components/truck/assignStickyHeader";
+import { manifests, companies as company_table } from "@/db/schema";
 import { useCompanyStore } from "@/store/useCompanyStore";
 import { useManifestStore } from "@/store/useManifestStore";
+import { useTruckStore } from "@/store/useTruckStore";
 import { FlashList } from "@shopify/flash-list";
 import { inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, View, Text, Button } from "react-native";
 
 const AssignTrucks = () => {
   const db = useSQLiteContext();
@@ -20,23 +22,45 @@ const AssignTrucks = () => {
     loading,
   } = useManifestStore();
   const { fetchCompanyWithActiveManifests } = useCompanyStore();
+  const { fetchTrucksWithActiveManifests } = useTruckStore();
 
   const { id } = useLocalSearchParams();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  // const isFocused = useIsFocused();
 
   useEffect(() => {
     fetchUnassignedManifestsSortedByCompany(db);
   }, []);
+  const toggleItemSelect = (
+    ids: number | number[],
+    action: "select" | "remove"
+  ) => {
+    setSelectedIds((prevIds) => {
+      // Convert single ID to an array for uniform handling
+      const idsArray = Array.isArray(ids) ? ids : [ids];
 
-  const toggleItemSelect = (id: number) => {
-    if (selectedIds.includes(id)) {
-      setSelectedIds((prevIds) => prevIds.filter((itemId) => itemId !== id));
-    } else {
-      setSelectedIds((prevIds) => [...prevIds, id]);
-    }
+      // Create a Set from the current selected IDs for efficient lookups
+      const selectedIdsSet = new Set(prevIds);
+
+      // Toggle each ID in the input array
+      idsArray.forEach((id) => {
+        switch (action) {
+          case "remove":
+            selectedIdsSet.delete(id);
+            break;
+          case "select":
+            selectedIdsSet.add(id);
+            break;
+          default:
+            break;
+        }
+      });
+
+      // Convert the Set back to an array and return
+      return Array.from(selectedIdsSet);
+    });
   };
+  console.log("selectedIdsOutside", selectedIds);
 
   const handleSave = async () => {
     try {
@@ -51,8 +75,8 @@ const AssignTrucks = () => {
 
       // Fetch the updated list of unassigned manifests sorted by company
       await fetchUnassignedManifestsSortedByCompany(db);
-
       await fetchCompanyWithActiveManifests(db);
+      await fetchTrucksWithActiveManifests(db);
     } catch (error) {
       // Handle any errors that occur during the update or fetch process
       console.error("Error updating manifests:", error);
@@ -70,24 +94,21 @@ const AssignTrucks = () => {
 
   return (
     <View className="flex-1 w-full  relative">
+      {selectedIds?.length ? (
+        <Button title="Hello World" onPress={handleSave} />
+      ) : null}
       <FlashList
         stickyHeaderIndices={sortedHeaderIndices}
-        // ListHeaderComponent={
-        //   <View className="bg-blue-500 p-5 ">
-        //     <Text className="font-geistMedium text-xl">Header</Text>
-        //   </View>
-        // }
         className="mb-1"
         data={unassignedManifests?.result}
-        renderItem={({ item }) => {
+        renderItem={({ item, index }) => {
           return typeof item === "string" ? (
-            <Pressable onPress={handleSave}>
-              <View className=" bg-stone-900 py-3 flex items-center justify-center rounded-sm">
-                <Text className="text-2xl font-geistSemiBold text-neutral-200 ">
-                  {item}
-                </Text>
-              </View>
-            </Pressable>
+            <AssignStickyHeader
+              position={index}
+              item={item}
+              manifestList={unassignedManifests}
+              toggleItemSelect={toggleItemSelect}
+            />
           ) : (
             <ManifestSelectableCard
               manifest={item}
@@ -100,7 +121,6 @@ const AssignTrucks = () => {
         keyExtractor={(item) =>
           typeof item === "string" ? item : item?.id?.toString()
         }
-        numColumns={1}
         extraData={selectedIds}
       />
     </View>

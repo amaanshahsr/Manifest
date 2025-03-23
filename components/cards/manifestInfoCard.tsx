@@ -23,7 +23,7 @@ const ManifestInfoCard: React.FC<ManifestInfoCardProps> = ({ manifest }) => {
     >
       <View className="flex-row justify-between items-center">
         <Text className="font-geistSemiBold text-2xl text-neutral-900">
-          {manifest?.manifestId}
+          {manifest?.manifestId} {manifest?.status}
         </Text>
         {/* <Text className="font-geistSemiBold text-2xl text-neutral-900">
           {companyName}

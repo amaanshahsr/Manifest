@@ -31,7 +31,11 @@ const TruckForm = () => {
   const pathname = usePathname();
   const truckId = pathname?.split("/")[2];
   const { addToDatabase } = useSaveToDatabase();
-  const { trucksWithActiveManifests: trucks, fetchTrucks } = useTruckStore();
+  const {
+    trucksWithActiveManifests: trucks,
+    fetchTrucks,
+    fetchTrucksWithActiveManifests,
+  } = useTruckStore();
   useCleanupOnExit(cleanUp);
 
   function cleanUp() {
@@ -112,7 +116,7 @@ const TruckForm = () => {
       setStatus("active");
 
       // Refresh and navigate
-      await fetchTrucks(db);
+      await fetchTrucksWithActiveManifests(db);
       router?.push("/trucks");
     } catch (error) {
       console.error("Error while saving truck info:", error);

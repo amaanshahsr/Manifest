@@ -8,6 +8,7 @@ import { useTruckStore } from "@/store/useTruckStore";
 import AddNewButton from "@/components/common/addNewButton";
 import { useSQLiteContext } from "expo-sqlite";
 import { useIsFocused } from "@react-navigation/native";
+import Animated, { SlideInLeft, SlideInRight } from "react-native-reanimated";
 
 export default function App() {
   const {
@@ -27,12 +28,12 @@ export default function App() {
   if (loading) {
     return (
       <View className="flex-1 w-full h-full  ">
-        <FlashList
+        {/* <FlashList
           data={Array(10).fill(null)}
           renderItem={() => <SkeletonLoader />}
           estimatedItemSize={10}
           keyExtractor={(_, index) => `skeleton-${index}`}
-        />
+        /> */}
       </View>
     );
   }
@@ -46,9 +47,9 @@ export default function App() {
   }
 
   return (
-    <View className=" flex-1 w-full h-full">
+    <Animated.View className=" flex-1 w-full h-full">
       <CustomSearchBar search={search} setSearch={setSearch} />
-      {/* <AddNewButton route="/trucks/new" text="Truck" /> */}
+      <AddNewButton route="/trucks/new" text="Truck" />
       <FlashList
         className="mb-1"
         data={trucks?.filter(
@@ -61,10 +62,9 @@ export default function App() {
               .includes(search?.trim().toLowerCase())
         )}
         renderItem={({ item }) => <TruckInfoCard truck={item} />}
-        estimatedItemSize={500}
+        estimatedItemSize={300}
         keyExtractor={(truck) => truck?.id?.toString()}
-        numColumns={1}
       />
-    </View>
+    </Animated.View>
   );
 }

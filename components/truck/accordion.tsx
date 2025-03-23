@@ -7,7 +7,9 @@ import { Pressable, View, Text, LayoutChangeEvent } from "react-native";
 import Animated from "react-native-reanimated";
 
 interface AccordionProps<
-  T extends ManifestWithCompanyName | ManifestWithAssignedVehicleRegistration
+  T extends
+    | ManifestWithCompanyName
+    | Omit<ManifestWithAssignedVehicleRegistration, "createdAt">
 > {
   expanded?: boolean;
   rows: T[];
@@ -16,7 +18,9 @@ interface AccordionProps<
 }
 
 const Accordion = <
-  T extends ManifestWithCompanyName | ManifestWithAssignedVehicleRegistration
+  T extends
+    | ManifestWithCompanyName
+    | Omit<ManifestWithAssignedVehicleRegistration, "createdAt">
 >({
   expanded,
   rows,
@@ -74,13 +78,17 @@ const TableHeaders = ({ headers }: TableHeadersProps) => {
 };
 
 interface TableRows<
-  T extends ManifestWithCompanyName | ManifestWithAssignedVehicleRegistration
+  T extends
+    | ManifestWithCompanyName
+    | Omit<ManifestWithAssignedVehicleRegistration, "createdAt">
 > {
   rowKeys: [keyof T, keyof T];
   rows: T[];
 }
 const TableRows = <
-  T extends ManifestWithCompanyName | ManifestWithAssignedVehicleRegistration
+  T extends
+    | ManifestWithCompanyName
+    | Omit<ManifestWithAssignedVehicleRegistration, "createdAt">
 >({
   rows,
   rowKeys,

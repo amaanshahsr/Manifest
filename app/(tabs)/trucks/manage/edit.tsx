@@ -1,4 +1,4 @@
-import { Manifest, manifests } from "@/db/schema";
+import { companies, Manifest, manifests } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -9,14 +9,19 @@ import { FlashList } from "@shopify/flash-list";
 import { manifestStatus } from "@/constants";
 import { capitalizeWord } from "@/utils/utils";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { ManifestStatus } from "@/types";
+import { ManifestStatus, ManifestWithCompanyName } from "@/types";
+import { useTruckStore } from "@/store/useTruckStore";
+import EditTruckCard from "@/components/cards/editTruckCard";
 
 const EditTruckStatus = () => {
   const { id } = useLocalSearchParams();
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
 
-  const [activeManifests, setActiveManifests] = useState<Manifest[]>([]);
+  const { fetchTrucksWithActiveManifests } = useTruckStore();
+  const [activeManifests, setActiveManifests] = useState<
+    ManifestWithCompanyName[]
+  >([]);
   useEffect(() => {
     fetchActiveManifestsForTruck().then((result) => {
       setActiveManifests(result);
@@ -25,8 +30,19 @@ const EditTruckStatus = () => {
 
   const fetchActiveManifestsForTruck = async () => {
     const result = await drizzleDb
-      .select()
+      .select({
+        manifest: {
+          id: manifests.id,
+          manifestId: manifests?.manifestId,
+          status: manifests.status,
+          assignedTo: manifests.assignedTo,
+          companyId: manifests.companyId,
+          createdAt: manifests?.createdAt,
+          companyName: companies.companyName, // Add companyName from the companies table
+        },
+      })
       .from(manifests)
+      .leftJoin(companies, eq(manifests.companyId, companies.id)) // Join with the company table
       .where(
         and(
           eq(manifests.status, "active"), // Filter by status = "active"
@@ -35,19 +51,23 @@ const EditTruckStatus = () => {
       )
       .execute();
 
-    return result;
+    return result.map((item) => item?.manifest);
   };
-  const markManifestCompleted = async () => {
+  const markAsCompleted = async (id?: number) => {
     try {
       // Extract manifest IDs from activeManifests
-      const manifestIds = activeManifests?.map((record) => record?.manifestId);
+      const manifestIds = id
+        ? [id]
+        : activeManifests?.map((record) => record?.manifestId);
+
+      const date = new Date(); // Current date and time
 
       // Update the status and assignedTo fields for the selected manifests
       const result = await drizzleDb
         .update(manifests)
         .set({
           status: "completed",
-          assignedTo: null,
+          completedOn: date,
         })
         .where(inArray(manifests.manifestId, manifestIds))
         .execute();
@@ -56,21 +76,14 @@ const EditTruckStatus = () => {
 
       // Fetch the updated list of active manifests
       const updatedManifests = await fetchActiveManifestsForTruck();
+      await fetchTrucksWithActiveManifests(db);
       setActiveManifests(updatedManifests);
+      alert(`Manifest COmpleted with id :${id}`);
     } catch (error) {
       console.error("Failed to mark manifests as completed:", error);
       // Handle the error
     }
   };
-
-  // const bottomSheetRef = useRef<BottomSheet>(null);
-  // const title = "Passing my data 🔥";
-
-  // const handleClosePress = () => bottomSheetRef.current?.close();
-  // const handleOpenPress = () => {
-  //   console.log("bottomsadsasd", bottomSheetRef?.current);
-  //   bottomSheetRef.current?.expand();
-  // };
 
   if (activeManifests?.length === 0) {
     return (
@@ -82,7 +95,7 @@ const EditTruckStatus = () => {
 
   return (
     <View className="flex-1 w-full  relative">
-      <Pressable
+      {/* <Pressable
         onPress={() => {
           markManifestCompleted();
         }}
@@ -93,43 +106,16 @@ const EditTruckStatus = () => {
       </Pressable>
       <Pressable>
         <Ionicons name="filter-circle-sharp" size={40} color="black" />
-      </Pressable>
+      </Pressable> */}
       <FlashList
-        // stickyHeaderIndices={[0, 7]}
-        // ListHeaderComponent={
-        //   <View className="bg-blue-500 p-5 ">
-        //     <Text className="font-geistMedium text-xl">Header</Text>
-        //   </View>
-        // }
         className="mb-1"
         data={activeManifests}
         renderItem={({ item }) => {
-          return (
-            <View className="bg-white rounded-xl p-4 my-2">
-              <Text className="text-lg font-geistSemiBold text-neutral-900">
-                Manifest ID: {item?.manifestId}
-              </Text>
-              <Text className="text-sm text-neutral-500">Status</Text>
-              <StatusToggle status={item?.status} />
-            </View>
-          );
+          return <EditTruckCard saveFn={markAsCompleted} manifest={item} />;
         }}
-        estimatedItemSize={200}
+        estimatedItemSize={25}
         keyExtractor={(item) => item?.id?.toString()}
-        numColumns={1}
       />
-      {/* <CustomBottomSheet title={title} ref={bottomSheetRef} /> */}
-
-      {/* <BottomSheet
-        animateOnMount
-        index={-1}
-        ref={bottomSheetRef}
-        onChange={handleSheetChanges}
-      >
-        <BottomSheetView className="flex-1 items-center  h-[50vw] ">
-          <ManifestForm />
-        </BottomSheetView>
-      </BottomSheet> */}
     </View>
   );
 };
@@ -139,43 +125,3 @@ export default EditTruckStatus;
 interface StatusToggleProps {
   status: ManifestStatus;
 }
-
-export const StatusToggle = ({ status }: StatusToggleProps) => {
-  const [currentStatus, setCurrentStatus] = useState(status);
-  return (
-    <View className="flex flex-row flex-wrap gap-3 mt-2">
-      {manifestStatus.map((status) => (
-        <Pressable
-          key={status}
-          className={`flex flex-row items-center px-4 py-2 border rounded-full gap-2 transition-all ${
-            status === currentStatus
-              ? "bg-stone-800 border-stone-800 "
-              : "border-stone-400"
-          }`}
-        >
-          {status === "completed" ? (
-            <MaterialCommunityIcons
-              name="checkbox-marked-circle"
-              size={18}
-              color={status === currentStatus ? "#fff" : "#1e293b"}
-            />
-          ) : (
-            <View
-              className={`w-2 h-2 rounded-full ${
-                status === "active" ? "bg-green-500" : "bg-blue-500"
-              }`}
-            ></View>
-          )}
-
-          <Text
-            className={`text-base font-geistMedium ${
-              status === currentStatus ? "text-white" : "text-neutral-700"
-            }`}
-          >
-            {capitalizeWord(status)}
-          </Text>
-        </Pressable>
-      ))}
-    </View>
-  );
-};

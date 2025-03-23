@@ -4,12 +4,13 @@ import {
 } from "@/types";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   Easing,
+  FadeIn,
 } from "react-native-reanimated";
 import Accordion from "../truck/accordion";
 import { CommonActions } from "@react-navigation/native";
@@ -59,8 +60,9 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
       { duration: 150, easing: Easing.out(Easing.quad) } // Snappy transition
     );
   };
+
   return (
-    <View
+    <Animated.View
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -68,7 +70,7 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
         shadowRadius: 4,
         elevation: 3,
       }}
-      className="bg-white h-auto w-[92.5%] mt-5 rounded-xl p-6 mx-auto"
+      className="bg-white w-full h-auto  mt-5 rounded-xl p-6 mx-auto "
     >
       <View className="flex-row justify-between mb-5 items-center">
         <Text className="font-geistSemiBold text-2xl text-neutral-900">
@@ -87,24 +89,40 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
           </Text>
         </Pressable>
       </View>
-      <Pressable
+      <TouchableOpacity
         onPress={spinChevron}
-        className="flex flex-row  gap-3 items-center"
+        className="flex flex-row  gap-3 items-center justify-between"
       >
         <ManifestCount count={activeManifestCount} />
         {activeManifestCount > 0 ? (
-          <Animated.View style={[animatedRotateStyle]}>
-            <Feather name="chevron-up" size={20} color="#1e293b" />
-          </Animated.View>
+          <TouchableOpacity
+            onPress={spinChevron}
+            activeOpacity={0.7}
+            className="flex flex-row items-center  py-2 px-3  rounded-full bg-gray-200"
+          >
+            <Text
+              className={`text-neutral-800 font-geistSemiBold text-base ${""}`}
+            >
+              View
+            </Text>
+            <Animated.View
+              className="font-geistSemiBold"
+              style={[animatedRotateStyle]}
+            >
+              <Feather name="chevron-up" size={20} color="#1e293b" />
+            </Animated.View>
+          </TouchableOpacity>
         ) : null}
-      </Pressable>
-      <Accordion
-        expanded={isExpanded}
-        tableRowkeys={["manifestId", "vehicleRegistration"]}
-        rows={manifestsWithVehicleRegistration}
-        tableHeaders={["Manifest No.", "Registration"]}
-      />
-    </View>
+      </TouchableOpacity>
+      {manifestsWithVehicleRegistration?.length ? (
+        <Accordion
+          expanded={isExpanded}
+          tableRowkeys={["manifestId", "vehicleRegistration"]}
+          rows={manifestsWithVehicleRegistration}
+          tableHeaders={["Manifest No.", "Registration"]}
+        />
+      ) : null}
+    </Animated.View>
   );
 };
 

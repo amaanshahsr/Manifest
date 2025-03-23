@@ -61,8 +61,9 @@ export type UnassignedManifests =
       createdAt: string;
     };
 
-export interface ManifestWithCompanyName extends Manifest {
-  companyName: string;
+export interface ManifestWithCompanyName
+  extends Omit<Manifest, "createdAt" | "completedOn"> {
+  companyName: string | null;
 }
 export interface TrucksWithActiveManifests extends Truck {
   manifests: ManifestWithCompanyName[];
