@@ -30,11 +30,9 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/icon.png",
-          
           "backgroundColor": "#ffffff"
         }
       ],
-   
       [
         "expo-sqlite",
         {
@@ -45,13 +43,23 @@
             "useSQLCipher": false
           },
           "ios": {
-            "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
+            "customBuildFlags": [
+              "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
+            ]
           }
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "929334e2-ccb2-4bf4-b4dd-cf5445a93bb3"
+      }
     }
   }
 }

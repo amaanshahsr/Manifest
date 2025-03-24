@@ -12,13 +12,13 @@ const ManifestInfoCard: React.FC<ManifestInfoCardProps> = ({ manifest }) => {
 
   return (
     <View
-      style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-        elevation: 3,
-      }}
+      // style={{
+      //   shadowColor: "#000",
+      //   shadowOffset: { width: 0, height: 2 },
+      //   shadowOpacity: 0.15,
+      //   shadowRadius: 4,
+      //   elevation: 3,
+      // }}
       className="bg-white h-auto w-[92.5%] mt-5 rounded-xl p-6 mx-auto"
     >
       <View className="flex-row justify-between items-center">

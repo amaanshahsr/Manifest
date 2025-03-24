@@ -75,8 +75,8 @@ const AssignTrucks = () => {
 
       // Fetch the updated list of unassigned manifests sorted by company
       await fetchUnassignedManifestsSortedByCompany(db);
-      await fetchCompanyWithActiveManifests(db);
-      await fetchTrucksWithActiveManifests(db);
+      // await fetchCompanyWithActiveManifests(db);
+      // await fetchTrucksWithActiveManifests(db);
     } catch (error) {
       // Handle any errors that occur during the update or fetch process
       console.error("Error updating manifests:", error);

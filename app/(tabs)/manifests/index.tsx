@@ -119,15 +119,15 @@ const Manifests = () => {
     setFilteredmanifestsSortedByCompany(finalArray);
   };
 
-  console.log("manifestss", manifestsSortedByCompany);
+  // console.log("manifestss", manifestsSortedByCompany);
 
-  if (loading) {
-    return (
-      <View className="flex-1 w-full h-full  bg-yellow-200">
-        <ActivityIndicator />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View className="flex-1 w-full h-full  bg-yellow-200">
+  //       <ActivityIndicator />
+  //     </View>
+  //   );
+  // }
 
   if (
     manifestsSortedByCompany?.result === null ||
@@ -140,8 +140,12 @@ const Manifests = () => {
     );
   }
 
-  return (
+  return loading ? (
+    <ActivityIndicator />
+  ) : (
     <View className="flex-1 w-full relative">
+      <AddNewButton route="/manifests/new" text="Manifest" />
+
       <Button
         onPress={handlePresentModalPress}
         title="Present Modal"
@@ -241,25 +245,31 @@ const Manifests = () => {
         title="Open Modal"
         onPress={() => bottomSheetModalRef?.current?.present()}
       />
-
-      <FlashList
-        className="mb-1"
-        // stickyHeaderIndices={sortedHeaderIndices}
-        data={filteredManifestsSortedByCompany}
-        renderItem={({ item }) => {
-          return typeof item === "string" ? (
-            <StickyHeader title={item} />
-          ) : (
-            <ManifestInfoCard manifest={item} />
-          );
-        }}
-        estimatedItemSize={5000}
-        keyExtractor={(item) =>
-          typeof item === "string" ? item : item?.id?.toString()
-        }
-      />
-
-      <AddNewButton route="/manifests/new" text="Manifest" />
+      {filteredManifestsSortedByCompany?.length ? (
+        <FlashList
+          className="mb-1"
+          ListEmptyComponent={
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator size={"small"} />
+            </View>
+          }
+          // stickyHeaderIndices={sortedHeaderIndices}
+          data={filteredManifestsSortedByCompany}
+          renderItem={({ item }) => {
+            return typeof item === "string" ? (
+              <StickyHeader title={item} />
+            ) : (
+              <ManifestInfoCard manifest={item} />
+            );
+          }}
+          estimatedItemSize={1000}
+          keyExtractor={(item) =>
+            typeof item === "string" ? item : item?.id?.toString()
+          }
+        />
+      ) : (
+        <ActivityIndicator />
+      )}
     </View>
   );
 };

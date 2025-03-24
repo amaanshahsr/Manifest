@@ -8,7 +8,7 @@ import { Route, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
-import Accordion from "../truck/accordion";
+import Accordion from "../truck/tableList";
 import * as Haptics from "expo-haptics";
 import Animated, {
   Easing,
@@ -24,7 +24,6 @@ interface TruckInfoCardProps {
 }
 const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
   const { driverName, id, registration, status, manifests } = truck;
-  const [isExpanded, setIsExpanded] = useState(false);
   const router = useRouter();
   const manifestCount = manifests?.length;
 
@@ -37,7 +36,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
   }));
 
   const spinChevron = () => {
-    setIsExpanded((old) => !old);
+    // setIsExpanded((old) => !old);
     rotateValue.value = withTiming(
       rotateValue?.value === 180 ? 0 : 180, // Toggle between 0 and 180 degrees
       { duration: 150, easing: Easing.out(Easing.quad) } // Snappy transition
@@ -105,14 +104,6 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
           ) : null}
         </View>
       </Pressable>
-      {manifestCount > 0 ? (
-        <Accordion
-          rows={manifests}
-          tableRowkeys={["manifestId", "companyName"]}
-          tableHeaders={["Manifest No.", "Company Name"]}
-          expanded={isExpanded}
-        />
-      ) : null}
       <View className="w-full border-t border-zinc-300 mt-5">
         <Pressable
           onPress={() => {

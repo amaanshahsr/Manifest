@@ -76,6 +76,7 @@ export interface ManifestWithAssignedVehicleRegistration {
   manifestId: number;
   assignedTo: number | null;
   companyId: number | null;
-  createdAt: string;
+  createdAt: Date;
+  completedOn: Date | null;
 }
 [];

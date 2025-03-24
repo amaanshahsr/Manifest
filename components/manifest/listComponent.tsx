@@ -1,10 +1,15 @@
 import { FlashList } from "@shopify/flash-list";
 import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { RefreshControl, Text, View } from "react-native";
 import { CompanyInfoCard } from "../cards/companyInfoCard";
-import { CompanyWithActiveManifests } from "@/types";
+import {
+  CompanyWithActiveManifests,
+  ManifestWithAssignedVehicleRegistration,
+} from "@/types";
 import AddNewButton from "../common/addNewButton";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import CustomBottomSheetModal from "../common/bottomSheetModal";
 
 interface ListComponentProps {
   fetchCompanyWithActiveManifests: (
@@ -13,12 +18,13 @@ interface ListComponentProps {
   ) => Promise<void>;
   comapaniesWithActiveManifests: CompanyWithActiveManifests[];
   search: string;
+  handleModalOpen: (data: CompanyWithActiveManifests) => void;
 }
 
 export const ListComponent = ({
   fetchCompanyWithActiveManifests,
   comapaniesWithActiveManifests,
-
+  handleModalOpen,
   search,
 }: ListComponentProps) => {
   const db = useSQLiteContext();
@@ -34,7 +40,7 @@ export const ListComponent = ({
 
   if (refreshing) {
     return (
-      <View className="w-full flex-1 ">
+      <View className="w-full flex-1 bg-red-600">
         <Text>Loading...</Text>
       </View>
     );
@@ -52,7 +58,16 @@ export const ListComponent = ({
       data={comapaniesWithActiveManifests?.filter((company) =>
         company?.companyName?.includes(search?.trim())
       )}
-      renderItem={({ item }) => <CompanyInfoCard company={item} />}
+      ListEmptyComponent={() => {
+        return (
+          <View className="w-full h-full bg-green-700">
+            <Text>dnajnsdjnaksdjnaksnj</Text>
+          </View>
+        );
+      }}
+      renderItem={({ item }) => (
+        <CompanyInfoCard handleModalOpen={handleModalOpen} company={item} />
+      )}
       estimatedItemSize={60}
       keyExtractor={(company) => company?.id?.toString()}
       numColumns={1}

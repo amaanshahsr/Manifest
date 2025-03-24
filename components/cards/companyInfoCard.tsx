@@ -1,65 +1,21 @@
-import {
-  CompanyWithActiveManifests,
-  ManifestWithAssignedVehicleRegistration,
-} from "@/types";
+import { CompanyWithActiveManifests } from "@/types";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { View, Text, Pressable, TouchableOpacity } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  Easing,
-  FadeIn,
-} from "react-native-reanimated";
-import Accordion from "../truck/accordion";
-import { CommonActions } from "@react-navigation/native";
-import { companies, manifests } from "@/db/schema";
-import { useTruckStore } from "@/store/useTruckStore";
-import { useMemo, useState } from "react";
+import Animated from "react-native-reanimated";
 
 interface CompanyInfoCardProps {
   company: CompanyWithActiveManifests;
+  handleModalOpen: (data: CompanyWithActiveManifests) => void;
 }
 
 export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
   company,
+  handleModalOpen,
 }) => {
-  const { trucksWithActiveManifests } = useTruckStore();
   const { companyName, id } = company;
   const router = useRouter();
   const activeManifestCount = company?.manifests?.length;
-
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const manifestsWithVehicleRegistration = useMemo(() => {
-    return (
-      company?.manifests?.map((manifest) => {
-        const assignedTruckDetails = trucksWithActiveManifests?.find(
-          (truck) => truck?.id === manifest?.assignedTo
-        );
-        return {
-          ...manifest,
-          vehicleRegistration: assignedTruckDetails?.registration || "",
-        };
-      }) ?? []
-    );
-  }, [company?.manifests, trucksWithActiveManifests]);
-
-  // Shared value for rotation angle
-  const rotateValue = useSharedValue(180);
-
-  // Animated style for rotation
-  const animatedRotateStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotateValue.value}deg` }], // Rotate by the current value
-  }));
-
-  const spinChevron = () => {
-    setIsExpanded((old) => !old);
-    rotateValue.value = withTiming(
-      rotateValue?.value === 180 ? 0 : 180, // Toggle between 0 and 180 degrees
-      { duration: 150, easing: Easing.out(Easing.quad) } // Snappy transition
-    );
-  };
 
   return (
     <Animated.View
@@ -90,13 +46,13 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
         </Pressable>
       </View>
       <TouchableOpacity
-        onPress={spinChevron}
+        onPress={() => handleModalOpen(company)}
         className="flex flex-row  gap-3 items-center justify-between"
       >
         <ManifestCount count={activeManifestCount} />
         {activeManifestCount > 0 ? (
           <TouchableOpacity
-            onPress={spinChevron}
+            // onPress={spinChevron}
             activeOpacity={0.7}
             className="flex flex-row items-center  py-2 px-3  rounded-full bg-gray-200"
           >
@@ -105,23 +61,9 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
             >
               View
             </Text>
-            <Animated.View
-              className="font-geistSemiBold"
-              style={[animatedRotateStyle]}
-            >
-              <Feather name="chevron-up" size={20} color="#1e293b" />
-            </Animated.View>
           </TouchableOpacity>
         ) : null}
       </TouchableOpacity>
-      {manifestsWithVehicleRegistration?.length ? (
-        <Accordion
-          expanded={isExpanded}
-          tableRowkeys={["manifestId", "vehicleRegistration"]}
-          rows={manifestsWithVehicleRegistration}
-          tableHeaders={["Manifest No.", "Registration"]}
-        />
-      ) : null}
     </Animated.View>
   );
 };

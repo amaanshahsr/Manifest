@@ -87,7 +87,6 @@ const ManifestForm = () => {
         table: manifests,
       });
 
-      alert("Manifests added successfully!");
       await fetchManifestsSortedByCompany(db);
     } catch (error) {
       console.error("Error while adding manifests:", error);
@@ -98,6 +97,7 @@ const ManifestForm = () => {
       // Refresh and navigate
       await fetchManifests(db);
       router?.push("/manifests");
+      alert("Manifests added successfully!");
     }
   };
   const router = useRouter();

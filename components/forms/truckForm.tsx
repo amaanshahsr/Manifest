@@ -104,10 +104,8 @@ const TruckForm = () => {
 
       if (truckId && truckId !== "new") {
         await handleDatabaseAction("edit", truckData, truckId);
-        alert("Truck info updated successfully!");
       } else {
         await handleDatabaseAction("new", truckData);
-        alert("Truck info saved successfully!");
       }
 
       // Reset form fields
@@ -118,6 +116,7 @@ const TruckForm = () => {
       // Refresh and navigate
       await fetchTrucksWithActiveManifests(db);
       router?.push("/trucks");
+      alert("Truck info saved successfully!");
     } catch (error) {
       console.error("Error while saving truck info:", error);
       alert("An error occurred while saving the truck info.");
