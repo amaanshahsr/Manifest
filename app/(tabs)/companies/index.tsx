@@ -1,5 +1,8 @@
 import AddNewButton from "@/components/common/addNewButton";
-import CustomBottomSheetModal from "@/components/common/bottomSheetModal";
+import CustomModal from "@/components/common/bareBoneModal";
+import CustomBottomSheetModal, {
+  TestFlashList,
+} from "@/components/common/bottomSheetModal";
 import CustomSearchBar from "@/components/common/searchBar";
 import { ListComponent } from "@/components/manifest/listComponent";
 import { useCompanyStore } from "@/store/useCompanyStore";
@@ -7,11 +10,12 @@ import {
   CompanyWithActiveManifests,
   ManifestWithAssignedVehicleRegistration,
 } from "@/types";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, Button, Modal } from "react-native";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 
 const Companies = () => {
   const [search, setSearch] = useState("");
@@ -27,13 +31,21 @@ const Companies = () => {
     fetchCompanyWithActiveManifests(db);
   }, []);
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const actionSheetRef = useRef<ActionSheetRef>(null);
 
   const handleModalOpen = useCallback((data: CompanyWithActiveManifests) => {
-    bottomSheetModalRef?.current?.present();
+    console.log(
+      "nkjndska",
+      actionSheetRef?.current?.currentSnapIndex,
+      actionSheetRef
+    );
+    setIsVisible(true);
+    actionSheetRef?.current?.show();
     setModal(data);
   }, []);
 
+  const [isVisible, setIsVisible] = useState(false);
   const [modal, setModal] = useState<CompanyWithActiveManifests | null>(null);
 
   // console.log("modamsdasdasda", typeof modal);
@@ -69,7 +81,12 @@ const Companies = () => {
         fetchCompanyWithActiveManifests={fetchCompanyWithActiveManifests}
         search={search}
       />
-      <CustomBottomSheetModal data={modal} ref={bottomSheetModalRef} />
+      <CustomBottomSheetModal
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        data={modal}
+        ref={actionSheetRef}
+      />
     </View>
   );
 };

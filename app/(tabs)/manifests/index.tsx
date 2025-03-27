@@ -39,6 +39,7 @@ import {
   ManifestStatus,
   ManifestWithCompanyName,
 } from "@/types";
+import { createCustomBackdrop } from "@/components/common/backdrop";
 
 const Manifests = () => {
   const db = useSQLiteContext();
@@ -151,7 +152,11 @@ const Manifests = () => {
         title="Present Modal"
         color="black"
       />
-      <BottomSheetModal ref={bottomSheetModalRef} onChange={handleSheetChanges}>
+      <BottomSheetModal
+        backdropComponent={createCustomBackdrop()}
+        ref={bottomSheetModalRef}
+        onChange={handleSheetChanges}
+      >
         <BottomSheetView className="flex-1 items-center h-96">
           <View className="flex relative flex-row justify-center items-center  w-full ">
             <Text className="font-geistSemiBold text-2xl ">Filter</Text>

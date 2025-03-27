@@ -1,5 +1,5 @@
 import { manifests, Truck } from "@/db/schema";
-import { TrucksWithActiveManifests } from "@/types";
+import { ManifestWithCompanyName, TrucksWithActiveManifests } from "@/types";
 import { capitalizeWord } from "@/utils/utils";
 import Feather from "@expo/vector-icons/Feather";
 import { eq } from "drizzle-orm";
@@ -17,7 +17,6 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { Gesture } from "react-native-gesture-handler";
 
 interface TruckInfoCardProps {
   truck: TrucksWithActiveManifests;

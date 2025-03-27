@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import TruckInfoCard from "@/components/cards/truckInfoCard";
@@ -9,6 +9,9 @@ import AddNewButton from "@/components/common/addNewButton";
 import { useSQLiteContext } from "expo-sqlite";
 import { useIsFocused } from "@react-navigation/native";
 import Animated, { SlideInLeft, SlideInRight } from "react-native-reanimated";
+import { CompanyWithActiveManifests, TrucksWithActiveManifests } from "@/types";
+import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+import CustomBottomSheetModal from "@/components/common/bottomSheetModal";
 
 export default function App() {
   const {
@@ -45,6 +48,7 @@ export default function App() {
       </View>
     );
   }
+  // console.log("acasdjasd", trucks);
 
   return (
     <Animated.View className=" flex-1 w-full h-full">
