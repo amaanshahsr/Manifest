@@ -1,16 +1,4 @@
-import BottomSheet, {
-  BottomSheetFlashList,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import TableList from "../truck/tableList";
 import {
   CompanyWithActiveManifests,
@@ -21,26 +9,22 @@ import {
 import { useTruckStore } from "@/store/useTruckStore";
 import { Manifest } from "@/db/schema";
 import { View, Text, Button, StyleSheet } from "react-native";
-import { useLocalSearchParams } from "expo-router";
-import { createCustomBackdrop } from "./backdrop";
 import { useSharedValue } from "react-native-reanimated";
-import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
-import { FlashList } from "react-native-actions-sheet/dist/src/views/FlashList";
-import CustomModal from "./bareBoneModal";
-export type Ref = BottomSheetModal;
+import CustomModal from "./customModal";
+import { FlashList } from "@shopify/flash-list";
+import { ScrollView } from "react-native-gesture-handler";
 
 interface CustomBottomSheetModalProps {
   data: CompanyWithActiveManifests | null;
   isVisible: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  //   handleClose: () => void;
 }
 
-const CustomBottomSheetModal = forwardRef<
-  ActionSheetRef,
-  CustomBottomSheetModalProps
->(({ data, isVisible, setIsVisible }, ref) => {
-  const snapPoints = useMemo(() => [50, 75, 90], []); // Start smaller
+const CustomBottomSheetModal = ({
+  data,
+  isVisible,
+  setIsVisible,
+}: CustomBottomSheetModalProps) => {
   const { trucksWithActiveManifests } = useTruckStore();
   const [
     manifestsWithVehicleRegistration,
@@ -70,10 +54,8 @@ const CustomBottomSheetModal = forwardRef<
       vehicleRegistration: truckMap[manifest.assignedTo || ""] || "",
     }));
 
-    setTimeout(() => {
-      setManifestsWithVehicleRegistration(updatedManifests);
-      setloading(false);
-    }, 500);
+    setManifestsWithVehicleRegistration(updatedManifests);
+    setloading(false);
 
     const endTime = performance.now();
     if (endTime - startTime > 50) {
@@ -81,36 +63,35 @@ const CustomBottomSheetModal = forwardRef<
       console.warn(`Slow effect: ${endTime - startTime}ms`);
     }
   }, [data]);
-  const animateValue = useSharedValue(1);
 
   return (
-    <CustomModal
-      visible={isVisible}
-      onClose={() => setIsVisible(false)}
-      backdropOpacity={0.7}
-      animationType="slide"
-    >
-      <TableList
-        tableRowkeys={["manifestId", "vehicleRegistration"]}
-        rows={manifestsWithVehicleRegistration}
-        tableHeaders={["Manifest No.", "Registration"]}
-      />
-    </CustomModal>
+    <View>
+      <CustomModal
+        visible={isVisible}
+        onClose={() => setIsVisible(false)}
+        backdropOpacity={0.7}
+      >
+        <TableList
+          tableRowkeys={["manifestId", "vehicleRegistration"]}
+          rows={manifestsWithVehicleRegistration}
+          columns={["Manifest No.", "Registration"]}
+        />
+      </CustomModal>
+    </View>
   );
-});
+};
 
 export default CustomBottomSheetModal;
 
-// Generate 100 test items
-const generateTestData = () => {
-  return Array.from({ length: 100 }, (_, index) => ({
-    id: index + 1,
-    title: `Item ${index + 1}`,
-    description: `This is item number ${index + 1} in the list`,
-  }));
-};
-
 export const TestFlashList = () => {
+  // Generate 100 test items
+  const generateTestData = () => {
+    return Array.from({ length: 100 }, (_, index) => ({
+      id: index + 1,
+      title: `Item ${index + 1}`,
+      description: `This is item number ${index + 1} in the list`,
+    }));
+  };
   const data = generateTestData();
 
   const renderItem = ({ item }: { item: any }) => (
@@ -119,9 +100,8 @@ export const TestFlashList = () => {
       <Text style={styles.description}>{item.description}</Text>
     </View>
   );
-
   return (
-    <View style={styles.container}>
+    <ScrollView className="flex-1 w-full h-16 bg-green-500">
       <FlashList
         data={data}
         renderItem={renderItem}
@@ -129,7 +109,7 @@ export const TestFlashList = () => {
         estimatedItemSize={80} // Helps with scroll performance
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -137,6 +117,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    display: "flex",
+    alignItems: "center",
   },
   itemContainer: {
     backgroundColor: "#fff",

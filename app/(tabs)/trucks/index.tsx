@@ -1,5 +1,5 @@
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import TruckInfoCard from "@/components/cards/truckInfoCard";
@@ -7,22 +7,37 @@ import CustomSearchBar from "@/components/common/searchBar";
 import { useTruckStore } from "@/store/useTruckStore";
 import AddNewButton from "@/components/common/addNewButton";
 import { useSQLiteContext } from "expo-sqlite";
-import { useIsFocused } from "@react-navigation/native";
-import Animated, { SlideInLeft, SlideInRight } from "react-native-reanimated";
-import { CompanyWithActiveManifests, TrucksWithActiveManifests } from "@/types";
-import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
-import CustomBottomSheetModal from "@/components/common/bottomSheetModal";
+import TableList from "@/components/truck/tableList";
+import CustomModal from "@/components/common/customModal";
+import { ManifestWithCompanyName } from "@/types";
 
 export default function App() {
   const {
-    fetchTrucks,
     trucksWithActiveManifests: trucks,
     fetchTrucksWithActiveManifests,
     loading,
   } = useTruckStore();
   const db = useSQLiteContext();
-
   const [search, setSearch] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
+  const [modalData, setModalData] = useState<ManifestWithCompanyName[]>([]);
+
+  // Memoized filtered trucks
+  const filteredTrucks = useMemo(() => {
+    if (!trucks) return [];
+    const searchTerm = search.trim().toLowerCase();
+    return trucks.filter(
+      (truck) =>
+        truck?.registration?.toLowerCase().includes(searchTerm) ||
+        truck?.driverName?.toLowerCase().includes(searchTerm)
+    );
+  }, [trucks, search]);
+
+  // Stable callback for modal toggle
+  const toggleModal = useCallback((data: ManifestWithCompanyName[]) => {
+    setIsVisible(true);
+    setModalData(data);
+  }, []);
 
   useEffect(() => {
     fetchTrucksWithActiveManifests(db);
@@ -30,45 +45,76 @@ export default function App() {
 
   if (loading) {
     return (
-      <View className="flex-1 w-full h-full  ">
-        {/* <FlashList
+      <View className="flex-1 w-full h-full">
+        <FlashList
           data={Array(10).fill(null)}
           renderItem={() => <SkeletonLoader />}
           estimatedItemSize={10}
           keyExtractor={(_, index) => `skeleton-${index}`}
-        /> */}
+        />
       </View>
     );
   }
 
-  if (trucks === null || trucks.length === 0) {
+  if (!trucks || trucks.length === 0) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
         <AddNewButton route="/trucks/new" text="Truck" />
       </View>
     );
   }
-  // console.log("acasdjasd", trucks);
 
   return (
-    <Animated.View className=" flex-1 w-full h-full">
+    <View className="flex-1 w-full h-full">
       <CustomSearchBar search={search} setSearch={setSearch} />
       <AddNewButton route="/trucks/new" text="Truck" />
       <FlashList
         className="mb-1"
-        data={trucks?.filter(
-          (truck) =>
-            truck?.registration
-              ?.toLowerCase()
-              .includes(search?.trim().toLowerCase()) || // ! TODO - Switch to direct DB search?
-            truck?.driverName
-              ?.toLowerCase()
-              .includes(search?.trim().toLowerCase())
+        data={filteredTrucks}
+        renderItem={({ item }) => (
+          <TruckInfoCard toggleTruckDetails={toggleModal} truck={item} />
         )}
-        renderItem={({ item }) => <TruckInfoCard truck={item} />}
         estimatedItemSize={300}
-        keyExtractor={(truck) => truck?.id?.toString()}
+        keyExtractor={(truck) => truck.id.toString()}
       />
-    </Animated.View>
+      <TruckBottomSheetModal
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        modalData={modalData}
+      />
+    </View>
   );
 }
+
+interface TruckBottomSheetModalProps {
+  isVisible: boolean;
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  modalData: ManifestWithCompanyName[];
+}
+
+const TruckBottomSheetModal = memo(
+  ({ isVisible, modalData, setIsVisible }: TruckBottomSheetModalProps) => {
+    const handleClose = useCallback(() => setIsVisible(false), [setIsVisible]);
+
+    return (
+      <View>
+        <CustomModal
+          backdropOpacity={0.7}
+          visible={isVisible}
+          key="trucks"
+          onClose={handleClose}
+        >
+          <TableList
+            rows={modalData}
+            tableRowkeys={["manifestId", "companyName"]}
+            columns={["Manifest No.", "Company Name"]}
+            key="tablelist"
+          />
+        </CustomModal>
+      </View>
+    );
+  },
+  (prevProps, nextProps) =>
+    prevProps.isVisible === nextProps.isVisible &&
+    prevProps.modalData === nextProps.modalData
+);

@@ -27,19 +27,13 @@ import {
   BottomSheetModalProvider,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import {
-  GestureHandlerRootView,
-  TextInput,
-} from "react-native-gesture-handler";
-import CustomSearchBar from "@/components/common/searchBar";
-import { CommonActions, useIsFocused } from "@react-navigation/native";
+
 import { Manifest } from "@/db/schema";
 import {
   CompanyWithActiveManifests,
   ManifestStatus,
   ManifestWithCompanyName,
 } from "@/types";
-import { createCustomBackdrop } from "@/components/common/backdrop";
 
 const Manifests = () => {
   const db = useSQLiteContext();
@@ -152,11 +146,7 @@ const Manifests = () => {
         title="Present Modal"
         color="black"
       />
-      <BottomSheetModal
-        backdropComponent={createCustomBackdrop()}
-        ref={bottomSheetModalRef}
-        onChange={handleSheetChanges}
-      >
+      <BottomSheetModal ref={bottomSheetModalRef} onChange={handleSheetChanges}>
         <BottomSheetView className="flex-1 items-center h-96">
           <View className="flex relative flex-row justify-center items-center  w-full ">
             <Text className="font-geistSemiBold text-2xl ">Filter</Text>
@@ -258,7 +248,6 @@ const Manifests = () => {
               <ActivityIndicator size={"small"} />
             </View>
           }
-          // stickyHeaderIndices={sortedHeaderIndices}
           data={filteredManifestsSortedByCompany}
           renderItem={({ item }) => {
             return typeof item === "string" ? (

@@ -1,12 +1,11 @@
-import React, { useCallback, memo } from "react";
-import { View, Text } from "react-native";
-// import { FlashList } from "@shopify/flash-list";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { FlashList } from "react-native-actions-sheet/dist/src/views/FlashList";
+import React, { useCallback, memo, useState } from "react";
+import { View, Text, TouchableWithoutFeedback } from "react-native";
 import type {
   ManifestWithAssignedVehicleRegistration,
   ManifestWithCompanyName,
 } from "@/types";
+import { FlashList } from "@shopify/flash-list";
+import { TouchableOpacity } from "react-native";
 
 interface TableListProps<
   T extends
@@ -15,7 +14,7 @@ interface TableListProps<
 > {
   rows: T[];
   tableRowkeys: [keyof T, keyof T];
-  tableHeaders: string[];
+  columns: [string, string];
 }
 
 const TableListComponent = <
@@ -24,60 +23,71 @@ const TableListComponent = <
     | Omit<ManifestWithAssignedVehicleRegistration, "createdAt">
 >({
   rows,
-  tableHeaders,
+  columns,
   tableRowkeys,
 }: TableListProps<T>) => {
+  const [renderedItemsCount, setRenderedItemsCount] = useState(30);
+
   // Memoize filtered data to prevent unnecessary recalculations
   const filteredData = React.useMemo(
-    () => rows?.filter((_, index) => index < 30),
-    [rows]
+    () => rows?.filter((_, index) => index < renderedItemsCount),
+    [rows, renderedItemsCount]
   );
 
   // Optimized renderItem with proper dependency array
   const renderItem = useCallback(
     ({ item, index }: { item: T; index: number }) => (
-      <View
-        className={`flex-row items-center py-2 ${
-          index === rows.length - 1 ? "" : "border-b border-neutral-300"
+      <TouchableOpacity
+        activeOpacity={1}
+        className={`flex-row px-4 items-center  py-2 ${
+          index === filteredData?.length - 1
+            ? "bg-neutral-400/30 rounded-b-lg"
+            : "border-b border-x border-neutral-300"
         }`}
       >
-        <Text className="text-neutral-800 font-geistMedium text-base flex-1 text-left">
-          {item[tableRowkeys[0]] as string}
-        </Text>
-        <Text className="text-neutral-800 font-geistMedium text-base flex-1 text-right">
-          {item[tableRowkeys[1]] as string}
-        </Text>
-      </View>
+        <>
+          <Text className="text-neutral-800 text-md font-geistMedium  flex-1 text-left">
+            {item[tableRowkeys[0]] as string}
+          </Text>
+          <Text className="text-neutral-800 text-md font-geistMedium  flex-1 text-right">
+            {item[tableRowkeys[1]] as string}
+          </Text>
+        </>
+      </TouchableOpacity>
     ),
-    [rows.length, tableRowkeys]
+    [filteredData.length, tableRowkeys]
   );
 
   // Memoized header component
   const ListHeader = useCallback(
     () => (
-      <View className="flex-row border-b border-neutral-400 pb-2">
+      <View className="flex-row  p-2  bg-neutral-400/30 rounded-t-lg border-neutral-300 border">
         <Text className="font-geistSemiBold text-base flex-1 text-left">
-          {tableHeaders[0]}
+          {columns[0]}
         </Text>
         <Text className="font-geistSemiBold text-base flex-1 text-right">
-          {tableHeaders[1]}
+          {columns[1]}
         </Text>
       </View>
     ),
-    [tableHeaders]
+    [columns]
   );
 
+  const handleScroll = () => {
+    if (renderedItemsCount >= rows?.length) return;
+    setRenderedItemsCount((oldCount) => oldCount + 30);
+  };
   return (
-    <View className="mt-3 flex-1 w-full bg-zinc-100 rounded-lg">
-      <FlashList
-        data={filteredData}
-        ListHeaderComponent={ListHeader}
-        estimatedItemSize={40}
-        renderItem={renderItem}
-        keyExtractor={(item) => item?.id?.toString()}
-        removeClippedSubviews={true} // Improves memory usage
-      />
-    </View>
+    <FlashList
+      contentContainerStyle={{ padding: 10 }}
+      data={filteredData}
+      ListHeaderComponent={ListHeader}
+      estimatedItemSize={40}
+      renderItem={renderItem}
+      onEndReached={handleScroll}
+      keyExtractor={(item) => item?.id?.toString()}
+      removeClippedSubviews={true} // Improves memory usage
+    />
   );
 };
 

@@ -20,8 +20,12 @@ import Animated, {
 
 interface TruckInfoCardProps {
   truck: TrucksWithActiveManifests;
+  toggleTruckDetails: (data: ManifestWithCompanyName[]) => void;
 }
-const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
+const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
+  truck,
+  toggleTruckDetails,
+}) => {
   const { driverName, id, registration, status, manifests } = truck;
   const router = useRouter();
   const manifestCount = manifests?.length;
@@ -29,13 +33,8 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
   // Shared value for rotation angle
   const rotateValue = useSharedValue(180);
 
-  // Animated style for rotation
-  const animatedRotateStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotateValue.value}deg` }], // Rotate by the current value
-  }));
-
   const spinChevron = () => {
-    // setIsExpanded((old) => !old);
+    toggleTruckDetails(manifests);
     rotateValue.value = withTiming(
       rotateValue?.value === 180 ? 0 : 180, // Toggle between 0 and 180 degrees
       { duration: 150, easing: Easing.out(Easing.quad) } // Snappy transition
@@ -96,11 +95,11 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({ truck }) => {
           <Text className="font-geistSemiBold text-sm text-neutral-700">
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </Text>
-          {manifestCount > 0 ? (
+          {/* {manifestCount > 0 ? (
             <Animated.View style={[animatedRotateStyle]}>
               <Feather name="chevron-up" size={20} color="#1e293b" />
             </Animated.View>
-          ) : null}
+          ) : null} */}
         </View>
       </Pressable>
       <View className="w-full border-t border-zinc-300 mt-5">
