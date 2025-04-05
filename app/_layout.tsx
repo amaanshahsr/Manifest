@@ -11,7 +11,6 @@ import { SQLiteProvider } from "expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "../drizzle/migrations";
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const expo = SQLite.openDatabaseSync("data.db");
 const db = drizzle(expo);
@@ -64,31 +63,29 @@ const RootLayout = () => {
 
   return (
     <GestureHandlerRootView>
-      <BottomSheetModalProvider>
-        <Suspense
-          fallback={
-            <View className="w-full h-full flex-1">
-              <ActivityIndicator size="large" />
-            </View>
-          }
+      <Suspense
+        fallback={
+          <View className="w-full h-full flex-1">
+            <ActivityIndicator size="large" />
+          </View>
+        }
+      >
+        <SQLiteProvider
+          databaseName="data.db"
+          options={{ enableChangeListener: true }}
+          useSuspense
         >
-          <SQLiteProvider
-            databaseName="data.db"
-            options={{ enableChangeListener: true }}
-            useSuspense
-          >
-            <Stack>
-              <Stack.Screen
-                name="(tabs)"
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack>
-          </SQLiteProvider>
-          <StatusBar style="inverted" />
-        </Suspense>
-      </BottomSheetModalProvider>
+          <Stack>
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </SQLiteProvider>
+        <StatusBar style="inverted" />
+      </Suspense>
     </GestureHandlerRootView>
   );
 };

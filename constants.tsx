@@ -35,6 +35,12 @@ export const tabBarIcons = {
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
+  reports: (customStyles?: TabIconStyle) => (
+    <Ionicons
+      name="documents-outline"
+      {...(customStyles ? customStyles : defaultIconStyle)}
+    />
+  ),
 };
 
 export const manifestStatus = ["unassigned", "active", "completed"];

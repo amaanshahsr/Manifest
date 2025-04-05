@@ -1,39 +1,24 @@
 import AddNewButton from "@/components/common/addNewButton";
 import ManifestInfoCard from "@/components/cards/manifestInfoCard";
-import SkeletonLoader from "@/components/common/skeletonLoader";
 import { useManifestStore } from "@/store/useManifestStore";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useSQLiteContext } from "expo-sqlite";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   ActivityIndicator,
   Button,
-  Pressable,
-  Modal,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import StickyHeader from "@/components/manifest/stickyHeader";
-import {
-  BottomSheetModal,
-  BottomSheetModalProvider,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
 
 import { Manifest } from "@/db/schema";
-import {
-  CompanyWithActiveManifests,
-  ManifestStatus,
-  ManifestWithCompanyName,
-} from "@/types";
+import { ManifestStatus } from "@/types";
+import CustomModal from "@/components/common/customModal";
+import { Pressable } from "react-native-gesture-handler";
 
 const Manifests = () => {
   const db = useSQLiteContext();
@@ -53,15 +38,16 @@ const Manifests = () => {
     setFilteredmanifestsSortedByCompany(manifestsSortedByCompany?.result);
   }, [manifestsSortedByCompany?.result]);
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [refreshing, setRefreshing] = useState(false); // State for refresh control
 
-  // callbacks
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  // Handle refresh
+  const handleRefresh = async () => {
+    setRefreshing(true); // Start refreshing
+    fetchManifestsSortedByCompany(db);
+    setRefreshing(false); // Stop refreshing
+  };
+
+  const [isVisible, setisVisible] = useState(false);
 
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [status, setStatus] = useState<ManifestStatus[]>([]);
@@ -112,6 +98,7 @@ const Manifests = () => {
     console.log("finalArray", finalArray);
 
     setFilteredmanifestsSortedByCompany(finalArray);
+    setisVisible(false);
   };
 
   // console.log("manifestss", manifestsSortedByCompany);
@@ -138,132 +125,192 @@ const Manifests = () => {
   return loading ? (
     <ActivityIndicator />
   ) : (
-    <View className="flex-1 w-full relative">
+    <View className="flex-1 w-full relative ">
       <AddNewButton route="/manifests/new" text="Manifest" />
+      <View>
+        <CustomModal
+          snapPoint="75%"
+          visible={isVisible}
+          onClose={() => setisVisible(false)}
+        >
+          <View className="flex-1 items-center z-50 px-5 py-6 bg-white rounded-t-3xl shadow-lg">
+            {/* Header */}
+            <View className="flex flex-row justify-between items-center w-full mb-4">
+              <Text className="font-geistSemiBold text-2xl text-gray-900">
+                Filters
+              </Text>
+              <Pressable onPress={() => setisVisible(false)}>
+                <AntDesign name="closecircle" size={24} color="black" />
+              </Pressable>
+            </View>
 
-      <Button
-        onPress={handlePresentModalPress}
-        title="Present Modal"
-        color="black"
-      />
-      <BottomSheetModal ref={bottomSheetModalRef} onChange={handleSheetChanges}>
-        <BottomSheetView className="flex-1 items-center h-96">
-          <View className="flex relative flex-row justify-center items-center  w-full ">
-            <Text className="font-geistSemiBold text-2xl ">Filter</Text>
-
-            <TouchableOpacity
-              className=" absolute right-4"
-              onPress={() => bottomSheetModalRef?.current?.close()}
-            >
-              <AntDesign name="closecircle" size={20} color="black" />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text className="font-geistMedium text-lg ">Companies</Text>
-            <View className="w-full flex flex-row gap-2 flex-wrap max-h-32 m-10 border border-neutral-500">
-              {companies?.map((company) => {
-                return (
+            {/* Companies Filter */}
+            <View className="w-full bg-gray-100 rounded-lg p-4 shadow-sm">
+              <Text className="font-geistMedium text-lg text-gray-800 mb-3">
+                Companies
+              </Text>
+              <View className="flex flex-row flex-wrap gap-2">
+                {companies?.map((company) => (
                   <Pressable
                     key={company}
                     onPress={() => {
                       setSelectedCompanies((old) =>
                         old?.includes(company)
-                          ? [...old?.filter((comp) => company !== comp)]
+                          ? old.filter((comp) => company !== comp)
                           : [...old, company]
                       );
                     }}
                   >
                     <View
-                      className={`border ${
-                        selectedCompanies?.includes(company)
-                          ? "bg-stone-900 text-white"
+                      className={`border px-4 py-2 rounded-full ${
+                        !selectedCompanies?.includes(company)
+                          ? "bg-black text-white"
                           : "border-gray-500"
-                      } rounded-full  p-2`}
+                      }`}
                     >
                       <Text
-                        className={`text-base  ${
-                          selectedCompanies?.includes(company)
-                            ? " text-white"
-                            : ""
-                        } font-geistRegular`}
+                        className={`text-base font-geistRegular ${
+                          !selectedCompanies?.includes(company)
+                            ? "text-white"
+                            : "text-black"
+                        }`}
                       >
                         {company}
                       </Text>
                     </View>
                   </Pressable>
-                );
-              })}
-              <Button onPress={handleFiltered} title="click me"></Button>
+                ))}
+              </View>
             </View>
-          </View>
-          <View>
-            <Text className="font-geistMedium text-lg ">Status</Text>
-            <View className="w-full flex flex-row gap-2 flex-wrap max-h-32 m-10 border border-neutral-500">
-              {statuses?.map((stat, index) => {
-                return (
+
+            {/* Status Filter */}
+            <View className="w-full bg-gray-100 rounded-lg p-4 shadow-sm mt-5">
+              <Text className="font-geistMedium text-lg text-gray-800 mb-3">
+                Status
+              </Text>
+              <View className="flex flex-row flex-wrap gap-2">
+                {statuses?.map((stat, index) => (
                   <Pressable
                     key={index}
                     onPress={() => {
                       setStatus((old) =>
                         old?.includes(stat)
-                          ? [...old?.filter((comp) => stat !== comp)]
+                          ? old.filter((comp) => stat !== comp)
                           : [...old, stat]
                       );
                     }}
                   >
                     <View
-                      className={`border ${
-                        status?.includes(stat as ManifestStatus)
-                          ? "bg-stone-900 text-white"
+                      className={`border px-4 py-2 rounded-full ${
+                        !status?.includes(stat)
+                          ? "bg-black text-white"
                           : "border-gray-500"
-                      } rounded-full  p-2`}
+                      }`}
                     >
                       <Text
-                        className={`text-base  ${
-                          status?.includes(stat as ManifestStatus)
-                            ? " text-white"
-                            : ""
-                        } font-geistRegular`}
+                        className={`text-base font-geistRegular ${
+                          !status?.includes(stat) ? "text-white" : "text-black"
+                        }`}
                       >
                         {stat}
                       </Text>
                     </View>
                   </Pressable>
-                );
-              })}
-              <Button onPress={handleFiltered} title="click me"></Button>
+                ))}
+              </View>
+            </View>
+
+            {/* Footer Buttons */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+                position: "absolute",
+                bottom: 25,
+              }}
+            >
+              {/* Cancel Button */}
+              <Pressable
+                onPress={() => setisVisible(false)}
+                style={{
+                  flex: 1,
+                  backgroundColor: "#E5E5E5",
+                  paddingVertical: 12,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  marginRight: 10,
+                }}
+              >
+                <Text
+                  className="font-geistMedium"
+                  style={{ fontSize: 18, color: "#333", fontWeight: "500" }}
+                >
+                  Cancel
+                </Text>
+              </Pressable>
+
+              {/* Apply Button */}
+              <Pressable
+                onPress={handleFiltered}
+                style={{
+                  flex: 1,
+                  backgroundColor: "#000",
+                  paddingVertical: 12,
+                  borderRadius: 10,
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  className="font-geistMedium"
+                  style={{
+                    fontSize: 18,
+                    color: "#FFF",
+                    fontWeight: "500",
+                  }}
+                >
+                  Apply
+                </Text>
+              </Pressable>
             </View>
           </View>
-        </BottomSheetView>
-      </BottomSheetModal>
-      <Button
-        title="Open Modal"
-        onPress={() => bottomSheetModalRef?.current?.present()}
+        </CustomModal>
+      </View>
+      <FlashList
+        // stickyHeaderIndices={manifestsSortedByCompany?.companyPositions?.map((item)=>item?.)}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+        className="mb-1"
+        ListEmptyComponent={
+          <View className=" flex-1 items-center justify-center  p-5 bg-red-500">
+            <AntDesign
+              name="folderopen"
+              size={40}
+              color="#999"
+              className="mb-2"
+            />
+            <Text className="text-lg font-medium text-gray-500 text-center">
+              No manifests found based on active filters.
+            </Text>
+          </View>
+        }
+        data={filteredManifestsSortedByCompany}
+        renderItem={({ item }) => {
+          return typeof item === "string" ? (
+            <StickyHeader
+              title={item}
+              onFilterPress={() => setisVisible(true)}
+            />
+          ) : (
+            <ManifestInfoCard manifest={item} />
+          );
+        }}
+        estimatedItemSize={1000}
+        keyExtractor={(item) =>
+          typeof item === "string" ? item : item?.id?.toString()
+        }
       />
-      {filteredManifestsSortedByCompany?.length ? (
-        <FlashList
-          className="mb-1"
-          ListEmptyComponent={
-            <View className="flex-1 items-center justify-center">
-              <ActivityIndicator size={"small"} />
-            </View>
-          }
-          data={filteredManifestsSortedByCompany}
-          renderItem={({ item }) => {
-            return typeof item === "string" ? (
-              <StickyHeader title={item} />
-            ) : (
-              <ManifestInfoCard manifest={item} />
-            );
-          }}
-          estimatedItemSize={1000}
-          keyExtractor={(item) =>
-            typeof item === "string" ? item : item?.id?.toString()
-          }
-        />
-      ) : (
-        <ActivityIndicator />
-      )}
     </View>
   );
 };

@@ -7,8 +7,8 @@ import {
   Dimensions,
   ViewStyle,
   DimensionValue,
-  Pressable,
   Text,
+  Pressable,
 } from "react-native";
 import {
   Directions,
@@ -33,12 +33,14 @@ interface CustomModalProps {
   children: React.ReactNode;
   containerStyle?: ViewStyle;
   backdropOpacity?: number;
+  snapPoint?: "50%" | "75%" | "90%";
 }
 
 const CustomModal = ({
   visible,
   onClose,
   children,
+  snapPoint = "50%",
   backdropOpacity = 0.3,
 }: CustomModalProps) => {
   const translateY = useSharedValue(Dimensions.get("window").height);
@@ -50,7 +52,9 @@ const CustomModal = ({
     stiffness: 300,
   };
 
-  const modalHeight = Dimensions.get("window").height / 2;
+  const modalHeight =
+    Dimensions.get("window").height *
+    (snapPoint === "50%" ? 0.5 : snapPoint === "75%" ? 0.75 : 0.9);
 
   useEffect(() => {
     if (visible) {
@@ -134,7 +138,7 @@ const CustomModal = ({
               </AnimatedPressable>
             </GestureDetector>
 
-            <Pressable className="flex-1 w-full">{children}</Pressable>
+            <Pressable className="flex-1 w-full z-50">{children}</Pressable>
           </AnimatedPressable>
         </AnimatedPressable>
       </GestureHandlerRootView>

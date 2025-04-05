@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import { RefreshControl, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import TruckInfoCard from "@/components/cards/truckInfoCard";
@@ -10,6 +10,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import TableList from "@/components/truck/tableList";
 import CustomModal from "@/components/common/customModal";
 import { ManifestWithCompanyName } from "@/types";
+import { TruckBottomSheetModal } from "@/components/truck/truckBottomSheetModal";
 
 export default function App() {
   const {
@@ -21,6 +22,15 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [modalData, setModalData] = useState<ManifestWithCompanyName[]>([]);
+
+  const [refreshing, setRefreshing] = useState(false); // State for refresh control
+
+  // Handle refresh
+  const handleRefresh = async () => {
+    setRefreshing(true); // Start refreshing
+    await fetchTrucksWithActiveManifests(db); // Fetch new data
+    setRefreshing(false); // Stop refreshing
+  };
 
   // Memoized filtered trucks
   const filteredTrucks = useMemo(() => {
@@ -67,9 +77,14 @@ export default function App() {
   return (
     <View className="flex-1 w-full h-full">
       <CustomSearchBar search={search} setSearch={setSearch} />
-      <AddNewButton route="/trucks/new" text="Truck" />
+      <View className="px-1">
+        <AddNewButton route="/trucks/new" text="Truck" />
+      </View>
       <FlashList
         className="mb-1"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
         data={filteredTrucks}
         renderItem={({ item }) => (
           <TruckInfoCard toggleTruckDetails={toggleModal} truck={item} />
@@ -85,36 +100,3 @@ export default function App() {
     </View>
   );
 }
-
-interface TruckBottomSheetModalProps {
-  isVisible: boolean;
-  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  modalData: ManifestWithCompanyName[];
-}
-
-const TruckBottomSheetModal = memo(
-  ({ isVisible, modalData, setIsVisible }: TruckBottomSheetModalProps) => {
-    const handleClose = useCallback(() => setIsVisible(false), [setIsVisible]);
-
-    return (
-      <View>
-        <CustomModal
-          backdropOpacity={0.7}
-          visible={isVisible}
-          key="trucks"
-          onClose={handleClose}
-        >
-          <TableList
-            rows={modalData}
-            tableRowkeys={["manifestId", "companyName"]}
-            columns={["Manifest No.", "Company Name"]}
-            key="tablelist"
-          />
-        </CustomModal>
-      </View>
-    );
-  },
-  (prevProps, nextProps) =>
-    prevProps.isVisible === nextProps.isVisible &&
-    prevProps.modalData === nextProps.modalData
-);
