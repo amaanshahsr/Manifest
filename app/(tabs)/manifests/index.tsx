@@ -1,7 +1,6 @@
-import AddNewButton from "@/components/common/addNewButton";
 import ManifestInfoCard from "@/components/cards/manifestInfoCard";
 import { useManifestStore } from "@/store/useManifestStore";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useRef, useState } from "react";
@@ -19,12 +18,17 @@ import { Manifest } from "@/db/schema";
 import { ManifestStatus } from "@/types";
 import CustomModal from "@/components/common/customModal";
 import { Pressable } from "react-native-gesture-handler";
+import PageHeader from "@/components/common/pageHeader";
+import { AddTruckButton } from "@/components/truck/addTruckButton";
+import CustomSearchBar from "@/components/common/searchBar";
 
 const Manifests = () => {
   const db = useSQLiteContext();
 
   const { loading, manifestsSortedByCompany, fetchManifestsSortedByCompany } =
     useManifestStore();
+
+  const [search, setSearch] = useState("");
 
   const [
     filteredManifestsSortedByCompany,
@@ -117,7 +121,7 @@ const Manifests = () => {
   ) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
-        <AddNewButton route="/manifests/new" text="Manifest" />
+        {/* <AddNewButton route="/manifests/new" text="Manifest" /> */}
       </View>
     );
   }
@@ -126,10 +130,22 @@ const Manifests = () => {
     <ActivityIndicator />
   ) : (
     <View className="flex-1 w-full relative ">
-      <AddNewButton route="/manifests/new" text="Manifest" />
+      <PageHeader
+        title="Manifests"
+        headerRightItem={<AddTruckButton route="/manifests/new" />}
+      >
+        <View className="flex flex-row mt-5 mb-2 gap-3">
+          <CustomSearchBar
+            search={search}
+            setSearch={setSearch}
+            placeholder="Search Manifests"
+            toggleFilter={() => setisVisible(true)}
+          />
+        </View>
+      </PageHeader>
       <View>
         <CustomModal
-          snapPoint="75%"
+          snapPoint="50%"
           visible={isVisible}
           onClose={() => setisVisible(false)}
         >
@@ -298,10 +314,7 @@ const Manifests = () => {
         data={filteredManifestsSortedByCompany}
         renderItem={({ item }) => {
           return typeof item === "string" ? (
-            <StickyHeader
-              title={item}
-              onFilterPress={() => setisVisible(true)}
-            />
+            <StickyHeader title={item} />
           ) : (
             <ManifestInfoCard manifest={item} />
           );

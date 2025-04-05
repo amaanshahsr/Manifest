@@ -1,4 +1,3 @@
-import AddNewButton from "@/components/common/addNewButton";
 import CustomModal from "@/components/common/customModal";
 import CustomBottomSheetModal, {
   TestFlashList,
@@ -10,6 +9,8 @@ import { CompanyWithActiveManifests } from "@/types";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, Button, Modal } from "react-native";
+import PageHeader from "@/components/common/pageHeader";
+import { AddTruckButton } from "@/components/truck/addTruckButton";
 
 const Companies = () => {
   const [search, setSearch] = useState("");
@@ -48,18 +49,20 @@ const Companies = () => {
   ) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
-        <AddNewButton text="Company" route="/companies/new" />
+        {/* <AddNewButton text="Company" route="/companies/new" /> */}
       </View>
     );
   }
   return (
     <View className=" flex-1 w-full h-full">
-      {/* <Button
-        title="asdjna"
-        onPress={() => bottomSheetModalRef?.current?.present()}
-      /> */}
-      <CustomSearchBar search={search} setSearch={setSearch} />
-      <AddNewButton text="Company" route="/companies/new" />
+      <PageHeader
+        title="Companies"
+        headerRightItem={<AddTruckButton route="/companies/new" />}
+      >
+        <View className="flex flex-row mt-5 mb-2">
+          <CustomSearchBar search={search} setSearch={setSearch} />
+        </View>
+      </PageHeader>
       <ListComponent
         handleModalOpen={handleModalOpen}
         comapaniesWithActiveManifests={comapaniesWithActiveManifests}

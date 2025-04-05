@@ -13,7 +13,7 @@ export const AddTruckButton = React.memo(({ route }: AddNewButtonProps) => {
 
   return (
     <Pressable
-      onPress={() => router?.push("/trucks/new")}
+      onPress={() => router?.push(route)}
       className="p-3 bg-neutral-800 rounded-full flex items"
     >
       <MaterialIcons name="post-add" size={20} color="white" />

@@ -130,7 +130,7 @@ const CustomModal = ({
           <AnimatedPressable
             style={[modalStyle, { height: modalHeight }]}
             onPressIn={(e) => e?.stopPropagation()}
-            className="w-[98%] bottom-0 absolute  flex-1  bg-white items-center rounded-t-2xl "
+            className="w-[98%] bottom-0 absolute  flex-1  bg-white items-center rounded-2xl "
           >
             <GestureDetector gesture={panGesture} touchAction="pan-y">
               <AnimatedPressable className="p-4 flex items-center w-full  justify-center">

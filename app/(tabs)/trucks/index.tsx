@@ -12,7 +12,6 @@ import SkeletonLoader from "@/components/common/skeletonLoader";
 import TruckInfoCard from "@/components/cards/truckInfoCard";
 import CustomSearchBar from "@/components/common/searchBar";
 import { useTruckStore } from "@/store/useTruckStore";
-import AddNewButton from "@/components/common/addNewButton";
 import { useSQLiteContext } from "expo-sqlite";
 import TableList from "@/components/truck/tableList";
 import CustomModal from "@/components/common/customModal";
@@ -82,7 +81,7 @@ export default function App() {
   if (!trucks || trucks.length === 0) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
-        <AddNewButton route="/trucks/new" text="Truck" />
+        {/* <AddNewButton route="/trucks/new" text="Truck" /> */}
       </View>
     );
   }
