@@ -1,5 +1,12 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { RefreshControl, View } from "react-native";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
+import { RefreshControl, View, Text, TextInput, Pressable } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import TruckInfoCard from "@/components/cards/truckInfoCard";
@@ -11,6 +18,12 @@ import TableList from "@/components/truck/tableList";
 import CustomModal from "@/components/common/customModal";
 import { ManifestWithCompanyName } from "@/types";
 import { TruckBottomSheetModal } from "@/components/truck/truckBottomSheetModal";
+import { router, useNavigation, useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import ScreenHeader from "@/components/common/pageHeader";
+import PageHeader from "@/components/common/pageHeader";
+import { Entypo, Ionicons } from "@expo/vector-icons";
+import { AddTruckButton } from "@/components/truck/addTruckButton";
 
 export default function App() {
   const {
@@ -75,11 +88,20 @@ export default function App() {
   }
 
   return (
-    <View className="flex-1 w-full h-full">
-      <CustomSearchBar search={search} setSearch={setSearch} />
-      <View className="px-1">
-        <AddNewButton route="/trucks/new" text="Truck" />
-      </View>
+    <View className="flex-1 w-full h-full bg-neutral-50">
+      <PageHeader
+        title="Trucks"
+        headerRightItem={<AddTruckButton route="/trucks/new" />}
+      >
+        <View className="flex flex-row mt-5 mb-2">
+          <CustomSearchBar
+            search={search}
+            setSearch={setSearch}
+            placeholder="Search Trucks"
+          />
+        </View>
+      </PageHeader>
+
       <FlashList
         className="mb-1"
         refreshControl={

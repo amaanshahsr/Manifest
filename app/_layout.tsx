@@ -11,6 +11,7 @@ import { SQLiteProvider } from "expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "../drizzle/migrations";
 import { drizzle } from "drizzle-orm/expo-sqlite";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const expo = SQLite.openDatabaseSync("data.db");
 const db = drizzle(expo);

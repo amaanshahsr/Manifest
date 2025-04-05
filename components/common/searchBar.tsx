@@ -15,23 +15,24 @@ const CustomSearchBar: React.FC<SearchBarProps> = memo(
     }, [setSearch]);
 
     return (
-      <View className="py-2 mx-6">
-        <View style={{ elevation: 4 }} className="relative min-h-14 rounded-lg">
-          <TextInput
-            placeholder={placeholder}
-            className="border-[0.7px] relative rounded-lg p-4 h-14 border-zinc-300 bg-white placeholder:text-gray-400 font-geistMedium"
-            onChangeText={setSearch}
-            value={search}
-          />
-          <View className="absolute top-1/4 right-3">
-            {search?.length ? (
-              <Pressable onPress={handleClearSearch}>
-                <AntDesign name="closecircle" size={24} color="black" />
-              </Pressable>
-            ) : (
-              <Ionicons name="search" size={24} color="black" />
-            )}
-          </View>
+      <View
+        style={{ elevation: 2 }}
+        className="relative flex-1 min-h-14 rounded-lg"
+      >
+        <TextInput
+          placeholder={placeholder}
+          className="relative rounded-lg p-3 h-14  bg-neutral-200 placeholder:text-neutral-600 font-geistMedium"
+          onChangeText={setSearch}
+          value={search}
+        />
+        <View className="absolute top-1/4 right-3">
+          {search?.length ? (
+            <Pressable onPress={handleClearSearch}>
+              <AntDesign name="closecircle" size={24} color="#525252" />
+            </Pressable>
+          ) : (
+            <Ionicons name="search" size={24} color="#525252" />
+          )}
         </View>
       </View>
     );

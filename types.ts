@@ -49,6 +49,7 @@ export type ManifestWithCompanies = {
 export interface CompanyWithActiveManifests extends Company {
   manifests: Manifest[];
 }
+export type ValidRoutes = "/trucks/new" | "/companies/new" | "/manifests/new";
 
 export type UnassignedManifests =
   | string

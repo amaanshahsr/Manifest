@@ -1,4 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
+import { ValidRoutes } from "@/types";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Text } from "react-native";
@@ -9,7 +10,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-type ValidRoutes = "/trucks/new" | "/companies/new" | "/manifests/new";
 interface AddNewButtonProps {
   text: string;
   route: ValidRoutes;
@@ -45,7 +45,7 @@ const AddNewButton = ({ text, route }: AddNewButtonProps) => {
       >
         <Text className="text-white font-geistSemiBold ">Add New {text}</Text>
         <Text>
-          <Ionicons name="add-circle-sharp" size={18} color="white" />
+          <MaterialIcons name="post-add" size={20} color="black" />
         </Text>
       </Animated.View>
     </Pressable>

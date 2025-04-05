@@ -50,7 +50,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
         shadowRadius: 4,
         elevation: 3,
       }}
-      className="bg-white h-auto w-[92.5%] mt-5 rounded-xl relative p-6 mx-auto"
+      className=" bg-zinc-50   h-auto w-[92.5%] mt-5 rounded-xl relative p-6 mx-auto"
     >
       {/* Registration Number */}
       <View className="flex-row justify-between items-center">
@@ -95,11 +95,6 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
           <Text className="font-geistSemiBold text-sm text-neutral-700">
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </Text>
-          {/* {manifestCount > 0 ? (
-            <Animated.View style={[animatedRotateStyle]}>
-              <Feather name="chevron-up" size={20} color="#1e293b" />
-            </Animated.View>
-          ) : null} */}
         </View>
       </Pressable>
       <View className="w-full border-t border-zinc-300 mt-5">

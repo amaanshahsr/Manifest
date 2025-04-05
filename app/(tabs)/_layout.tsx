@@ -79,7 +79,12 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 }
 
 function MyTabs() {
-  return <Tabs tabBar={(props) => <MyTabBar {...props} />}></Tabs>;
+  return (
+    <Tabs
+      screenOptions={{ headerShown: false }}
+      tabBar={(props) => <MyTabBar {...props} />}
+    ></Tabs>
+  );
 }
 
 export default MyTabs;
