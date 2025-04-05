@@ -21,6 +21,7 @@ import { Pressable } from "react-native-gesture-handler";
 import PageHeader from "@/components/common/pageHeader";
 import { AddTruckButton } from "@/components/truck/addTruckButton";
 import CustomSearchBar from "@/components/common/searchBar";
+import NoResultsFound from "@/components/common/noResultsFound";
 
 const Manifests = () => {
   const db = useSQLiteContext();
@@ -143,9 +144,34 @@ const Manifests = () => {
           />
         </View>
       </PageHeader>
+
+      <FlashList
+        // stickyHeaderIndices={manifestsSortedByCompany?.companyPositions?.map((item)=>item?.)}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+        className="mb-1"
+        ListEmptyComponent={
+          <View className="flex-1 my-5">
+            <NoResultsFound text="No manifests found matching the active filters." />
+          </View>
+        }
+        data={filteredManifestsSortedByCompany}
+        renderItem={({ item }) => {
+          return typeof item === "string" ? (
+            <StickyHeader title={item} />
+          ) : (
+            <ManifestInfoCard manifest={item} />
+          );
+        }}
+        estimatedItemSize={1000}
+        keyExtractor={(item) =>
+          typeof item === "string" ? item : item?.id?.toString()
+        }
+      />
       <View>
         <CustomModal
-          snapPoint="50%"
+          snapPoint="75%"
           visible={isVisible}
           onClose={() => setisVisible(false)}
         >
@@ -161,8 +187,8 @@ const Manifests = () => {
             </View>
 
             {/* Companies Filter */}
-            <View className="w-full bg-gray-100 rounded-lg p-4 shadow-sm">
-              <Text className="font-geistMedium text-lg text-gray-800 mb-3">
+            <View className="w-full bg-neutral-950 rounded-lg p-4 shadow-sm">
+              <Text className="font-geistMedium text-lg text-white mb-3">
                 Companies
               </Text>
               <View className="flex flex-row flex-wrap gap-2">
@@ -180,15 +206,15 @@ const Manifests = () => {
                     <View
                       className={`border px-4 py-2 rounded-full ${
                         !selectedCompanies?.includes(company)
-                          ? "bg-black text-white"
+                          ? "bg-white "
                           : "border-gray-500"
                       }`}
                     >
                       <Text
                         className={`text-base font-geistRegular ${
                           !selectedCompanies?.includes(company)
-                            ? "text-white"
-                            : "text-black"
+                            ? "text-black"
+                            : "text-white"
                         }`}
                       >
                         {company}
@@ -292,38 +318,6 @@ const Manifests = () => {
           </View>
         </CustomModal>
       </View>
-      <FlashList
-        // stickyHeaderIndices={manifestsSortedByCompany?.companyPositions?.map((item)=>item?.)}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-        className="mb-1"
-        ListEmptyComponent={
-          <View className=" flex-1 items-center justify-center  p-5 bg-red-500">
-            <AntDesign
-              name="folderopen"
-              size={40}
-              color="#999"
-              className="mb-2"
-            />
-            <Text className="text-lg font-medium text-gray-500 text-center">
-              No manifests found based on active filters.
-            </Text>
-          </View>
-        }
-        data={filteredManifestsSortedByCompany}
-        renderItem={({ item }) => {
-          return typeof item === "string" ? (
-            <StickyHeader title={item} />
-          ) : (
-            <ManifestInfoCard manifest={item} />
-          );
-        }}
-        estimatedItemSize={1000}
-        keyExtractor={(item) =>
-          typeof item === "string" ? item : item?.id?.toString()
-        }
-      />
     </View>
   );
 };

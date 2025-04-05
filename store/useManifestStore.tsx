@@ -89,7 +89,6 @@ export const useManifestStore = create<ManifestState>((set) => ({
         .select()
         .from(manifests)
         .leftJoin(companies, eq(manifests.companyId, companies.id)) // Join companies table
-        .limit(1000)
         .execute();
 
       // Pass  the result for formatting used in flashlist

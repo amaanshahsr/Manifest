@@ -1,15 +1,10 @@
 import { FlashList } from "@shopify/flash-list";
 import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 import { RefreshControl, Text, View } from "react-native";
 import { CompanyInfoCard } from "../cards/companyInfoCard";
-import {
-  CompanyWithActiveManifests,
-  ManifestWithAssignedVehicleRegistration,
-} from "@/types";
-import AddNewButton from "../common/addNewButton";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import CustomBottomSheetModal from "../common/bottomSheetModal";
+import { CompanyWithActiveManifests } from "@/types";
+import NoResultsFound from "../common/noResultsFound";
 
 interface ListComponentProps {
   fetchCompanyWithActiveManifests: (
@@ -61,7 +56,7 @@ export const ListComponent = ({
       ListEmptyComponent={() => {
         return (
           <View className="w-full h-full bg-green-700">
-            <Text>dnajnsdjnaksdjnaksnj</Text>
+            <NoResultsFound text="No Companies found." />
           </View>
         );
       }}

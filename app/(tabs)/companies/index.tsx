@@ -1,14 +1,12 @@
 import CustomModal from "@/components/common/customModal";
-import CustomBottomSheetModal, {
-  TestFlashList,
-} from "@/components/common/bottomSheetModal";
+import CustomBottomSheetModal from "@/components/common/bottomSheetModal";
 import CustomSearchBar from "@/components/common/searchBar";
 import { ListComponent } from "@/components/manifest/listComponent";
 import { useCompanyStore } from "@/store/useCompanyStore";
 import { CompanyWithActiveManifests } from "@/types";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, Button, Modal } from "react-native";
+import { View, Text } from "react-native";
 import PageHeader from "@/components/common/pageHeader";
 import { AddTruckButton } from "@/components/truck/addTruckButton";
 

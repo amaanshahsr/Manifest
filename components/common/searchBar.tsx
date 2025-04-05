@@ -30,6 +30,7 @@ const CustomSearchBar: React.FC<SearchBarProps> = memo(
         <View className="absolute top-1/4 right-3 flex flex-row gap-2 items-center">
           {toggleFilter && (
             <Pressable
+              hitSlop={20}
               onPress={(e) => {
                 e?.stopPropagation();
                 toggleFilter();
@@ -40,10 +41,7 @@ const CustomSearchBar: React.FC<SearchBarProps> = memo(
           )}
 
           {search?.length ? (
-            <Pressable
-              className=" border-l border-neutral-600 pl-2"
-              onPress={handleClearSearch}
-            >
+            <Pressable className="  pl-2" onPress={handleClearSearch}>
               <AntDesign name="closecircle" size={24} color="#525252" />
             </Pressable>
           ) : (

@@ -1,8 +1,8 @@
 import React from "react";
 import { View } from "react-native";
 
-const FilterButton = () => {
+const FilterModal = () => {
   return <View></View>;
 };
 
-export default FilterButton;
+export default FilterModal;

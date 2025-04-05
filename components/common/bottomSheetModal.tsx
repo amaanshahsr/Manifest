@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
 import TableList from "../truck/tableList";
-import {
-  CompanyWithActiveManifests,
-  GenericRecord,
-  ManifestWithCompanyName,
-  TrucksWithActiveManifests,
-} from "@/types";
+import { CompanyWithActiveManifests, GenericRecord } from "@/types";
 import { useTruckStore } from "@/store/useTruckStore";
 import { Manifest } from "@/db/schema";
-import { View, Text, Button, StyleSheet } from "react-native";
-import { useSharedValue } from "react-native-reanimated";
+import { View } from "react-native";
 import CustomModal from "./customModal";
-import { FlashList } from "@shopify/flash-list";
-import { ScrollView } from "react-native-gesture-handler";
 
 interface CustomBottomSheetModalProps {
   data: CompanyWithActiveManifests | null;
@@ -82,62 +74,3 @@ const CustomBottomSheetModal = ({
 };
 
 export default CustomBottomSheetModal;
-
-export const TestFlashList = () => {
-  // Generate 100 test items
-  const generateTestData = () => {
-    return Array.from({ length: 100 }, (_, index) => ({
-      id: index + 1,
-      title: `Item ${index + 1}`,
-      description: `This is item number ${index + 1} in the list`,
-    }));
-  };
-  const data = generateTestData();
-
-  const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-    </View>
-  );
-  return (
-    <ScrollView className="flex-1 w-full h-16 bg-green-500">
-      <FlashList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        estimatedItemSize={80} // Helps with scroll performance
-        showsVerticalScrollIndicator={false}
-      />
-    </ScrollView>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    display: "flex",
-    alignItems: "center",
-  },
-  itemContainer: {
-    backgroundColor: "#fff",
-    padding: 16,
-    marginBottom: 8,
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  description: {
-    fontSize: 14,
-    color: "#666",
-  },
-});
