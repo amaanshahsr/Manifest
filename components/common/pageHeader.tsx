@@ -1,12 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
-import React, { ReactElement, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { View, Text, StatusBar, Platform, Pressable } from "react-native";
-// import { Pressable } from "react-native-gesture-handler";
 
 interface PageHeaderProps {
   title: string;
-  headerRightItem?: React.ReactNode; // Most flexible
+  headerRightItem?: React.ReactNode;
   children?: ReactNode;
 }
 

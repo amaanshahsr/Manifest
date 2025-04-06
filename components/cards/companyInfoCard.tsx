@@ -91,25 +91,21 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
           </Text>
         </Pressable>
       </View>
-      <TouchableOpacity
-        onPress={() => handleModalOpen(company)}
-        className="flex flex-row  gap-3 items-center justify-between"
-      >
+      <Pressable className="flex flex-row  gap-3 items-center justify-between">
         <ManifestCount count={activeManifestCount} />
         {activeManifestCount > 0 ? (
           <TouchableOpacity
-            // onPress={spinChevron}
+            onPress={() => handleModalOpen(company)}
             activeOpacity={0.7}
-            className="flex flex-row items-center  py-2 px-3  rounded-full bg-gray-200"
+            className="flex flex-row items-center gap-2 py-2 px-3  rounded-full bg-neutral-900"
           >
-            <Text
-              className={`text-neutral-800 font-geistSemiBold text-base ${""}`}
-            >
+            <Text className={`text-white font-geistSemiBold text-base ${""}`}>
               View
             </Text>
+            <Feather name="arrow-up-right" size={20} color="white" />
           </TouchableOpacity>
         ) : null}
-      </TouchableOpacity>
+      </Pressable>
       {/* {isExpanded?
     
       < <TableList

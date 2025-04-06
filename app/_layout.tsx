@@ -76,14 +76,16 @@ const RootLayout = () => {
           options={{ enableChangeListener: true }}
           useSuspense
         >
-          <Stack>
-            <Stack.Screen
-              name="(tabs)"
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack>
+          <SafeAreaProvider>
+            <Stack>
+              <Stack.Screen
+                name="(tabs)"
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </SafeAreaProvider>
         </SQLiteProvider>
         <StatusBar style="inverted" />
       </Suspense>

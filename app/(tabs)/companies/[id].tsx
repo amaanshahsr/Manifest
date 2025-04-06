@@ -4,13 +4,7 @@ import CustomModal from "@/components/common/customModal";
 import { View } from "react-native";
 
 const Id = () => {
-  return (
-    <View>
-      <CustomModal visible={true} onClose={() => {}}>
-        <CompanyForm />
-      </CustomModal>
-    </View>
-  );
+  return <CompanyForm />;
 };
 
 export default Id;

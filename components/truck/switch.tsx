@@ -46,7 +46,6 @@ export const Switch = <T extends string>({
       <Animated.View
         style={[
           animatedLeftStyle,
-
           {
             width: width,
             shadowColor: "#000",

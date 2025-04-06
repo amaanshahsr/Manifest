@@ -1,22 +1,9 @@
-import { manifests, Truck } from "@/db/schema";
 import { ManifestWithCompanyName, TrucksWithActiveManifests } from "@/types";
-import { capitalizeWord } from "@/utils/utils";
 import Feather from "@expo/vector-icons/Feather";
-import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/expo-sqlite";
 import { Route, useRouter } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Text, Pressable } from "react-native";
-import Accordion from "../truck/tableList";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
 
 interface TruckInfoCardProps {
   truck: TrucksWithActiveManifests;
@@ -30,17 +17,6 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
   const router = useRouter();
   const manifestCount = manifests?.length;
 
-  // Shared value for rotation angle
-  const rotateValue = useSharedValue(180);
-
-  const spinChevron = () => {
-    toggleTruckDetails(manifests);
-    rotateValue.value = withTiming(
-      rotateValue?.value === 180 ? 0 : 180, // Toggle between 0 and 180 degrees
-      { duration: 150, easing: Easing.out(Easing.quad) } // Snappy transition
-    );
-  };
-
   return (
     <View
       style={{
@@ -50,7 +26,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
         shadowRadius: 4,
         elevation: 3,
       }}
-      className=" bg-zinc-50   h-auto w-[92.5%] mt-5 rounded-xl relative p-6 mx-auto"
+      className=" bg-zinc-50 h-auto w-[92.5%] mt-5 rounded-xl relative p-6 mx-auto"
     >
       {/* Registration Number */}
       <View className="flex-row justify-between items-center">
@@ -66,7 +42,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
           }
         >
           <Text>
-            <Feather name="edit" size={24} color="#1e293b" /> {/* Edit Icon */}
+            <Feather name="edit" size={24} color="#1e293b" />
           </Text>
         </Pressable>
       </View>
@@ -77,9 +53,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
       </Text>
 
       <Pressable
-        onPress={() => {
-          spinChevron();
-        }}
+        onPress={() => toggleTruckDetails(manifests)}
         className="flex flex-row justify-between items-center pt-4"
       >
         <Text className="font-geistMedium text-base text-neutral-800">

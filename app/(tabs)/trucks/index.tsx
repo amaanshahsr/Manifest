@@ -1,27 +1,14 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from "react";
-import { RefreshControl, View, Text, TextInput, Pressable } from "react-native";
+import React, { useCallback, useLayoutEffect, useMemo, useState } from "react";
+import { RefreshControl, View, Text } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import TruckInfoCard from "@/components/cards/truckInfoCard";
 import CustomSearchBar from "@/components/common/searchBar";
 import { useTruckStore } from "@/store/useTruckStore";
 import { useSQLiteContext } from "expo-sqlite";
-import TableList from "@/components/truck/tableList";
-import CustomModal from "@/components/common/customModal";
 import { ManifestWithCompanyName } from "@/types";
 import { TruckBottomSheetModal } from "@/components/truck/truckBottomSheetModal";
-import { router, useNavigation, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ScreenHeader from "@/components/common/pageHeader";
 import PageHeader from "@/components/common/pageHeader";
-import { Entypo, Ionicons } from "@expo/vector-icons";
 import { AddTruckButton } from "@/components/truck/addTruckButton";
 
 export default function App() {
@@ -61,27 +48,14 @@ export default function App() {
     setModalData(data);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     fetchTrucksWithActiveManifests(db);
   }, []);
 
-  if (loading) {
-    return (
-      <View className="flex-1 w-full h-full">
-        <FlashList
-          data={Array(10).fill(null)}
-          renderItem={() => <SkeletonLoader />}
-          estimatedItemSize={10}
-          keyExtractor={(_, index) => `skeleton-${index}`}
-        />
-      </View>
-    );
-  }
-
-  if (!trucks || trucks.length === 0) {
+  if (!trucks || trucks?.length === 0) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
-        {/* <AddNewButton route="/trucks/new" text="Truck" /> */}
+        <AddTruckButton route="/trucks/new" />
       </View>
     );
   }
@@ -100,9 +74,7 @@ export default function App() {
           />
         </View>
       </PageHeader>
-
       <FlashList
-        className="mb-1"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }

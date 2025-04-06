@@ -40,7 +40,8 @@ const Manifests = () => {
   }, []);
 
   useEffect(() => {
-    setFilteredmanifestsSortedByCompany(manifestsSortedByCompany?.result);
+    // setFilteredmanifestsSortedByCompany(manifestsSortedByCompany?.result);
+    handleFiltered();
   }, [manifestsSortedByCompany?.result]);
 
   const [refreshing, setRefreshing] = useState(false); // State for refresh control

@@ -4,13 +4,7 @@ import React from "react";
 import { View } from "react-native";
 
 const New = () => {
-  return (
-    <View>
-      <CustomModal visible={true} onClose={() => {}}>
-        <CompanyForm />
-      </CustomModal>
-    </View>
-  );
+  return <CompanyForm />;
 };
 
 export default New;
