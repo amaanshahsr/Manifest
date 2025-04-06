@@ -29,7 +29,7 @@ export const useCompanyStore = create<CompanyState>((set) => ({
       const result = await drizzleDb
         ?.select()
         .from(companies)
-        .leftJoin?.(
+        .innerJoin?.(
           manifests,
           and(
             eq(companies.id, manifests.companyId), // Join condition

@@ -16,7 +16,7 @@ import StickyHeader from "@/components/manifest/stickyHeader";
 
 import { Manifest } from "@/db/schema";
 import { ManifestStatus } from "@/types";
-import CustomModal from "@/components/common/customModal";
+import CustomModal, { ModalRef } from "@/components/common/customModal";
 import { Pressable } from "react-native-gesture-handler";
 import PageHeader from "@/components/common/pageHeader";
 import { AddTruckButton } from "@/components/truck/addTruckButton";
@@ -53,7 +53,7 @@ const Manifests = () => {
     setRefreshing(false); // Stop refreshing
   };
 
-  const [isVisible, setisVisible] = useState(false);
+  const modalRef = useRef<ModalRef>(null);
 
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [status, setStatus] = useState<ManifestStatus[]>([]);
@@ -104,7 +104,7 @@ const Manifests = () => {
     console.log("finalArray", finalArray);
 
     setFilteredmanifestsSortedByCompany(finalArray);
-    setisVisible(false);
+    modalRef?.current?.close();
   };
 
   // console.log("manifestss", manifestsSortedByCompany);
@@ -141,7 +141,7 @@ const Manifests = () => {
             search={search}
             setSearch={setSearch}
             placeholder="Search Manifests"
-            toggleFilter={() => setisVisible(true)}
+            toggleFilter={() => modalRef?.current?.open()}
           />
         </View>
       </PageHeader>
@@ -173,8 +173,9 @@ const Manifests = () => {
       <View>
         <CustomModal
           snapPoint="75%"
-          visible={isVisible}
-          onClose={() => setisVisible(false)}
+          // visible={isVisible}
+          ref={modalRef}
+          // onClose={() => setisVisible(false)}
         >
           <View className="flex-1 items-center z-50 px-5 py-6 bg-white rounded-t-3xl shadow-lg">
             {/* Header */}
@@ -182,7 +183,7 @@ const Manifests = () => {
               <Text className="font-geistSemiBold text-2xl text-gray-900">
                 Filters
               </Text>
-              <Pressable onPress={() => setisVisible(false)}>
+              <Pressable onPress={() => modalRef?.current?.close()}>
                 <AntDesign name="closecircle" size={24} color="black" />
               </Pressable>
             </View>
@@ -275,7 +276,7 @@ const Manifests = () => {
             >
               {/* Cancel Button */}
               <Pressable
-                onPress={() => setisVisible(false)}
+                onPress={() => modalRef?.current?.close()}
                 style={{
                   flex: 1,
                   backgroundColor: "#E5E5E5",

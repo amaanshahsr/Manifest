@@ -1,5 +1,11 @@
-import React, { useCallback, useLayoutEffect, useMemo, useState } from "react";
-import { RefreshControl, View, Text } from "react-native";
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { RefreshControl, View, Text, Pressable } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import TruckInfoCard from "@/components/cards/truckInfoCard";
@@ -7,9 +13,14 @@ import CustomSearchBar from "@/components/common/searchBar";
 import { useTruckStore } from "@/store/useTruckStore";
 import { useSQLiteContext } from "expo-sqlite";
 import { ManifestWithCompanyName } from "@/types";
-import { TruckBottomSheetModal } from "@/components/truck/truckBottomSheetModal";
 import PageHeader from "@/components/common/pageHeader";
 import { AddTruckButton } from "@/components/truck/addTruckButton";
+import TruckForm from "@/components/forms/truckForm";
+import NoResultsFound from "@/components/common/noResultsFound";
+import TruckBottomSheetModal, {
+  TruckModalRef,
+} from "@/components/truck/truckBottomSheetModal";
+import { ModalRef } from "@/components/common/customModal";
 
 export default function App() {
   const {
@@ -19,8 +30,7 @@ export default function App() {
   } = useTruckStore();
   const db = useSQLiteContext();
   const [search, setSearch] = useState("");
-  const [isVisible, setIsVisible] = useState(false);
-  const [modalData, setModalData] = useState<ManifestWithCompanyName[]>([]);
+  const modalRef = useRef<TruckModalRef>(null);
 
   const [refreshing, setRefreshing] = useState(false); // State for refresh control
 
@@ -44,8 +54,7 @@ export default function App() {
 
   // Stable callback for modal toggle
   const toggleModal = useCallback((data: ManifestWithCompanyName[]) => {
-    setIsVisible(true);
-    setModalData(data);
+    modalRef?.current?.open(data);
   }, []);
 
   useLayoutEffect(() => {
@@ -64,7 +73,12 @@ export default function App() {
     <View className="flex-1 w-full h-full bg-neutral-50">
       <PageHeader
         title="Trucks"
-        headerRightItem={<AddTruckButton route="/trucks/new" />}
+        headerRightItem={
+          <AddTruckButton route="/trucks/new" />
+          // <Pressable onPress={() => setIsAddVisible(true)}>
+          //   <Text className="bg-neutral-700 p-3">Helladnkja</Text>
+          // </Pressable>
+        }
       >
         <View className="flex flex-row mt-5 mb-2">
           <CustomSearchBar
@@ -75,6 +89,7 @@ export default function App() {
         </View>
       </PageHeader>
       <FlashList
+        ListEmptyComponent={<NoResultsFound text="No Trucks found." />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
@@ -85,11 +100,7 @@ export default function App() {
         estimatedItemSize={300}
         keyExtractor={(truck) => truck.id.toString()}
       />
-      <TruckBottomSheetModal
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
-        modalData={modalData}
-      />
+      <TruckBottomSheetModal ref={modalRef} />
     </View>
   );
 }

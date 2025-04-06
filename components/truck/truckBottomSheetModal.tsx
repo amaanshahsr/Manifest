@@ -1,30 +1,34 @@
 import { ManifestWithCompanyName } from "@/types";
-import { memo, useCallback } from "react";
+import { memo, forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { View, Text } from "react-native";
-import CustomModal from "../common/customModal";
+import CustomModal, { ModalRef } from "../common/customModal";
 import TableList from "./tableList";
 import { Pressable } from "react-native-gesture-handler";
 
-interface TruckBottomSheetModalProps {
-  isVisible: boolean;
-  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  modalData: ManifestWithCompanyName[];
-}
+export type TruckModalRef = {
+  open: (data: ManifestWithCompanyName[]) => void;
+  close: () => void;
+};
 
-export const TruckBottomSheetModal = memo(
-  ({ isVisible, modalData, setIsVisible }: TruckBottomSheetModalProps) => {
-    const handleClose = useCallback(() => setIsVisible(false), [setIsVisible]);
+const TruckBottomSheetModal = memo(
+  forwardRef<TruckModalRef>((_, ref) => {
+    const [modal, setmodal] = useState<ManifestWithCompanyName[]>([]);
+    const modalRef = useRef<ModalRef>(null);
+
+    // Expose open/close methods and pass the data for the table as argument through ref
+    useImperativeHandle(ref, () => ({
+      open: (data) => {
+        setmodal(data);
+        modalRef.current?.open();
+      },
+      close: () => modalRef.current?.close(),
+    }));
 
     return (
       <View>
-        <CustomModal
-          backdropOpacity={0.7}
-          visible={isVisible}
-          key="trucks"
-          onClose={handleClose}
-        >
+        <CustomModal ref={modalRef} backdropOpacity={0.7} snapPoint="75%">
           <TableList
-            rows={modalData}
+            rows={modal}
             tableRowkeys={["manifestId", "companyName"]}
             columns={["Manifest No.", "Company Name"]}
             key="tablelist"
@@ -32,8 +36,9 @@ export const TruckBottomSheetModal = memo(
         </CustomModal>
       </View>
     );
-  },
-  (prevProps, nextProps) =>
-    prevProps.isVisible === nextProps.isVisible &&
-    prevProps.modalData === nextProps.modalData
+  }),
+  // Simplified memo comparison since there are no props
+  () => true // Always return true to prevent unnecessary re-renders
 );
+
+export default TruckBottomSheetModal;

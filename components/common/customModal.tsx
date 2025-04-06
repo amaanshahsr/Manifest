@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle } from "react";
 import {
   Modal,
   View,
@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Dimensions,
   ViewStyle,
-  DimensionValue,
   Text,
   Pressable,
 } from "react-native";
@@ -16,134 +15,142 @@ import {
   GestureDetector,
 } from "react-native-gesture-handler";
 import Animated, {
-  SlideInUp,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
   interpolateColor,
   runOnJS,
 } from "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 interface CustomModalProps {
-  visible: boolean;
-  onClose: () => void;
   children: React.ReactNode;
   containerStyle?: ViewStyle;
   backdropOpacity?: number;
   snapPoint?: "50%" | "75%" | "90%";
 }
 
-const CustomModal = ({
-  visible,
-  onClose,
-  children,
-  snapPoint = "50%",
-  backdropOpacity = 0.3,
-}: CustomModalProps) => {
-  const translateY = useSharedValue(Dimensions.get("window").height);
-  const progress = useSharedValue(0); // Tracks animation progress (0-1)
+export type ModalRef = {
+  open: () => void;
+  close: () => void;
+};
 
-  const springConfig = {
-    damping: 30,
-    mass: 0.2,
-    stiffness: 300,
-  };
+const CustomModal = forwardRef<ModalRef, CustomModalProps>(
+  (
+    { children, snapPoint = "50%", backdropOpacity = 0.5, containerStyle },
+    ref
+  ) => {
+    const [visible, setVisible] = React.useState(false);
+    const translateY = useSharedValue(Dimensions.get("window").height);
+    const progress = useSharedValue(0);
 
-  const modalHeight =
-    Dimensions.get("window").height *
-    (snapPoint === "50%" ? 0.5 : snapPoint === "75%" ? 0.75 : 0.9);
-
-  useEffect(() => {
-    if (visible) {
-      translateY.value = withSpring(0, springConfig);
-      progress.value = withSpring(1, springConfig);
-    } else {
-      translateY.value = withSpring(
-        Dimensions.get("window").height,
-        springConfig
-      );
-      progress.value = withSpring(0, springConfig);
-    }
-  }, [visible]);
-
-  const modalStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
-
-  // Changed from opacity to background color animation
-  const backdropStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: interpolateColor(
-        progress.value,
-        [0, 1],
-        ["rgba(0,0,0,0)", `rgba(0,0,0,${backdropOpacity})`]
-      ),
+    const springConfig = {
+      damping: 30,
+      mass: 0.2,
+      stiffness: 300,
     };
-  });
 
-  const handleClose = () => {
-    if (visible) {
-      translateY.value = withSpring(modalHeight + 50, springConfig);
-      progress.value = withSpring(0, springConfig);
-    }
-    setTimeout(() => {
-      onClose();
-    }, 200);
-  };
+    const modalHeight =
+      Dimensions.get("window").height *
+      (snapPoint === "50%" ? 0.5 : snapPoint === "75%" ? 0.75 : 0.9);
 
-  const panGesture = Gesture.Pan()
-    .onUpdate((e) => {
-      // Only allow swipe down
-      if (e.translationY > 0) {
-        translateY.value = e.translationY;
-      }
-    })
-    .onEnd((e) => {
-      // If swiped down more than 1/3 of modal height, close
-      if (e.translationY > modalHeight / 5) {
-        translateY.value = withSpring(modalHeight, springConfig);
-        progress.value = withSpring(0, springConfig);
-        runOnJS(onClose)();
-      } else {
-        // Return to original position
+    // Expose open/close methods via ref
+    useImperativeHandle(ref, () => ({
+      open: () => {
+        setVisible(true);
         translateY.value = withSpring(0, springConfig);
+        progress.value = withSpring(1, springConfig);
+      },
+      close: () => {
+        translateY.value = withSpring(modalHeight + 50, springConfig);
+        progress.value = withSpring(0, springConfig);
+        setTimeout(() => setVisible(false), 200);
+      },
+    }));
+
+    useEffect(() => {
+      if (visible) {
+        translateY.value = withSpring(0, springConfig);
+        progress.value = withSpring(1, springConfig);
+      } else {
+        translateY.value = withSpring(
+          Dimensions.get("window").height,
+          springConfig
+        );
+        progress.value = withSpring(0, springConfig);
       }
+    }, [visible]);
+
+    const modalStyle = useAnimatedStyle(() => ({
+      transform: [{ translateY: translateY.value }],
+    }));
+
+    const backdropStyle = useAnimatedStyle(() => {
+      return {
+        backgroundColor: interpolateColor(
+          progress.value,
+          [0, 1],
+          ["rgba(0,0,0,0)", `rgba(0,0,0,${backdropOpacity})`]
+        ),
+      };
     });
 
-  return (
-    <Modal visible={visible} transparent={true} onRequestClose={handleClose}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <AnimatedPressable
-          style={[
-            backdropStyle,
-            {
-              height: Dimensions.get("window").height,
-              width: Dimensions.get("window").width,
-            },
-          ]}
-          onPress={handleClose}
-          className="relative flex bg-green-500  z-50  items-center justify-end "
-        >
-          <AnimatedPressable
-            style={[modalStyle, { height: modalHeight }]}
-            onPressIn={(e) => e?.stopPropagation()}
-            className="w-[98%] bottom-0 absolute  flex-1  bg-white items-center rounded-2xl "
-          >
-            <GestureDetector gesture={panGesture} touchAction="pan-y">
-              <AnimatedPressable className="p-4 flex items-center w-full  justify-center">
-                <Pressable className="w-14 bg-neutral-500 h-[6px] rounded-xl" />
-              </AnimatedPressable>
-            </GestureDetector>
+    const handleClose = () => {
+      translateY.value = withSpring(modalHeight + 50, springConfig);
+      progress.value = withSpring(0, springConfig);
+      setTimeout(() => setVisible(false), 200);
+    };
 
-            <Pressable className="flex-1 w-full z-50">{children}</Pressable>
+    const panGesture = Gesture.Pan()
+      .onUpdate((e) => {
+        if (e.translationY > 0) {
+          translateY.value = e.translationY;
+        }
+      })
+      .onEnd((e) => {
+        if (e.translationY > modalHeight / 5) {
+          translateY.value = withSpring(modalHeight, springConfig);
+          progress.value = withSpring(0, springConfig);
+          runOnJS(setVisible)(false);
+        } else {
+          translateY.value = withSpring(0, springConfig);
+        }
+      });
+
+    return (
+      <Modal visible={visible} transparent={true} onRequestClose={handleClose}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <AnimatedPressable
+            style={[
+              backdropStyle,
+              {
+                height: Dimensions.get("window").height,
+                width: Dimensions.get("window").width,
+              },
+            ]}
+            onPress={handleClose}
+            className="relative flex z-50 items-center justify-end"
+          >
+            <AnimatedPressable
+              style={[modalStyle, { height: modalHeight }, containerStyle]}
+              onPressIn={(e) => e?.stopPropagation()}
+              className="w-[98%] bottom-0 absolute flex-1 bg-white items-center rounded-2xl"
+            >
+              <GestureDetector gesture={panGesture} touchAction="pan-y">
+                <AnimatedPressable className="p-4 flex items-center w-full justify-center">
+                  <Pressable className="w-14 bg-neutral-500 h-[6px] rounded-xl" />
+                </AnimatedPressable>
+              </GestureDetector>
+
+              <Pressable className="flex-1 w-full z-50">{children}</Pressable>
+            </AnimatedPressable>
           </AnimatedPressable>
-        </AnimatedPressable>
-      </GestureHandlerRootView>
-    </Modal>
-  );
-};
+        </GestureHandlerRootView>
+      </Modal>
+    );
+  }
+);
 
 export default CustomModal;

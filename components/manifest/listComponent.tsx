@@ -55,7 +55,7 @@ export const ListComponent = ({
       )}
       ListEmptyComponent={() => {
         return (
-          <View className="w-full h-full bg-green-700">
+          <View className="w-full h-full ">
             <NoResultsFound text="No Companies found." />
           </View>
         );

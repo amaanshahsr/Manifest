@@ -6,7 +6,7 @@ interface SearchBarProps {
   search: string;
   setSearch: (text: string) => void;
   placeholder?: string;
-  toggleFilter?: () => void;
+  toggleFilter?: () => void | (() => void | undefined);
 }
 
 const CustomSearchBar: React.FC<SearchBarProps> = memo(

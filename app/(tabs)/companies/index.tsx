@@ -1,14 +1,17 @@
-import CustomModal from "@/components/common/customModal";
-import CustomBottomSheetModal from "@/components/common/bottomSheetModal";
+import CustomModal, { ModalRef } from "@/components/common/customModal";
+import CustomBottomSheetModal, {
+  CustomBottomSheetModalRef,
+} from "@/components/common/bottomSheetModal";
 import CustomSearchBar from "@/components/common/searchBar";
 import { ListComponent } from "@/components/manifest/listComponent";
 import { useCompanyStore } from "@/store/useCompanyStore";
-import { CompanyWithActiveManifests } from "@/types";
+import { CompanyWithActiveManifests, GenericRecord } from "@/types";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text } from "react-native";
 import PageHeader from "@/components/common/pageHeader";
 import { AddTruckButton } from "@/components/truck/addTruckButton";
+import { useTruckStore } from "@/store/useTruckStore";
 
 const Companies = () => {
   const [search, setSearch] = useState("");
@@ -19,20 +22,42 @@ const Companies = () => {
     fetchCompanyWithActiveManifests,
     comapaniesWithActiveManifests,
   } = useCompanyStore();
+  const { trucksWithActiveManifests, fetchTrucksWithActiveManifests } =
+    useTruckStore();
 
+  const modalRef = useRef<CustomBottomSheetModalRef>(null);
   useEffect(() => {
     fetchCompanyWithActiveManifests(db);
   }, []);
 
   const handleModalOpen = useCallback((data: CompanyWithActiveManifests) => {
-    setIsVisible(true);
-    setModal(data);
+    loadManifestDataIntoModal(data);
   }, []);
 
-  const [isVisible, setIsVisible] = useState(false);
-  const [modal, setModal] = useState<CompanyWithActiveManifests | null>(null);
+  const loadManifestDataIntoModal = (
+    data: CompanyWithActiveManifests | null
+  ) => {
+    if (!trucksWithActiveManifests) {
+      fetchTrucksWithActiveManifests(db)?.then(() => {
+        loadManifestDataIntoModal(data);
+      });
+    }
 
-  // console.log("modamsdasdasda", typeof modal);
+    const truckMap = trucksWithActiveManifests.reduce<GenericRecord>(
+      (acc, truck) => {
+        acc[truck.id] = truck.registration;
+        return acc;
+      },
+      {}
+    );
+
+    const updatedManifests = data?.manifests.map((manifest) => ({
+      ...manifest,
+      vehicleRegistration: truckMap[manifest.assignedTo || ""] || "",
+    }));
+    modalRef?.current?.open(updatedManifests);
+  };
+
   if (loading) {
     return (
       <View className="flex-1 w-full h-full  ">
@@ -67,11 +92,7 @@ const Companies = () => {
         fetchCompanyWithActiveManifests={fetchCompanyWithActiveManifests}
         search={search}
       />
-      <CustomBottomSheetModal
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
-        data={modal}
-      />
+      <CustomBottomSheetModal ref={modalRef} />
     </View>
   );
 };
