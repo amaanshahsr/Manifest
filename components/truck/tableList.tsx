@@ -1,8 +1,8 @@
 import React, { useCallback, memo, useState } from "react";
 import { View, Text, TouchableWithoutFeedback } from "react-native";
 import type {
-  ManifestWithAssignedVehicleRegistration,
   ManifestWithCompanyName,
+  ManifestWithRegistration,
 } from "@/types";
 import { FlashList } from "@shopify/flash-list";
 import { TouchableOpacity } from "react-native";
@@ -10,7 +10,7 @@ import { TouchableOpacity } from "react-native";
 interface TableListProps<
   T extends
     | ManifestWithCompanyName
-    | Omit<ManifestWithAssignedVehicleRegistration, "createdAt">
+    | Omit<ManifestWithRegistration, "createdAt">
 > {
   rows: T[];
   tableRowkeys: [keyof T, keyof T];
@@ -20,7 +20,7 @@ interface TableListProps<
 const TableListComponent = <
   T extends
     | ManifestWithCompanyName
-    | Omit<ManifestWithAssignedVehicleRegistration, "createdAt">
+    | Omit<ManifestWithRegistration, "createdAt">
 >({
   rows,
   columns,

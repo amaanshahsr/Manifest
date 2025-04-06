@@ -19,7 +19,7 @@ import { ManifestStatus } from "@/types";
 import CustomModal, { ModalRef } from "@/components/common/customModal";
 import { Pressable } from "react-native-gesture-handler";
 import PageHeader from "@/components/common/pageHeader";
-import { AddTruckButton } from "@/components/truck/addTruckButton";
+import { AddNewButton } from "@/components/truck/addNewButton";
 import CustomSearchBar from "@/components/common/searchBar";
 import NoResultsFound from "@/components/common/noResultsFound";
 
@@ -107,23 +107,15 @@ const Manifests = () => {
     modalRef?.current?.close();
   };
 
-  // console.log("manifestss", manifestsSortedByCompany);
-
-  // if (loading) {
-  //   return (
-  //     <View className="flex-1 w-full h-full  bg-yellow-200">
-  //       <ActivityIndicator />
-  //     </View>
-  //   );
-  // }
-
   if (
-    manifestsSortedByCompany?.result === null ||
-    manifestsSortedByCompany?.result.length === 0
+    !manifestsSortedByCompany?.result ||
+    manifestsSortedByCompany?.result?.length === 0
   ) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
-        {/* <AddNewButton route="/manifests/new" text="Manifest" /> */}
+        <NoResultsFound text="No manifests found" />
+
+        <AddNewButton route="/manifests/new" text="Add New Manifest" />
       </View>
     );
   }
@@ -134,7 +126,7 @@ const Manifests = () => {
     <View className="flex-1 w-full relative ">
       <PageHeader
         title="Manifests"
-        headerRightItem={<AddTruckButton route="/manifests/new" />}
+        headerRightItem={<AddNewButton route="/manifests/new" />}
       >
         <View className="flex flex-row mt-5 mb-2 gap-3">
           <CustomSearchBar

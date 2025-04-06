@@ -14,13 +14,11 @@ import { useTruckStore } from "@/store/useTruckStore";
 import { useSQLiteContext } from "expo-sqlite";
 import { ManifestWithCompanyName } from "@/types";
 import PageHeader from "@/components/common/pageHeader";
-import { AddTruckButton } from "@/components/truck/addTruckButton";
-import TruckForm from "@/components/forms/truckForm";
+import { AddNewButton } from "@/components/truck/addNewButton";
 import NoResultsFound from "@/components/common/noResultsFound";
 import TruckBottomSheetModal, {
   TruckModalRef,
 } from "@/components/truck/truckBottomSheetModal";
-import { ModalRef } from "@/components/common/customModal";
 
 export default function App() {
   const {
@@ -64,7 +62,9 @@ export default function App() {
   if (!trucks || trucks?.length === 0) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
-        <AddTruckButton route="/trucks/new" />
+        <NoResultsFound text="No Trucks found" />
+
+        <AddNewButton route="/manifests/new" text="Add New Truck" />
       </View>
     );
   }
@@ -73,12 +73,7 @@ export default function App() {
     <View className="flex-1 w-full h-full bg-neutral-50">
       <PageHeader
         title="Trucks"
-        headerRightItem={
-          <AddTruckButton route="/trucks/new" />
-          // <Pressable onPress={() => setIsAddVisible(true)}>
-          //   <Text className="bg-neutral-700 p-3">Helladnkja</Text>
-          // </Pressable>
-        }
+        headerRightItem={<AddNewButton route="/trucks/new" />}
       >
         <View className="flex flex-row mt-5 mb-2">
           <CustomSearchBar

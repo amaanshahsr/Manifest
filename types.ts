@@ -46,8 +46,9 @@ export type ManifestWithCompanies = {
 //   status: "active" | "repair";
 // };
 
+export type ManifestWithRegistration = Manifest & { truckRegistration: string };
 export interface CompanyWithActiveManifests extends Company {
-  manifests: Manifest[];
+  manifests: ManifestWithRegistration[];
 }
 export type ValidRoutes = "/trucks/new" | "/companies/new" | "/manifests/new";
 

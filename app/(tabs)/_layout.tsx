@@ -29,9 +29,7 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       transform: [
         {
           translateX: withSpring(
-            tabDimensions[currentRouteName]?.x +
-              tabDimensions[currentRouteName]?.width / 4 +
-              left.value,
+            tabDimensions[currentRouteName]?.x + left.value,
             {
               damping: 20,
               stiffness: 250,
@@ -39,27 +37,29 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             }
           ),
         },
-        {
-          translateY: -8,
-        },
       ],
     };
   });
 
   return (
     <View
-      style={styles?.shadowProp}
-      className=" border-t-[0.5px]  border-t-neutral-300 relative  flex flex-row  " // Styles for BottomTab Container
+      style={{
+        ...styles?.shadowProp,
+        paddingBlock: 16,
+        display: "flex",
+        justifyContent: "space-evenly",
+      }}
+      className=" border-t-[0.5px]  border-t-neutral-300 relative  flex flex-row  bg-indigo-500" // Styles for BottomTab Container
     >
       <Animated.View
         style={[
           [animatedLeftStyle],
           {
-            width: tabDimensions[currentRouteName]?.width / 2,
-            height: tabDimensions[currentRouteName]?.height - 10,
+            width: tabDimensions[currentRouteName]?.width,
+            height: 4,
           },
         ]}
-        className={` rounded-lg   bg-neutral-300  absolute bottom-0 `}
+        className={` rounded-lg   bg-neutral-900  absolute bottom-0 left-0`}
       ></Animated.View>
       {state.routes.map((route, index: number) => {
         return (

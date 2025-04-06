@@ -1,4 +1,4 @@
-import { companies, Company, Manifest, manifests } from "@/db/schema";
+import { companies, Company, Manifest, manifests, trucks } from "@/db/schema";
 import { useDataFetch } from "@/hooks/useDataFetch";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { create } from "zustand";
@@ -27,16 +27,26 @@ export const useCompanyStore = create<CompanyState>((set) => ({
     const drizzleDb = drizzle(db);
     try {
       const result = await drizzleDb
-        ?.select()
+        ?.select({
+          companies: companies,
+          manifests: {
+            ...manifests,
+            truckRegistration: trucks?.registration, // Include registration in manifest
+          },
+        })
         .from(companies)
-        .innerJoin?.(
+        .innerJoin(
           manifests,
           and(
-            eq(companies.id, manifests.companyId), // Join condition
-            eq(manifests.status, "active") // Filter for active manifests
+            eq(companies.id, manifests.companyId),
+            eq(manifests.status, "active")
           )
+        )
+        .leftJoin(
+          // Use leftJoin in case some manifests aren't assigned to trucks
+          trucks,
+          eq(manifests.assignedTo, trucks.id)
         );
-
       const groupedResult = result?.reduce<GenericRecord>((acc, row) => {
         if (!acc[row?.companies?.id]) {
           acc[row?.companies?.id] = { ...row?.companies, manifests: [] };

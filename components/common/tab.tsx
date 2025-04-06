@@ -22,8 +22,6 @@ const Tab: React.FC<TabProps> = ({
   descriptors,
   setTabDimensions,
 }) => {
-  const { colors } = useTheme();
-
   const { options } = descriptors[route.key];
   const label =
     options.tabBarLabel !== undefined
@@ -109,11 +107,9 @@ const Tab: React.FC<TabProps> = ({
       onPress={onPress}
       onLongPress={onLongPress}
       style={{
-        flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        padding: 10,
-        gap: 4,
+        flexDirection: "column",
         display: isHiddenRoute ? "none" : "flex",
       }}
       onLayout={passTabDimensionsToParent}
@@ -129,7 +125,7 @@ const Tab: React.FC<TabProps> = ({
           style={[
             {
               fontFamily: "Geist-Medium",
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: isFocused ? "600" : "400",
               color: isFocused ? "#1c1917" : "#737373",
             },

@@ -10,8 +10,8 @@ import { useSQLiteContext } from "expo-sqlite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text } from "react-native";
 import PageHeader from "@/components/common/pageHeader";
-import { AddTruckButton } from "@/components/truck/addTruckButton";
-import { useTruckStore } from "@/store/useTruckStore";
+import { AddNewButton } from "@/components/truck/addNewButton";
+import NoResultsFound from "@/components/common/noResultsFound";
 
 const Companies = () => {
   const [search, setSearch] = useState("");
@@ -22,41 +22,17 @@ const Companies = () => {
     fetchCompanyWithActiveManifests,
     comapaniesWithActiveManifests,
   } = useCompanyStore();
-  const { trucksWithActiveManifests, fetchTrucksWithActiveManifests } =
-    useTruckStore();
 
   const modalRef = useRef<CustomBottomSheetModalRef>(null);
   useEffect(() => {
     fetchCompanyWithActiveManifests(db);
   }, []);
 
+  console.log("coimpanywitha ctivea", comapaniesWithActiveManifests[0]);
+
   const handleModalOpen = useCallback((data: CompanyWithActiveManifests) => {
-    loadManifestDataIntoModal(data);
+    modalRef?.current?.open(data?.manifests);
   }, []);
-
-  const loadManifestDataIntoModal = (
-    data: CompanyWithActiveManifests | null
-  ) => {
-    if (!trucksWithActiveManifests) {
-      fetchTrucksWithActiveManifests(db)?.then(() => {
-        loadManifestDataIntoModal(data);
-      });
-    }
-
-    const truckMap = trucksWithActiveManifests.reduce<GenericRecord>(
-      (acc, truck) => {
-        acc[truck.id] = truck.registration;
-        return acc;
-      },
-      {}
-    );
-
-    const updatedManifests = data?.manifests.map((manifest) => ({
-      ...manifest,
-      vehicleRegistration: truckMap[manifest.assignedTo || ""] || "",
-    }));
-    modalRef?.current?.open(updatedManifests);
-  };
 
   if (loading) {
     return (
@@ -68,19 +44,20 @@ const Companies = () => {
 
   if (
     comapaniesWithActiveManifests === null ||
-    comapaniesWithActiveManifests.length === 0
+    comapaniesWithActiveManifests?.length === 0
   ) {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
-        {/* <AddNewButton text="Company" route="/companies/new" /> */}
+        <NoResultsFound text="No Companies found" />
+        <AddNewButton route="/manifests/new" text="Add New Company" />
       </View>
     );
   }
   return (
-    <View className=" flex-1 w-full h-full">
+    <View className=" flex-1 w-full h-full relative">
       <PageHeader
         title="Companies"
-        headerRightItem={<AddTruckButton route="/companies/new" />}
+        headerRightItem={<AddNewButton route="/companies/new" />}
       >
         <View className="flex flex-row mt-5 mb-2">
           <CustomSearchBar search={search} setSearch={setSearch} />

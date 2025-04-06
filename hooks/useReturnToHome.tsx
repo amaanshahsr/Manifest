@@ -13,7 +13,7 @@ const useReturnToHome = ({ route }: useReturnToHomeProps) => {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        router.replace(route as Route); // Navigate back to the trucks list
+        router.push(route as Route); // Navigate back to the trucks list
         return true; // Prevent default back behavior
       };
 
