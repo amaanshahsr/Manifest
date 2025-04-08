@@ -11,6 +11,7 @@ import useReturnToHome from "@/hooks/useReturnToHome";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCompanyStore } from "@/store/useCompanyStore";
 import useCleanupOnExit from "@/hooks/useCleanupOnExit";
+import PageHeader from "../common/pageHeader";
 
 const ManifestForm = () => {
   useReturnToHome({ route: "/manifests" });
@@ -107,41 +108,47 @@ const ManifestForm = () => {
   };
 
   return (
-    <View className="px-6 z-50 mt-5 ">
-      <InputField
-        value={start}
-        onChangeText={setStart}
-        key="start"
-        keyboardType="numeric"
-        label="Start Manifest Number"
-      />
-      <InputField
-        value={end}
-        keyboardType="numeric"
-        onChangeText={setEnd}
-        key="end"
-        label="End Manifest Number"
-      />
-      <View className="mt-4">
-        <DropDown
-          data={companies}
-          handleUpdate={handleUpdate}
-          schema={{ label: "companyName", value: "id" }}
+    <View>
+      <PageHeader
+        backRoute="/(tabs)/manifests"
+        title={`Add New Manifests`}
+      ></PageHeader>
+      <View className="px-6 z-50 mt-5 ">
+        <InputField
+          value={start}
+          onChangeText={setStart}
+          key="start"
+          keyboardType="numeric"
+          label="Start Manifest Number"
         />
-      </View>
+        <InputField
+          value={end}
+          keyboardType="numeric"
+          onChangeText={setEnd}
+          key="end"
+          label="End Manifest Number"
+        />
+        <View className="mt-4">
+          <DropDown
+            data={companies}
+            handleUpdate={handleUpdate}
+            schema={{ label: "companyName", value: "id" }}
+          />
+        </View>
 
-      <Pressable
-        onPress={handleSave}
-        className="bg-neutral-900 px-3 py-4 rounded-lg flex items-center justify-center "
-      >
-        <Text className="text-white font-geistSemiBold ">Save</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => router?.push("/manifests")}
-        className="bg-gray-100 px-3 py-4 rounded-lg flexmb-auto items-center justify-center mt-3"
-      >
-        <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
-      </Pressable>
+        <Pressable
+          onPress={handleSave}
+          className="bg-neutral-900 px-3 py-4 rounded-lg flex items-center justify-center "
+        >
+          <Text className="text-white font-geistSemiBold ">Save</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => router?.push("/manifests")}
+          className="bg-gray-100 px-3 py-4 rounded-lg flexmb-auto items-center justify-center mt-3"
+        >
+          <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };

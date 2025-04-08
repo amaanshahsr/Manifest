@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "expo-router";
+import { Route, useNavigation, useRouter } from "expo-router";
 import React, { ReactNode } from "react";
 import { View, Text, StatusBar, Platform, Pressable } from "react-native";
 
@@ -7,10 +7,17 @@ interface PageHeaderProps {
   title: string;
   headerRightItem?: React.ReactNode;
   children?: ReactNode;
+  backRoute?: Route;
 }
 
-const PageHeader = ({ title, headerRightItem, children }: PageHeaderProps) => {
+const PageHeader = ({
+  title,
+  headerRightItem,
+  children,
+  backRoute,
+}: PageHeaderProps) => {
   const navigation = useNavigation();
+  const router = useRouter();
   return (
     <View
       style={{
@@ -34,7 +41,9 @@ const PageHeader = ({ title, headerRightItem, children }: PageHeaderProps) => {
     >
       <View className=" flex flex-row items-center justify-between">
         <Pressable
-          onPress={() => navigation?.goBack()}
+          onPress={() =>
+            backRoute ? router?.push(backRoute) : navigation?.goBack()
+          }
           className="flex items-center justify-center p-3 bg-neutral-200 rounded-full"
         >
           <Ionicons name="chevron-back" size={20} color="black" />

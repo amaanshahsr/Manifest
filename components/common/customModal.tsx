@@ -121,7 +121,7 @@ const CustomModal = forwardRef<ModalRef, CustomModalProps>(
 
     return (
       <Modal visible={visible} transparent={true} onRequestClose={handleClose}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={{ flex: 1, zIndex: 999 }}>
           <AnimatedPressable
             style={[
               backdropStyle,

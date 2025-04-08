@@ -19,6 +19,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 import { StatusBadge } from "../truck/truckStatusBadge";
 import { Switch } from "../truck/switch";
+import PageHeader from "../common/pageHeader";
 
 const TruckForm = () => {
   useReturnToHome({ route: "/trucks" });
@@ -152,38 +153,44 @@ const TruckForm = () => {
   };
 
   return (
-    <View className="px-6 z-50 mt-5">
-      <InputField
-        value={registration}
-        onChangeText={setRegistration}
-        key="registration"
-        label="Registration"
-      />
-      <InputField
-        value={driverName}
-        onChangeText={setDriverName}
-        key="name"
-        label="Name"
-      />
-      <Switch
-        handleStatus={handleStatus}
-        status={status}
-        options={truckStatus as ("active" | "repair")[]}
-      >
-        <StatusBadge status={status} />
-      </Switch>
-      <Pressable
-        onPress={handleSave}
-        className="bg-neutral-900 px-3 py-4 rounded-lg mt-56 flex items-center justify-center "
-      >
-        <Text className="text-white font-geistSemiBold ">Save</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => router?.push("/trucks")}
-        className="bg-gray-100 px-3 py-4 rounded-lg flex items-center justify-center mt-3"
-      >
-        <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
-      </Pressable>
+    <View>
+      <PageHeader
+        backRoute="/(tabs)/trucks"
+        title={`${truckId === "new" ? "Add New Truck" : "Edit Truck Details"}`}
+      ></PageHeader>
+      <View className="px-6 z-50 mt-5">
+        <InputField
+          value={registration}
+          onChangeText={setRegistration}
+          key="registration"
+          label="Registration"
+        />
+        <InputField
+          value={driverName}
+          onChangeText={setDriverName}
+          key="name"
+          label="Name"
+        />
+        <Switch
+          handleStatus={handleStatus}
+          status={status}
+          options={truckStatus as ("active" | "repair")[]}
+        >
+          <StatusBadge status={status} />
+        </Switch>
+        <Pressable
+          onPress={handleSave}
+          className="bg-neutral-900 px-3 py-4 rounded-lg mt-56 flex items-center justify-center "
+        >
+          <Text className="text-white font-geistSemiBold ">Save</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => router?.push("/trucks")}
+          className="bg-gray-100 px-3 py-4 rounded-lg flex items-center justify-center mt-3"
+        >
+          <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };

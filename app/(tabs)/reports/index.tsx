@@ -2,10 +2,10 @@ import { companies, manifests, trucks } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { eq, sql } from "drizzle-orm";
 import { useSQLiteContext } from "expo-sqlite";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button, View, Text, Platform } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
-import CustomModal from "@/components/common/customModal";
+import CustomModal, { ModalRef } from "@/components/common/customModal";
 import { Pressable } from "react-native-gesture-handler";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
@@ -14,6 +14,7 @@ import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system"; // For Android
 import * as DocumentPicker from "expo-document-picker";
 import * as Sharing from "expo-sharing";
+import PageHeader from "@/components/common/pageHeader";
 interface CompletedManifests {
   manifestId: number;
   status: "completed" | "active" | "unassigned";
@@ -28,6 +29,7 @@ interface CompletedManifests {
 const Index = () => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
+  const modalRef = useRef<ModalRef>(null);
 
   function formatDateToDDMMYYYY(passedDate: string): string {
     return passedDate?.split("-")?.reverse()?.join("-");
@@ -72,7 +74,7 @@ const Index = () => {
       )
       .execute();
     setCompletedManifests(results);
-    console.log("resultsss", results);
+    modalRef?.current?.close();
   };
 
   const handleDownload = async () => {
@@ -150,18 +152,43 @@ const Index = () => {
   }
 
   console.log("ajsdnkansd");
-  const [isVisible, setisVisible] = useState(false);
   return (
     <View className="flex-1 w-full relative">
-      <View className="flex flex-row items-center justify-between py-2 px-4">
-        <Text className="font-geistMedium text-lg text-gray-700">
-          {currentDate}
-        </Text>
-        <Pressable onPress={() => setisVisible(true)} className="p-2">
-          <AntDesign name="calendar" size={28} color="black" />
-        </Pressable>
+      <PageHeader
+        title={currentDate}
+        headerRightItem={
+          <Pressable onPress={() => modalRef?.current?.open()} className="p-2">
+            <AntDesign name="calendar" size={28} color="black" />
+          </Pressable>
+        }
+      ></PageHeader>
+      <View>
+        <CustomModal ref={modalRef} snapPoint="75%">
+          <Pressable style={{ zIndex: 9999 }}>
+            <Calendar
+              onDayPress={handlePress}
+              // Collection of dates that have to be marked. Default = {}
+              markedDates={{
+                "2012-05-16": {
+                  selected: true,
+                  marked: true,
+                  selectedColor: "blue",
+                },
+                "2012-05-17": { marked: true },
+                "2012-05-18": {
+                  marked: true,
+                  dotColor: "red",
+                  activeOpacity: 0,
+                },
+                "2012-05-19": { disabled: true, disableTouchEvent: true },
+              }}
+            />
+          </Pressable>
+        </CustomModal>
       </View>
-      <View className="flex-1 items-center justify-center">
+
+      {/* 
+      <View className="flex  items-center justify-center">
         {completedManifests?.length === 0 ? (
           <View className="flex items-center justify-center p-6">
             <AntDesign name="inbox" size={40} color="#999" className="mb-3" />
@@ -215,36 +242,7 @@ const Index = () => {
             />
           </View>
         )}
-      </View>
-
-      <View>
-        <CustomModal
-          onClose={() => setisVisible(false)}
-          visible={isVisible}
-          snapPoint="50%"
-        >
-          <Pressable>
-            <Calendar
-              onDayPress={handlePress}
-              // Collection of dates that have to be marked. Default = {}
-              markedDates={{
-                "2012-05-16": {
-                  selected: true,
-                  marked: true,
-                  selectedColor: "blue",
-                },
-                "2012-05-17": { marked: true },
-                "2012-05-18": {
-                  marked: true,
-                  dotColor: "red",
-                  activeOpacity: 0,
-                },
-                "2012-05-19": { disabled: true, disableTouchEvent: true },
-              }}
-            />
-          </Pressable>
-        </CustomModal>
-      </View>
+      </View> */}
     </View>
   );
 };

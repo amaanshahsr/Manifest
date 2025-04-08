@@ -8,6 +8,7 @@ import InputField from "@/components/common/inputField";
 import useReturnToHome from "@/hooks/useReturnToHome";
 import { useSQLiteContext } from "expo-sqlite";
 import useCleanupOnExit from "@/hooks/useCleanupOnExit";
+import PageHeader from "../common/pageHeader";
 
 export default function CompanyForm() {
   useReturnToHome({ route: "/companies" });
@@ -95,26 +96,34 @@ export default function CompanyForm() {
   }, [companyId, companies?.length]);
 
   return (
-    <View className="mt-5 px-6">
-      <InputField
-        value={companyName}
-        onChangeText={setCompanyName}
-        key="name"
-        label="Company Name"
-      />
+    <View>
+      <PageHeader
+        backRoute="/(tabs)/manifests"
+        title={`${
+          companyId === "new" ? "Add New Company" : "Edit Company Details"
+        }`}
+      ></PageHeader>
+      <View className="mt-5 px-6">
+        <InputField
+          value={companyName}
+          onChangeText={setCompanyName}
+          key="name"
+          label="Company Name"
+        />
 
-      <Pressable
-        onPress={handleSave}
-        className="bg-neutral-900 px-3 py-4 rounded-lg flex items-center justify-center mt-auto"
-      >
-        <Text className="text-white font-geistSemiBold ">Save</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => router?.push("/companies")}
-        className="bg-gray-100 px-3 py-4 rounded-lg flex items-center justify-center mt-3"
-      >
-        <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
-      </Pressable>
+        <Pressable
+          onPress={handleSave}
+          className="bg-neutral-900 px-3 py-4 rounded-lg flex items-center justify-center mt-auto"
+        >
+          <Text className="text-white font-geistSemiBold ">Save</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => router?.push("/companies")}
+          className="bg-gray-100 px-3 py-4 rounded-lg flex items-center justify-center mt-3"
+        >
+          <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
