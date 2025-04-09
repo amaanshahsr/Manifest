@@ -1,13 +1,19 @@
 import { Manifest } from "@/db/schema";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
+import { Entypo, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
 interface ManifestSelectableCardProps {
-  manifest: Omit<Manifest, "createdAt" | "completedOn">;
+  manifest: Omit<Manifest, "completedOn">;
   selectedIds: number[];
   handleSelect: (id: number, action: "select" | "remove") => void;
 }
+const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 const ManifestSelectableCard = ({
   manifest,
   selectedIds,
@@ -15,18 +21,12 @@ const ManifestSelectableCard = ({
 }: ManifestSelectableCardProps) => {
   const isSelected =
     selectedIds?.findIndex((id) => id === manifest?.manifestId) !== -1;
+
   return (
     <Pressable
-      //   style={{
-      //     shadowColor: "#000",
-      //     shadowOffset: { width: 0, height: 4 },
-      //     shadowOpacity: 0.1,
-      //     shadowRadius: 6,
-      //     elevation: 5,
-      //   }}
       className={`${
-        isSelected ? "bg-neutral-100  " : "bg-white"
-      } h-auto w-full  px-5 py-7 mx-auto  border-b border-neutral-400 `}
+        isSelected ? "bg-neutral-200" : "bg-white"
+      } w-full px-5 py-5 border-b border-neutral-300`}
       onPress={() =>
         handleSelect(manifest?.manifestId, isSelected ? "remove" : "select")
       }
@@ -34,10 +34,18 @@ const ManifestSelectableCard = ({
       {/* Row: Manifest Info + Checkbox */}
       <View className="flex-row justify-between items-center">
         {/* Manifest Details */}
-        <View className="flex flex-row items-center space-x-2">
+        <View className="space-y-1">
           <Text className="text-lg font-geistSemiBold text-neutral-900">
-            Manifest ID: {manifest?.manifestId}
+            Manifest No:{" "}
+            <Text className="text-xl ml-1">{manifest?.manifestId}</Text>
           </Text>
+          <View className="font-geist gap-2 flex flex-row items-center pt-2">
+            {/* <Feather name="calendar" size={14} color="#9ca3af" /> */}
+            <Entypo name="calendar" size={18} color="#4b5563" />
+            <Text className="text-neutral-500 text-sm ">
+              {new Date(manifest?.createdAt).toLocaleDateString()}
+            </Text>
+          </View>
         </View>
 
         {/* Selection Checkbox */}
@@ -45,15 +53,15 @@ const ManifestSelectableCard = ({
           onPress={() =>
             handleSelect(manifest?.manifestId, isSelected ? "remove" : "select")
           }
+          className="pl-4"
         >
-          <MaterialCommunityIcons
+          <AnimatedIcon
             name={
               isSelected
                 ? "checkbox-marked-circle"
                 : "checkbox-blank-circle-outline"
             }
             size={24}
-            color={isSelected ? "#1e293b" : "#9ca3af"}
           />
         </Pressable>
       </View>

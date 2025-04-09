@@ -2,8 +2,9 @@ import { ManifestWithCompanyName, TrucksWithActiveManifests } from "@/types";
 import Feather from "@expo/vector-icons/Feather";
 import { Route, useRouter } from "expo-router";
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import * as Haptics from "expo-haptics";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 
 interface TruckInfoCardProps {
   truck: TrucksWithActiveManifests;
@@ -26,7 +27,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
         shadowRadius: 4,
         elevation: 3,
       }}
-      className=" bg-zinc-50 h-auto w-[92.5%] mt-5 rounded-xl relative p-6 mx-auto"
+      className=" bg-zinc-50 h-auto w-full  rounded-xl relative p-6 mx-auto"
     >
       {/* Registration Number */}
       <View className="flex-row justify-between items-center">
@@ -51,15 +52,21 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
       <Text className="font-geistMedium text-base mt-1 mb-2 text-neutral-600">
         Driver: {driverName as string}
       </Text>
+      <Pressable className="flex flex-row justify-between items-center pt-4">
+        <TouchableOpacity
+          onPress={() => (manifestCount ? toggleTruckDetails(manifests) : null)}
+        >
+          <View className="bg-neutral-800 flex  border border-neutral-300 flex-row items-center gap-2 py-1 px-2 rounded-md">
+            <View className="font-geistMedium flex flex-row items-center  text-base text-white">
+              <Text className="text-neutral-200">Active Trips: </Text>
+              <Text className="font-geistSemiBold text-lg text-white">
+                {manifestCount}
+              </Text>
+            </View>
+            <Feather name="arrow-up-right" size={20} color="#d4d4d4" />
+          </View>
+        </TouchableOpacity>
 
-      <Pressable
-        onPress={() => toggleTruckDetails(manifests)}
-        className="flex flex-row justify-between items-center pt-4"
-      >
-        <Text className="font-geistMedium text-base text-neutral-800">
-          <Text>Active Trips: </Text>
-          <Text className="font-geistSemiBold text-lg">{manifestCount}</Text>
-        </Text>
         <View className="bg-zinc-200 px-3 py-1 rounded-full flex flex-row items-center gap-2">
           <View
             className={`${
@@ -80,12 +87,12 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
               params: { id: id?.toString() },
             });
           }}
-          className="flex flex-row  justify-center bg-stone-950 mt-3 p-3 gap-2 rounded-lg"
+          className="flex flex-row  justify-center bg-stone-950 mt-3 p-3 gap-3 rounded-lg"
         >
           <Text className="text-white font-geistSemiBold text-base">
             Manage
           </Text>
-          <Feather name="arrow-right" size={20} color="white" />
+          <Ionicons name="book-outline" size={20} color="white" />
         </Pressable>
       </View>
     </View>

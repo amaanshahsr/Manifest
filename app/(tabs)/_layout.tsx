@@ -45,11 +45,10 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     <View
       style={{
         ...styles?.shadowProp,
-        paddingBlock: 16,
         display: "flex",
         justifyContent: "space-evenly",
       }}
-      className=" border-t-[0.5px]  border-t-neutral-300 relative  flex flex-row  bg-indigo-500" // Styles for BottomTab Container
+      className=" border-t-[0.5px]  border-t-neutral-300 relative  flex flex-row" // Styles for BottomTab Container
     >
       <Animated.View
         style={[
@@ -59,7 +58,7 @@ function MyTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             height: 4,
           },
         ]}
-        className={` rounded-lg   bg-neutral-900  absolute bottom-0 left-0`}
+        className={` rounded-lg   bg-neutral-900  absolute top-0 left-0`}
       ></Animated.View>
       {state.routes.map((route, index: number) => {
         return (

@@ -107,6 +107,7 @@ const Tab: React.FC<TabProps> = ({
       onPress={onPress}
       onLongPress={onLongPress}
       style={{
+        padding: 12,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",

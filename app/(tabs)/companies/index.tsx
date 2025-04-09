@@ -12,6 +12,7 @@ import { View, Text } from "react-native";
 import PageHeader from "@/components/common/pageHeader";
 import { AddNewButton } from "@/components/truck/addNewButton";
 import NoResultsFound from "@/components/common/noResultsFound";
+import { useIsFocused } from "@react-navigation/native";
 
 const Companies = () => {
   const [search, setSearch] = useState("");
@@ -24,11 +25,12 @@ const Companies = () => {
   } = useCompanyStore();
 
   const modalRef = useRef<CustomBottomSheetModalRef>(null);
+
+  // const isFocused = useIsFocused();
   useEffect(() => {
     fetchCompanyWithActiveManifests(db);
   }, []);
-
-  console.log("coimpanywitha ctivea", comapaniesWithActiveManifests[0]);
+  console.log("ascnjansdkjasda", comapaniesWithActiveManifests[0]?.manifests);
 
   const handleModalOpen = useCallback((data: CompanyWithActiveManifests) => {
     modalRef?.current?.open(data?.manifests);
@@ -49,7 +51,7 @@ const Companies = () => {
     return (
       <View className="flex-1 w-full h-full items-center justify-center">
         <NoResultsFound text="No Companies found" />
-        <AddNewButton route="/manifests/new" text="Add New Company" />
+        <AddNewButton route="/companies/new" text="Add New Company" />
       </View>
     );
   }

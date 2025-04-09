@@ -153,7 +153,7 @@ const Index = () => {
 
   console.log("ajsdnkansd");
   return (
-    <View className="flex-1 w-full relative">
+    <View className="w-full relative">
       <PageHeader
         title={currentDate}
         headerRightItem={
@@ -187,13 +187,12 @@ const Index = () => {
         </CustomModal>
       </View>
 
-      {/* 
       <View className="flex  items-center justify-center">
         {completedManifests?.length === 0 ? (
           <View className="flex items-center justify-center p-6">
             <AntDesign name="inbox" size={40} color="#999" className="mb-3" />
             <Text className="text-lg font-geistMedium text-gray-600 text-center">
-              No completed manifests for this date.
+              No completed trips for this date.
             </Text>
           </View>
         ) : (
@@ -242,7 +241,7 @@ const Index = () => {
             />
           </View>
         )}
-      </View> */}
+      </View>
     </View>
   );
 };

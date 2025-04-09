@@ -15,7 +15,7 @@ const EditTruckCard = ({ manifest, saveFn }: EditTruckCardProps) => {
     manifest;
 
   return (
-    <View className="bg-white rounded-xl p-6 my-2 shadow-sm">
+    <View className="bg-white rounded-xl p-6 shadow-sm">
       {/* Manifest Number Section */}
       <View className="flex flex-row items-center gap-3 mb-4">
         <Text className="font-geistMedium text-neutral-600 text-base">

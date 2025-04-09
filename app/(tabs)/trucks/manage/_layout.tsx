@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, SafeAreaView } from "react-native";
 import {
   Slot,
   Link,
@@ -41,7 +41,7 @@ const ManageLayout = () => {
   };
 
   return (
-    <View className="flex-1 bg-gray-100 p-2">
+    <SafeAreaView className="flex-1 bg-gray-100 p-2 pt-10">
       <Switch
         key="bitch"
         options={optionsForSwitch}
@@ -53,7 +53,7 @@ const ManageLayout = () => {
       <View className="flex-1">
         <Slot />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

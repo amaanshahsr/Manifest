@@ -1,6 +1,6 @@
-import ManifestInfoCard from "@/components/cards/manifestInfoCard";
+import { ManifestCard } from "@/components/cards/manifestInfoCard";
 import { useManifestStore } from "@/store/useManifestStore";
-import { AntDesign, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useRef, useState } from "react";
@@ -101,7 +101,7 @@ const Manifests = () => {
       return !status.includes(record.status);
     });
 
-    console.log("finalArray", finalArray);
+    // console.log("finalArray", finalArray);
 
     setFilteredmanifestsSortedByCompany(finalArray);
     modalRef?.current?.close();
@@ -154,9 +154,15 @@ const Manifests = () => {
           return typeof item === "string" ? (
             <StickyHeader title={item} />
           ) : (
-            <ManifestInfoCard manifest={item} />
+            <ManifestCard manifest={item} />
           );
         }}
+        contentContainerStyle={{
+          paddingTop: 12, // 👈 top space before the first item
+          paddingBottom: 24, // 👈 bottom space after the last item (optional)
+          paddingHorizontal: 16, // 👈 optional side padding
+        }}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         estimatedItemSize={1000}
         keyExtractor={(item) =>
           typeof item === "string" ? item : item?.id?.toString()
@@ -169,10 +175,10 @@ const Manifests = () => {
           ref={modalRef}
           // onClose={() => setisVisible(false)}
         >
-          <View className="flex-1 items-center z-50 px-5 py-6 bg-white rounded-t-3xl shadow-lg">
+          <View className="flex-1 z-50 px-5 pt-6 pb-28 bg-white rounded-t-3xl">
             {/* Header */}
-            <View className="flex flex-row justify-between items-center w-full mb-4">
-              <Text className="font-geistSemiBold text-2xl text-gray-900">
+            <View className="flex-row justify-between items-center mb-6">
+              <Text className="text-2xl font-geistSemiBold text-neutral-900">
                 Filters
               </Text>
               <Pressable onPress={() => modalRef?.current?.close()}>
@@ -180,131 +186,123 @@ const Manifests = () => {
               </Pressable>
             </View>
 
-            {/* Companies Filter */}
-            <View className="w-full bg-neutral-950 rounded-lg p-4 shadow-sm">
-              <Text className="font-geistMedium text-lg text-white mb-3">
+            {/* Companies Filter Section */}
+            <View className="w-full bg-neutral-950 rounded-xl p-5 space-y-4">
+              <Text className="text-lg font-geistMedium text-white">
                 Companies
               </Text>
-              <View className="flex flex-row flex-wrap gap-2">
-                {companies?.map((company) => (
-                  <Pressable
-                    key={company}
-                    onPress={() => {
-                      setSelectedCompanies((old) =>
-                        old?.includes(company)
-                          ? old.filter((comp) => company !== comp)
-                          : [...old, company]
-                      );
-                    }}
-                  >
-                    <View
-                      className={`border px-4 py-2 rounded-full ${
-                        !selectedCompanies?.includes(company)
-                          ? "bg-white "
-                          : "border-gray-500"
-                      }`}
+              <View className="flex-row flex-wrap gap-3">
+                {companies?.map((company) => {
+                  const isActive = selectedCompanies?.includes(company);
+                  return (
+                    <Pressable
+                      key={company}
+                      onPress={() =>
+                        setSelectedCompanies((prev) =>
+                          isActive
+                            ? prev.filter((c) => c !== company)
+                            : [...prev, company]
+                        )
+                      }
                     >
-                      <Text
-                        className={`text-base font-geistRegular ${
-                          !selectedCompanies?.includes(company)
-                            ? "text-black"
-                            : "text-white"
+                      <View
+                        className={`px-4 py-2 rounded-full flex flex-row items-center gap-1 ${
+                          isActive
+                            ? "bg-white border border-neutral-300"
+                            : "bg-neutral-800"
                         }`}
                       >
-                        {company}
-                      </Text>
-                    </View>
-                  </Pressable>
-                ))}
+                        <Text
+                          className={`text-sm font-geistMedium ${
+                            isActive ? "text-black" : "text-white"
+                          }`}
+                        >
+                          {company}
+                        </Text>
+                        <Ionicons
+                          name="close"
+                          size={14}
+                          color={isActive ? `black` : "#262626"}
+                        />
+                      </View>
+                    </Pressable>
+                  );
+                })}
               </View>
             </View>
 
-            {/* Status Filter */}
-            <View className="w-full bg-gray-100 rounded-lg p-4 shadow-sm mt-5">
-              <Text className="font-geistMedium text-lg text-gray-800 mb-3">
+            {/* Status Filter Section */}
+            <View className="w-full bg-neutral-100 rounded-xl p-5 mt-6 space-y-4">
+              <Text className="text-lg font-geistMedium text-neutral-900">
                 Status
               </Text>
-              <View className="flex flex-row flex-wrap gap-2">
-                {statuses?.map((stat, index) => (
-                  <Pressable
-                    key={index}
-                    onPress={() => {
-                      setStatus((old) =>
-                        old?.includes(stat)
-                          ? old.filter((comp) => stat !== comp)
-                          : [...old, stat]
-                      );
-                    }}
-                  >
-                    <View
-                      className={`border px-4 py-2 rounded-full ${
-                        !status?.includes(stat)
-                          ? "bg-black text-white"
-                          : "border-gray-500"
-                      }`}
+              <View className="flex-row flex-wrap gap-3">
+                {statuses?.map((stat, index) => {
+                  const isActive = status?.includes(stat);
+                  return (
+                    <Pressable
+                      key={index}
+                      onPress={() =>
+                        setStatus((prev) =>
+                          isActive
+                            ? prev.filter((s) => s !== stat)
+                            : [...prev, stat]
+                        )
+                      }
                     >
-                      <Text
-                        className={`text-base font-geistRegular ${
-                          !status?.includes(stat) ? "text-white" : "text-black"
+                      <View
+                        className={`px-4 py-2 rounded-full ${
+                          isActive
+                            ? "bg-black border border-black"
+                            : "bg-white border border-neutral-300"
                         }`}
                       >
-                        {stat}
-                      </Text>
-                    </View>
-                  </Pressable>
-                ))}
+                        <Text
+                          className={`text-sm font-geistMedium ${
+                            isActive ? "text-white" : "text-black"
+                          }`}
+                        >
+                          {stat}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  );
+                })}
               </View>
             </View>
 
             {/* Footer Buttons */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                position: "absolute",
-                bottom: 25,
-              }}
-            >
-              {/* Cancel Button */}
+            <View className="absolute bottom-6 left-5 right-5 flex-row gap-3">
+              {/* Cancel */}
               <Pressable
-                onPress={() => modalRef?.current?.close()}
                 style={{
                   flex: 1,
-                  backgroundColor: "#E5E5E5",
+                  backgroundColor: "#E5E5E5", // neutral-200
                   paddingVertical: 12,
-                  borderRadius: 10,
+                  borderRadius: 12,
                   alignItems: "center",
-                  marginRight: 10,
                 }}
+                onPress={() => modalRef?.current?.close()}
+                // className="flex-1 bg-neutral-200 py-3 rounded-xl items-center"
               >
-                <Text
-                  className="font-geistMedium"
-                  style={{ fontSize: 18, color: "#333", fontWeight: "500" }}
-                >
+                <Text className="text-base font-geistMedium text-neutral-800">
                   Cancel
                 </Text>
               </Pressable>
 
-              {/* Apply Button */}
+              {/* Apply */}
               <Pressable
                 onPress={handleFiltered}
                 style={{
                   flex: 1,
-                  backgroundColor: "#000",
+                  backgroundColor: "#000000",
                   paddingVertical: 12,
-                  borderRadius: 10,
+                  borderRadius: 12,
                   alignItems: "center",
                 }}
+                // className="flex-1 bg-black py-3 rounded-xl items-center"
               >
-                <Text
-                  className="font-geistMedium"
-                  style={{
-                    fontSize: 18,
-                    color: "#FFF",
-                    fontWeight: "500",
-                  }}
-                >
+                <Text className="text-base font-geistMedium text-white">
                   Apply
                 </Text>
               </Pressable>

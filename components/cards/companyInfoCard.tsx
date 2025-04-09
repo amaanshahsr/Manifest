@@ -72,7 +72,7 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
         shadowRadius: 4,
         elevation: 3,
       }}
-      className="bg-white w-full h-auto  mt-5 rounded-xl p-6 mx-auto "
+      className="bg-white w-full h-auto   rounded-xl p-6 mx-auto "
     >
       <View className="flex-row justify-between mb-5 items-center">
         <Text className="font-geistSemiBold text-2xl text-neutral-900">

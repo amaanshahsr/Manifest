@@ -35,7 +35,7 @@ export const useCompanyStore = create<CompanyState>((set) => ({
           },
         })
         .from(companies)
-        .innerJoin(
+        .leftJoin(
           manifests,
           and(
             eq(companies.id, manifests.companyId),
@@ -51,7 +51,7 @@ export const useCompanyStore = create<CompanyState>((set) => ({
         if (!acc[row?.companies?.id]) {
           acc[row?.companies?.id] = { ...row?.companies, manifests: [] };
         }
-        if (row.manifests) {
+        if (row?.manifests?.id) {
           acc[row.companies?.id].manifests.push(row?.manifests);
         }
 

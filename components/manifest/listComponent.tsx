@@ -42,7 +42,6 @@ export const ListComponent = ({
   }
   return (
     <FlashList
-      contentContainerStyle={{ paddingHorizontal: 16 }}
       refreshControl={
         <RefreshControl
           refreshing={refreshing} // Pass the refreshing state
@@ -60,6 +59,12 @@ export const ListComponent = ({
           </View>
         );
       }}
+      contentContainerStyle={{
+        paddingTop: 12, // 👈 top space before the first item
+        paddingBottom: 24, // 👈 bottom space after the last item (optional)
+        paddingHorizontal: 16, // 👈 optional side padding
+      }}
+      ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
       renderItem={({ item }) => (
         <CompanyInfoCard handleModalOpen={handleModalOpen} company={item} />
       )}

@@ -1,6 +1,7 @@
 import { Manifest } from "@/db/schema";
 import { useState } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
+import Animated, { FadeInUp, FadeOutDown } from "react-native-reanimated";
 
 interface AssignStickyHeaderProps {
   item: string;
@@ -54,20 +55,20 @@ export const AssignStickyHeader = ({
   };
 
   return (
-    <View className="flex flex-row px-2 items-center justify-between bg-stone-900 py-3 ">
-      <View className="  flex items-center justify-between rounded-sm">
-        <Text className="text-2xl font-geistSemiBold text-neutral-200 ">
-          {item}
-        </Text>
-      </View>
+    <View className="flex flex-row items-center justify-between px-4 py-3 bg-zinc-900 rounded-t-md shadow-sm">
+      <Text className="text-xl font-geistSemiBold text-neutral-100 tracking-wide">
+        {item}
+      </Text>
+
       <TouchableOpacity
         onPress={handlePress}
-        className="bg-white p-2 rounded-lg gap-2 flex flex-row items-center"
+        className="bg-white px-3 py-1.5 w-32 rounded-md flex-row justify-center items-center shadow-sm"
       >
-        <Text className="font-geistMedium">
-          {!allSelected ? "Select all" : "Deselect All"}
-        </Text>
-        {/* <AntDesign name="checkcircleo" size={20} color="black" /> */}
+        <Animated.View>
+          <Text className="text-sm font-geistMedium text-stone-800">
+            {allSelected ? "Deselect All" : "Select all"}
+          </Text>
+        </Animated.View>
       </TouchableOpacity>
     </View>
   );

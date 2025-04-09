@@ -12,6 +12,8 @@ import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { ManifestStatus, ManifestWithCompanyName } from "@/types";
 import { useTruckStore } from "@/store/useTruckStore";
 import EditTruckCard from "@/components/cards/editTruckCard";
+import NoResultsFound from "@/components/common/noResultsFound";
+import { useCompanyStore } from "@/store/useCompanyStore";
 
 const EditTruckStatus = () => {
   const { id } = useLocalSearchParams();
@@ -19,6 +21,8 @@ const EditTruckStatus = () => {
   const drizzleDb = drizzle(db);
 
   const { fetchTrucksWithActiveManifests } = useTruckStore();
+  const { fetchCompanyWithActiveManifests } = useCompanyStore();
+
   const [activeManifests, setActiveManifests] = useState<
     ManifestWithCompanyName[]
   >([]);
@@ -77,6 +81,8 @@ const EditTruckStatus = () => {
       // Fetch the updated list of active manifests
       const updatedManifests = await fetchActiveManifestsForTruck();
       await fetchTrucksWithActiveManifests(db);
+      await fetchCompanyWithActiveManifests(db);
+
       setActiveManifests(updatedManifests);
       alert(`Manifest COmpleted with id :${id}`);
     } catch (error) {
@@ -86,11 +92,7 @@ const EditTruckStatus = () => {
   };
 
   if (activeManifests?.length === 0) {
-    return (
-      <View>
-        <Text>No Active manifests found.</Text>
-      </View>
-    );
+    return <NoResultsFound text="No Active Manifests Found" />;
   }
 
   return (
@@ -108,7 +110,12 @@ const EditTruckStatus = () => {
         <Ionicons name="filter-circle-sharp" size={40} color="black" />
       </Pressable> */}
       <FlashList
-        className="mb-1"
+        contentContainerStyle={{
+          paddingTop: 2, // 👈 top space before the first item
+          paddingBottom: 24, // 👈 bottom space after the last item (optional)
+          paddingHorizontal: 10, // 👈 optional side padding
+        }}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
         data={activeManifests}
         renderItem={({ item }) => {
           return <EditTruckCard saveFn={markAsCompleted} manifest={item} />;

@@ -1,11 +1,18 @@
 import React, {
   useCallback,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { RefreshControl, View, Text, Pressable } from "react-native";
+import {
+  RefreshControl,
+  View,
+  Text,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import SkeletonLoader from "@/components/common/skeletonLoader";
 import TruckInfoCard from "@/components/cards/truckInfoCard";
@@ -19,6 +26,7 @@ import NoResultsFound from "@/components/common/noResultsFound";
 import TruckBottomSheetModal, {
   TruckModalRef,
 } from "@/components/truck/truckBottomSheetModal";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function App() {
   const {
@@ -55,16 +63,16 @@ export default function App() {
     modalRef?.current?.open(data);
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     fetchTrucksWithActiveManifests(db);
   }, []);
 
   if (!trucks || trucks?.length === 0) {
     return (
-      <View className="flex-1 w-full h-full items-center justify-center">
+      <View className="flex-1 w-full h-full  items-center justify-center">
         <NoResultsFound text="No Trucks found" />
 
-        <AddNewButton route="/manifests/new" text="Add New Truck" />
+        <AddNewButton route="/trucks/new" text="Add New Truck" />
       </View>
     );
   }
@@ -88,7 +96,13 @@ export default function App() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
+        contentContainerStyle={{
+          paddingTop: 12, // 👈 top space before the first item
+          paddingBottom: 24, // 👈 bottom space after the last item (optional)
+          paddingHorizontal: 16, // 👈 optional side padding
+        }}
         data={filteredTrucks}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
         renderItem={({ item }) => (
           <TruckInfoCard toggleTruckDetails={toggleModal} truck={item} />
         )}

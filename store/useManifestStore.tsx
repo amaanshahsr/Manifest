@@ -8,7 +8,7 @@ export interface ManifestState {
   manifests: Manifest[];
   loading: boolean;
   unassignedManifests: {
-    result: (string | Omit<Manifest, "createdAt" | "completedOn">)[];
+    result: (string | Omit<Manifest, "completedOn">)[];
     companyPositions: Record<string, number>;
   };
   fetchManifests: (db: SQLite.SQLiteDatabase) => Promise<void>;
