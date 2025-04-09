@@ -26,7 +26,11 @@ const TruckBottomSheetModal = memo(
 
     return (
       <View>
-        <CustomModal ref={modalRef} backdropOpacity={0.7} snapPoint="75%">
+        <CustomModal
+          ref={modalRef}
+          backdropOpacity={0.7}
+          snapPoint={modal?.length < 50 ? "50%" : "75%"}
+        >
           <TableList
             rows={modal}
             tableRowkeys={["manifestId", "companyName"]}

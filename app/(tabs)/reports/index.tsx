@@ -2,12 +2,12 @@ import { companies, manifests, trucks } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { eq, sql } from "drizzle-orm";
 import { useSQLiteContext } from "expo-sqlite";
-import React, { useRef, useState } from "react";
-import { Button, View, Text, Platform } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, View, Text, Platform, TouchableOpacity } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 import CustomModal, { ModalRef } from "@/components/common/customModal";
-import { Pressable } from "react-native-gesture-handler";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { Pressable, ScrollView } from "react-native-gesture-handler";
+import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
@@ -15,6 +15,8 @@ import * as FileSystem from "expo-file-system"; // For Android
 import * as DocumentPicker from "expo-document-picker";
 import * as Sharing from "expo-sharing";
 import PageHeader from "@/components/common/pageHeader";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 interface CompletedManifests {
   manifestId: number;
   status: "completed" | "active" | "unassigned";
@@ -25,30 +27,35 @@ interface CompletedManifests {
   truckName: string;
   companyName: string;
 }
+dayjs.extend(customParseFormat);
 
 const Index = () => {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db);
   const modalRef = useRef<ModalRef>(null);
 
-  function formatDateToDDMMYYYY(passedDate: string): string {
-    return passedDate?.split("-")?.reverse()?.join("-");
-  }
-  const [currentDate, setCurrentDate] = useState(
-    formatDateToDDMMYYYY(new Date()?.toISOString()?.split("T")[0])
-  );
+  // function formatDateToDDMMYYYY(passedDate: string): string {
+  //   return passedDate?.split("-")?.reverse()?.join("-");
+  // }
+  const [currentDate, setCurrentDate] = useState(dayjs()?.format("DD-MM-YYYY"));
 
   const [completedManifests, setCompletedManifests] = useState<
     CompletedManifests[]
   >([]);
 
-  const handlePress = async (selectedDate: DateData) => {
-    setCurrentDate(formatDateToDDMMYYYY(selectedDate?.dateString));
+  const handlePress = async (selectedDate: DayItem) => {
+    setCurrentDate(selectedDate?.fullDate);
+    // setCurrentDate(formatDateToDDMMYYYY(selectedDate?.dateString));
     // Create start and end of day boundaries
-    const startOfDay = new Date(selectedDate?.timestamp);
+    const startOfDay = dayjs(selectedDate?.fullDate, "DD-MM-YYYY")
+      .startOf("day")
+      .toDate();
+
     startOfDay.setHours(0, 0, 0, 0);
 
-    const endOfDay = new Date(selectedDate?.timestamp);
+    const endOfDay = dayjs(selectedDate?.fullDate, "DD-MM-YYYY")
+      .startOf("day")
+      .toDate();
     endOfDay.setHours(23, 59, 59, 999);
 
     // Convert to Unix timestamps (seconds)
@@ -150,10 +157,15 @@ const Index = () => {
       shareAsync(uri);
     }
   }
+  console.log("completefd manifests", completedManifests);
 
-  console.log("ajsdnkansd");
   return (
-    <View className="w-full relative">
+    <View className="flex-1 w-full h-full relative">
+      <View>
+        <CustomModal ref={modalRef} snapPoint="60%">
+          <DatePicker handlePress={handlePress} />
+        </CustomModal>
+      </View>
       <PageHeader
         title={currentDate}
         headerRightItem={
@@ -162,32 +174,8 @@ const Index = () => {
           </Pressable>
         }
       ></PageHeader>
-      <View>
-        <CustomModal ref={modalRef} snapPoint="75%">
-          <Pressable style={{ zIndex: 9999 }}>
-            <Calendar
-              onDayPress={handlePress}
-              // Collection of dates that have to be marked. Default = {}
-              markedDates={{
-                "2012-05-16": {
-                  selected: true,
-                  marked: true,
-                  selectedColor: "blue",
-                },
-                "2012-05-17": { marked: true },
-                "2012-05-18": {
-                  marked: true,
-                  dotColor: "red",
-                  activeOpacity: 0,
-                },
-                "2012-05-19": { disabled: true, disableTouchEvent: true },
-              }}
-            />
-          </Pressable>
-        </CustomModal>
-      </View>
 
-      <View className="flex  items-center justify-center">
+      <View className="flex-1 flex items-center">
         {completedManifests?.length === 0 ? (
           <View className="flex items-center justify-center p-6">
             <AntDesign name="inbox" size={40} color="#999" className="mb-3" />
@@ -196,7 +184,7 @@ const Index = () => {
             </Text>
           </View>
         ) : (
-          <View className="flex-1 w-full">
+          <View className="">
             <Pressable
               style={{
                 marginBlock: 10,
@@ -227,18 +215,20 @@ const Index = () => {
                 Export
               </Text>
             </Pressable>
-            <FlashList
-              data={completedManifests}
-              keyExtractor={(item) => item.manifestId.toString()}
-              renderItem={({ item }) => (
-                <ManifestCard
-                  truckName={item.truckName}
-                  companyName={item.companyName}
-                  manifestId={item.manifestId}
-                />
-              )}
-              estimatedItemSize={80}
-            />
+            <View className="flex-1 w-full">
+              <FlashList
+                data={completedManifests}
+                keyExtractor={(item) => item.manifestId.toString()}
+                renderItem={({ item }) => (
+                  <ManifestCard
+                    truckName={item.truckName}
+                    companyName={item.companyName}
+                    manifestId={item.manifestId}
+                  />
+                )}
+                estimatedItemSize={80}
+              />
+            </View>
           </View>
         )}
       </View>
@@ -267,5 +257,144 @@ const ManifestCard = ({
       <Text className="text-base text-gray-600">{companyName}</Text>
       <Text className="text-sm text-gray-500">Manifest ID: {manifestId}</Text>
     </View>
+  );
+};
+
+type DayItem = {
+  date: number;
+  day: string;
+  fullDate: string;
+  isToday: boolean;
+  isOverflowDate: boolean;
+};
+
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+interface DatePickerProps {
+  handlePress: (val: DayItem) => void;
+}
+
+const DatePicker = ({ handlePress }: DatePickerProps) => {
+  const [dates, setDates] = useState<(DayItem | string | null)[]>([]);
+  const [currentMonth, setCurrentMonth] = useState(dayjs());
+  const [selectedDate, setSelectedDate] = useState<DayItem | null>(null);
+
+  const generateCalendarArray = (month: dayjs.Dayjs): (DayItem | null)[] => {
+    const startOfMonth = month.startOf("month");
+    const endOfMonth = month.endOf("month");
+    const daysInMonth = endOfMonth.date();
+    const startDayOfWeek = startOfMonth.day(); // 0 (Sun) - 6 (Sat)
+
+    const monthDays: DayItem[] = Array.from({ length: daysInMonth }, (_, i) => {
+      const date = startOfMonth.add(i, "day");
+      return {
+        date: date.date(),
+        day: date.format("ddd"),
+        fullDate: date.format("DD-MM-YYYY"),
+        isToday: date.isSame(dayjs(), "day"),
+        isOverflowDate: false,
+      };
+    });
+
+    const paddedStart = Array(startDayOfWeek).fill(null);
+    const totalGridSlots = 42;
+    const paddedEnd = Array(
+      totalGridSlots - paddedStart.length - monthDays.length
+    ).fill(null);
+
+    return [...days, ...paddedStart, ...monthDays, ...paddedEnd];
+  };
+
+  useEffect(() => {
+    setDates(generateCalendarArray(currentMonth));
+  }, [currentMonth]);
+
+  const goToPreviousMonth = () =>
+    setCurrentMonth((prev) => prev.subtract(1, "month"));
+  const goToNextMonth = () => setCurrentMonth((prev) => prev.add(1, "month"));
+
+  function onPress(item: DayItem) {
+    setSelectedDate(item);
+    handlePress(item);
+  }
+  return (
+    <FlashList
+      data={dates}
+      numColumns={7}
+      estimatedItemSize={70}
+      contentContainerStyle={{
+        paddingHorizontal: 10,
+        paddingTop: 10,
+        paddingBottom: 40,
+      }}
+      ListHeaderComponent={
+        <View className="flex-row items-center justify-between mb-4 px-2">
+          <Pressable
+            onPress={goToPreviousMonth}
+            style={{
+              padding: 12,
+              backgroundColor: "#e5e5e5",
+              borderRadius: 9999,
+            }}
+          >
+            <Ionicons name="chevron-back" size={20} color="black" />
+          </Pressable>
+          <Text className="text-neutral-900 font-geistSemiBold text-2xl tracking-tight">
+            {currentMonth.format("MMMM YYYY")}
+          </Text>
+          <Pressable
+            onPress={goToNextMonth}
+            style={{
+              padding: 12,
+              backgroundColor: "#e5e5e5",
+              borderRadius: 9999,
+            }}
+          >
+            <Ionicons name="chevron-forward" size={20} color="black" />
+          </Pressable>
+        </View>
+      }
+      renderItem={({ item }) =>
+        !item ? (
+          <View className="aspect-square flex-1 m-[2px] rounded-lg" />
+        ) : typeof item === "string" ? (
+          <View className="aspect-square flex-1 m-[2px] rounded-lg items-center justify-center">
+            <Text className="text-base font-geistRegular font-semibold text-neutral-500">
+              {item}
+            </Text>
+          </View>
+        ) : (
+          <TouchableOpacity
+            onPress={() => onPress(item)}
+            activeOpacity={0.7}
+            className={`aspect-square flex-1 m-[2px] rounded-xl items-center justify-center border ${
+              item.isToday
+                ? "border-black font-geistMedium"
+                : selectedDate?.fullDate === item?.fullDate
+                ? "bg-black"
+                : "border-neutral-200"
+            }`}
+          >
+            <Text
+              className={`${
+                selectedDate?.fullDate === item?.fullDate
+                  ? "font-geistMedium text-white"
+                  : "font-geistRegular text-black"
+              }    text-lg  font-semibold `}
+            >
+              {item.date}
+            </Text>
+          </TouchableOpacity>
+        )
+      }
+      extraData={selectedDate}
+      keyExtractor={(item, index) =>
+        typeof item === "object" && item
+          ? item?.fullDate + index
+          : typeof item === "string"
+          ? item
+          : `empty-${index}`
+      }
+    />
   );
 };

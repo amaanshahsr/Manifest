@@ -13,6 +13,7 @@ import {
   Directions,
   Gesture,
   GestureDetector,
+  Pressable as Presable,
 } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
@@ -29,7 +30,7 @@ interface CustomModalProps {
   children: React.ReactNode;
   containerStyle?: ViewStyle;
   backdropOpacity?: number;
-  snapPoint?: "50%" | "75%" | "90%";
+  snapPoint?: "25%" | "50%" | "60%" | "75%" | "90%" | "100%";
 }
 
 export type ModalRef = {
@@ -53,8 +54,7 @@ const CustomModal = forwardRef<ModalRef, CustomModalProps>(
     };
 
     const modalHeight =
-      Dimensions.get("window").height *
-      (snapPoint === "50%" ? 0.5 : snapPoint === "75%" ? 0.75 : 0.9);
+      (Dimensions.get("window").height * parseFloat(snapPoint)) / 100;
 
     // Expose open/close methods via ref
     useImperativeHandle(ref, () => ({

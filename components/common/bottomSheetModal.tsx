@@ -12,6 +12,7 @@ import {
 
 import { View } from "react-native";
 import CustomModal from "./customModal";
+import { Pressable } from "react-native-gesture-handler";
 
 export type CustomBottomSheetModalRef = {
   open: (data?: ManifestWithRegistration[]) => void;

@@ -30,7 +30,6 @@ const Companies = () => {
   useEffect(() => {
     fetchCompanyWithActiveManifests(db);
   }, []);
-  console.log("ascnjansdkjasda", comapaniesWithActiveManifests[0]?.manifests);
 
   const handleModalOpen = useCallback((data: CompanyWithActiveManifests) => {
     modalRef?.current?.open(data?.manifests);

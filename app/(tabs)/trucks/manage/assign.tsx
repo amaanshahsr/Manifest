@@ -17,7 +17,6 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  SlideInUp,
 } from "react-native-reanimated";
 
 const AssignTrucks = () => {

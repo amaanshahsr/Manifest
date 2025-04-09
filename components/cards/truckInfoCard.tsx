@@ -56,14 +56,21 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
         <TouchableOpacity
           onPress={() => (manifestCount ? toggleTruckDetails(manifests) : null)}
         >
-          <View className="bg-neutral-800 flex  border border-neutral-300 flex-row items-center gap-2 py-1 px-2 rounded-md">
-            <View className="font-geistMedium flex flex-row items-center  text-base text-white">
-              <Text className="text-neutral-200">Active Trips: </Text>
-              <Text className="font-geistSemiBold text-lg text-white">
+          <View className="bg-neutral-100 border border-neutral-200 flex-row items-center gap-2 py-2 px-3 rounded-lg shadow-sm">
+            <View className="flex flex-row items-center">
+              <Text className="font-geistMedium text-base text-neutral-600">
+                Active Trips:{" "}
+              </Text>
+              <Text className="font-geistSemiBold text-lg text-neutral-800">
                 {manifestCount}
               </Text>
             </View>
-            <Feather name="arrow-up-right" size={20} color="#d4d4d4" />
+            <Feather
+              name="arrow-up-right"
+              size={18}
+              color="#525252"
+              style={{ marginLeft: 4 }}
+            />
           </View>
         </TouchableOpacity>
 
