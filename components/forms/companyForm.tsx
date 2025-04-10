@@ -10,6 +10,8 @@ import { useSQLiteContext } from "expo-sqlite";
 import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 import PageHeader from "../common/pageHeader";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { toast } from "@backpackapp-io/react-native-toast";
+import ToastMessage from "../common/ToastMessage";
 
 export default function CompanyForm() {
   useReturnToHome({ route: "/companies" });
@@ -33,12 +35,30 @@ export default function CompanyForm() {
     const trimmedCompanyName = companyName.trim();
 
     if (!trimmedCompanyName) {
-      alert("Please enter a valid company name.");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Please enter a valid company name.  ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
       return;
     }
 
     if (trimmedCompanyName.length < 3) {
-      alert("Company name must be at least 3 characters long.");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Company name must be at least 3 characters long.  ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
       return;
     }
 
@@ -54,7 +74,16 @@ export default function CompanyForm() {
           id: companyId,
         });
         await fetchCompanies(db);
-        alert("Company info updated successfully!");
+        toast("", {
+          duration: 1500,
+          customToast: (toast) => (
+            <ToastMessage
+              message="Company info updated successfully 🎉"
+              toast={toast}
+              type="success"
+            />
+          ),
+        });
       } else {
         // Insert a new Company
         await addToDatabase({
@@ -64,17 +93,38 @@ export default function CompanyForm() {
             companyName: trimmedCompanyName,
           },
         });
-        alert("Company info saved successfully!");
+        toast("", {
+          duration: 1500,
+          customToast: (toast) => (
+            <ToastMessage
+              message="Company info saved successfully 🎉"
+              toast={toast}
+              type="success"
+            />
+          ),
+        });
       }
 
       // Refresh or update the company list after saving
       await fetchCompanyWithActiveManifests(db);
       await fetchCompanies(db);
       //route back to the List UI
-      router?.push("/companies");
+
+      setTimeout(() => {
+        router?.push("/companies");
+      }, 25);
     } catch (error) {
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Error while saving company info  ❌"
+            toast={toast}
+            type="error"
+          />
+        ),
+      });
       console.error("Error while saving truck info:", error);
-      alert("An error occurred while saving the truck info.");
     }
   };
 

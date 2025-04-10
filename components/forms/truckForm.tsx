@@ -21,6 +21,12 @@ import { StatusBadge } from "../truck/truckStatusBadge";
 import { Switch } from "../truck/switch";
 import PageHeader from "../common/pageHeader";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import {
+  resolveValue,
+  toast,
+  ToastPosition,
+} from "@backpackapp-io/react-native-toast";
+import ToastMessage from "../common/ToastMessage";
 
 const TruckForm = () => {
   useReturnToHome({ route: "/trucks" });
@@ -55,7 +61,16 @@ const TruckForm = () => {
     const trimmedDriverName = driverName.trim();
 
     if (!trimmedRegistration) {
-      alert("Please enter a valid registration number.");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Invalid Registration number.  ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
       return false;
     }
 
@@ -66,17 +81,44 @@ const TruckForm = () => {
     // }
 
     if (!trimmedDriverName) {
-      alert("Please enter a valid driver name.");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Please enter a valid driver name.  ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
       return false;
     }
 
     if (trimmedDriverName.length < 3) {
-      alert("Driver name must be at least 3 characters long.");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Name must be atleast 3 characters long.  ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
       return false;
     }
 
     if (!["active", "repair"].includes(status)) {
-      alert("Please select a valid status.");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Please select a valid status.  ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
       return false;
     }
 
@@ -117,11 +159,33 @@ const TruckForm = () => {
 
       // Refresh and navigate
       await fetchTrucksWithActiveManifests(db);
-      router?.push("/trucks");
-      alert("Truck info saved successfully!");
+      // Update the loading toast to a success toast
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Truck info saved successfully 🎉"
+            toast={toast}
+            type="success"
+          />
+        ),
+      });
+
+      setTimeout(() => {
+        router?.push("/trucks");
+      }, 25);
     } catch (error) {
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Error while saving truck info  ❌"
+            toast={toast}
+            type="error"
+          />
+        ),
+      });
       console.error("Error while saving truck info:", error);
-      alert("An error occurred while saving the truck info.");
     }
   };
 
@@ -191,9 +255,10 @@ const TruckForm = () => {
           />
           <Text className="text-white font-geistSemiBold text-base">Save</Text>
         </Pressable>
-
         <Pressable
-          onPress={() => router?.push("/trucks")}
+          onPress={() => {
+            router?.push("/trucks");
+          }}
           className="bg-gray-100 px-4 py-4 rounded-2xl flex-row items-center justify-center gap-2 space-x-2"
         >
           <Ionicons name="arrow-back-sharp" size={24} color="black" />

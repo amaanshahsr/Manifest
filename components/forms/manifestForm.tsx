@@ -13,6 +13,8 @@ import { useCompanyStore } from "@/store/useCompanyStore";
 import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 import PageHeader from "../common/pageHeader";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import ToastMessage from "../common/ToastMessage";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 const ManifestForm = () => {
   useReturnToHome({ route: "/manifests" });
@@ -46,17 +48,43 @@ const ManifestForm = () => {
     companyId: number | null
   ): boolean => {
     if (start === 0 && end === 0) {
-      alert("Please enter a valid range.");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Please enter a valid range. ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
       return false;
     }
     if (end < start) {
-      alert(
-        "The start number must be less than the end number. Please enter a valid range."
-      );
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="The start number must be less than the end number. Please enter a valid range. ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
+
       return false;
     }
     if (!companyId) {
-      alert("Please select a company to assign manifests to.");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Please select a company to assign manifests to. ⚠️"
+            toast={toast}
+            type="warning"
+          />
+        ),
+      });
       return false;
     }
     return true;
@@ -92,14 +120,29 @@ const ManifestForm = () => {
       await fetchManifestsSortedByCompany(db);
     } catch (error) {
       console.error("Error while adding manifests:", error);
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage message={`${error}`} toast={toast} type="success" />
+        ),
+      });
     } finally {
       // Reset states after addition
       cleanUp();
 
       // Refresh and navigate
       await fetchManifests(db);
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Manifest added successfully 🎉"
+            toast={toast}
+            type="success"
+          />
+        ),
+      });
       router?.push("/manifests");
-      alert("Manifests added successfully!");
     }
   };
   const router = useRouter();

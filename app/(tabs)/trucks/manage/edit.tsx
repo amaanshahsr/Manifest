@@ -14,6 +14,8 @@ import { useTruckStore } from "@/store/useTruckStore";
 import EditTruckCard from "@/components/cards/editTruckCard";
 import NoResultsFound from "@/components/common/noResultsFound";
 import { useCompanyStore } from "@/store/useCompanyStore";
+import ToastMessage from "@/components/common/ToastMessage";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 const EditTruckStatus = () => {
   const { id } = useLocalSearchParams();
@@ -84,9 +86,27 @@ const EditTruckStatus = () => {
       await fetchCompanyWithActiveManifests(db);
 
       setActiveManifests(updatedManifests);
-      alert(`Manifest COmpleted with id :${id}`);
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message={`Manifest completed with ID: ${id}  🎉 `}
+            toast={toast}
+            type="success"
+          />
+        ),
+      });
     } catch (error) {
-      console.error("Failed to mark manifests as completed:", error);
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Failed to mark manifests as completed ❌"
+            toast={toast}
+            type="error"
+          />
+        ),
+      });
       // Handle the error
     }
   };

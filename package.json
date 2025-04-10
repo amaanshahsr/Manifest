@@ -15,8 +15,8 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@backpackapp-io/react-native-toast": "^0.13.0",
     "@expo/vector-icons": "^14.0.4",
-    "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "@shopify/flash-list": "1.7.1",
     "babel-plugin-inline-import": "^3.0.0",

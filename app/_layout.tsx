@@ -12,7 +12,7 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "../drizzle/migrations";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import { Toasts } from "@backpackapp-io/react-native-toast";
 const expo = SQLite.openDatabaseSync("data.db");
 const db = drizzle(expo);
 const RootLayout = () => {
@@ -28,8 +28,6 @@ const RootLayout = () => {
     "Geist-ExtraBold": require("../assets/fonts/Geist-ExtraBold.ttf"),
     "Geist-Bold": require("../assets/fonts/Geist-Bold.ttf"),
     "Geist-Black": require("../assets/fonts/Geist-Black.ttf"),
-
-    // "Inter-Variable": require("../assets/fonts/Inter-VariableFont_opsz,wght.ttf"),
   });
 
   // hide the splashscreen only after font has been loaded.
@@ -42,25 +40,13 @@ const RootLayout = () => {
   if (!loaded) {
     return null;
   }
-  // if (error) {
-  //   console.log("error", error?.cause);
-  //   return (
-  //     <View>
-  //       <Text>Migration Error </Text>
-  //     </View>
-  //   );
-  // }
-  const config = {
-    animation: "spring",
-    config: {
-      stiffness: 1000,
-      damping: 500,
-      mass: 3,
-      overshootClamping: true,
-      restDisplacementThreshold: 0.01,
-      restSpeedThreshold: 0.01,
-    },
-  };
+  if (error) {
+    return (
+      <View>
+        <Text>Migration Error </Text>
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView>
@@ -85,6 +71,7 @@ const RootLayout = () => {
                 }}
               />
             </Stack>
+            <Toasts />
           </SafeAreaProvider>
         </SQLiteProvider>
         <StatusBar style="inverted" />

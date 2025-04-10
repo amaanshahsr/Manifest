@@ -823,6 +823,11 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
+"@backpackapp-io/react-native-toast@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@backpackapp-io/react-native-toast/-/react-native-toast-0.13.0.tgz#f53feead8cb9bc6556370ad102e5b748e92a1d90"
+  integrity sha512-kutFSE1vi77ybNV24JSnKQ4WUgWZ+LcYsrdAyl5ztEWGP7FRsfinsuaOrBQwDBGxm0rzMFeKM5K7fRHa/Hvy8A==
+
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"

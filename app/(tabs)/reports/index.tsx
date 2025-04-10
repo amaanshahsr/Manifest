@@ -3,23 +3,11 @@ import { drizzle } from "drizzle-orm/expo-sqlite";
 import { eq, sql } from "drizzle-orm";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Button,
-  View,
-  Text,
-  Platform,
-  TouchableOpacity,
-  RefreshControl,
-} from "react-native";
-import { Calendar, DateData } from "react-native-calendars";
+import { View, Platform } from "react-native";
 import CustomModal, { ModalRef } from "@/components/common/customModal";
-import { Pressable, ScrollView } from "react-native-gesture-handler";
-import { AntDesign, Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { FlashList } from "@shopify/flash-list";
-import { shareAsync } from "expo-sharing";
-import * as MediaLibrary from "expo-media-library";
+import { Pressable } from "react-native-gesture-handler";
+import { AntDesign } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system"; // For Android
-import * as DocumentPicker from "expo-document-picker";
 import * as Sharing from "expo-sharing";
 import PageHeader from "@/components/common/pageHeader";
 import dayjs from "dayjs";
@@ -27,6 +15,8 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import DatePicker from "@/components/common/datePicker";
 import { CompletedManifests, DayItem } from "@/types";
 import ListComponent from "@/components/reports/listComponent";
+import ToastMessage from "@/components/common/ToastMessage";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 dayjs.extend(customParseFormat);
 
@@ -162,7 +152,16 @@ const Index = () => {
       console.log("File shared successfully");
     } catch (error) {
       console.error("Error saving CSV:", error);
-      alert("Error saving CSV file! ❌");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Error saving CSV file! ❌"
+            toast={toast}
+            type="error"
+          />
+        ),
+      });
     }
   };
 
@@ -196,7 +195,16 @@ const Index = () => {
       }
     } catch (error) {
       console.error("Error saving or sharing file:", error);
-      alert("Something went wrong while saving the file. ❌");
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Something went wrong while saving the file. ❌"
+            toast={toast}
+            type="error"
+          />
+        ),
+      });
     }
   }
 

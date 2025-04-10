@@ -1,10 +1,12 @@
 import ManifestSelectableCard from "@/components/cards/manifestSelectableCard";
 import NoResultsFound from "@/components/common/noResultsFound";
+import ToastMessage from "@/components/common/ToastMessage";
 import { AssignStickyHeader } from "@/components/truck/assignStickyHeader";
 import { manifests, companies as company_table } from "@/db/schema";
 import { useCompanyStore } from "@/store/useCompanyStore";
 import { useManifestStore } from "@/store/useManifestStore";
 import { useTruckStore } from "@/store/useTruckStore";
+import { toast } from "@backpackapp-io/react-native-toast";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { inArray } from "drizzle-orm";
@@ -96,8 +98,28 @@ const AssignTrucks = () => {
 
       // Step 4: Refetch truck manifest info
       await fetchTrucksWithActiveManifests(db);
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Manifests assigned successfully! ✅"
+            toast={toast}
+            type="success"
+          />
+        ),
+      });
     } catch (error) {
       console.error("Error updating manifests:", error);
+      toast("", {
+        duration: 1500,
+        customToast: (toast) => (
+          <ToastMessage
+            message="Failed to assign manifests ❌"
+            toast={toast}
+            type="error"
+          />
+        ),
+      });
     } finally {
       setStep("Assign");
       setLoading(false);
