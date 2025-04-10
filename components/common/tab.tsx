@@ -59,11 +59,11 @@ const Tab: React.FC<TabProps> = ({
 
   React.useEffect(() => {
     if (isFocused) {
-      iconScale.value = withTiming(1.8, {
+      iconScale.value = withTiming(1.5, {
         duration: 300,
         easing: Easing.out(Easing.exp),
       });
-      iconTranslateY.value = withTiming(5, {
+      iconTranslateY.value = withTiming(2, {
         duration: 300,
         easing: Easing.out(Easing.exp),
       });
@@ -123,7 +123,7 @@ const Tab: React.FC<TabProps> = ({
       onPress={onPress}
       onLongPress={onLongPress}
       style={{
-        padding: 12,
+        padding: 16,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
@@ -134,21 +134,21 @@ const Tab: React.FC<TabProps> = ({
       <Animated.View style={iconStyle}>
         {tabBarIcons[slicedLabel as keyof typeof tabBarIcons]({
           color: isFocused ? "#1c1917" : "#737373",
-          size: 16,
+          size: 20,
         })}
       </Animated.View>
-      <Animated.View style={labelStyle}>
+      {/* <Animated.View style={labelStyle}>
         <Text
           style={{
             fontFamily: "Geist-Medium",
-            fontSize: 12,
+            fontSize: 8,
             fontWeight: isFocused ? "600" : "400",
             color: isFocused ? "#1c1917" : "#737373",
           }}
         >
           {capitalizeWord(slicedLabel)}
         </Text>
-      </Animated.View>
+      </Animated.View> */}
     </PlatformPressable>
   );
 };

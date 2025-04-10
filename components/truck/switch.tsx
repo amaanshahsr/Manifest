@@ -42,47 +42,46 @@ export const Switch = <T extends string>({
   });
 
   return (
-    <View className="flex flex-row w-full  justify-stretch relative my-6 bg-gray-300  rounded-xl shadow-md ">
+    <View className="flex flex-row w-full justify-stretch relative my-6 bg-neutral-100 rounded-2xl shadow-sm">
+      {/* Sliding Animated Background */}
       <Animated.View
         style={[
           animatedLeftStyle,
           {
             width: width,
             shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 3,
-            },
-            shadowOpacity: 0.27,
-            shadowRadius: 4.65,
-
-            elevation: 6,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.15,
+            shadowRadius: 3,
+            elevation: 4,
           },
         ]}
-        className="absolute top-0  rounded-xl  bg-white  h-full z-50 pointer-events-none"
+        className="absolute top-0 rounded-2xl bg-white h-full z-40 pointer-events-none"
       >
         {children}
       </Animated.View>
-      {options?.map((stat, index) => {
-        return (
-          <Pressable
-            onLayout={(e) => {
-              index === 0 ? setWidth(e?.nativeEvent?.layout?.width) : null;
-            }}
-            key={stat}
-            onPress={() => handleStatus(stat)}
-            className={` flex-1 justify-center relative items-center  rounded-md p-4 z-[90] text-black `}
+
+      {/* Buttons */}
+      {options?.map((stat, index) => (
+        <Pressable
+          key={stat}
+          onLayout={(e) =>
+            index === 0 ? setWidth(e.nativeEvent.layout.width) : null
+          }
+          onPress={() => handleStatus(stat)}
+          className="flex-1 justify-center items-center z-50 py-3 rounded-2xl"
+        >
+          <Text
+            className={`text-base ${
+              stat === status
+                ? "font-geistSemiBold text-neutral-900"
+                : "font-geistMedium text-neutral-500"
+            }`}
           >
-            <Text
-              className={`${
-                stat === status ? "font-geistSemiBold" : "font-geistMedium "
-              } `}
-            >
-              {capitalizeWord(stat) as string}
-            </Text>
-          </Pressable>
-        );
-      })}
+            {capitalizeWord(stat)}
+          </Text>
+        </Pressable>
+      ))}
     </View>
   );
 };

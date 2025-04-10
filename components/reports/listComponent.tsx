@@ -20,29 +20,33 @@ const ListComponent = ({
 }: ReportListComponentProps) => {
   return (
     <View className="flex-1 px-4">
-      <Pressable
-        style={{
-          gap: 8,
-          marginBlock: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          width: "100%",
-          backgroundColor: "#262626", // neutral-800 ≈ #262626
-          justifyContent: "center",
-          paddingHorizontal: 16, // px-4 ≈ 16 (Tailwind: 1 unit = 4px)
-          paddingVertical: 12, // py-3 ≈ 12
-          borderRadius: 8, // rounded-lg ≈ 8
-          shadowColor: "#000", // shadow-md (approximation)
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 3, // Android shadow
-        }}
-        onPress={handleDownload}
-      >
-        <Text className="text-white font-geistSemiBold text-base">Export</Text>
-        <Feather name="download" size={18} color="white" className="mr-2" />
-      </Pressable>
+      {completedManifests?.length && (
+        <Pressable
+          style={{
+            gap: 8,
+            marginBlock: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            width: "100%",
+            backgroundColor: "#262626", // neutral-800 ≈ #262626
+            justifyContent: "center",
+            paddingHorizontal: 16, // px-4 ≈ 16 (Tailwind: 1 unit = 4px)
+            paddingVertical: 12, // py-3 ≈ 12
+            borderRadius: 8, // rounded-lg ≈ 8
+            shadowColor: "#000", // shadow-md (approximation)
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3, // Android shadow
+          }}
+          onPress={handleDownload}
+        >
+          <Text className="text-white font-geistSemiBold text-base">
+            Export
+          </Text>
+          <Feather name="download" size={18} color="white" className="mr-2" />
+        </Pressable>
+      )}
       <FlashList
         ListEmptyComponent={
           <View className="flex items-center justify-center p-6">

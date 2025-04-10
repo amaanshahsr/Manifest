@@ -86,11 +86,6 @@ const RootLayout = () => {
               />
             </Stack>
           </SafeAreaProvider>
-          <View>
-            <View className="p-5 absolute top-0 left-1/2 z-[9999] bg-pink-400">
-              <Text>Bitch wokriong</Text>
-            </View>
-          </View>
         </SQLiteProvider>
         <StatusBar style="inverted" />
       </Suspense>

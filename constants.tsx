@@ -1,10 +1,10 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Feather from "@expo/vector-icons/Feather";
 import { TabIconStyle } from "./types";
-import { Octicons } from "@expo/vector-icons";
-import { TableTypes } from "./db/schema";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { useSQLiteContext } from "expo-sqlite";
+import {
+  FontAwesome5,
+  FontAwesome6,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 
 const defaultIconStyle = { size: 24, color: "black" };
 
@@ -18,31 +18,29 @@ export const tabBarIcons = {
     />
   ),
   companies: (customStyles?: TabIconStyle) => (
-    <Octicons
-      name="people"
+    <FontAwesome5
+      name="building"
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
   trucks: (customStyles?: TabIconStyle) => (
-    <Feather
-      name="truck"
+    <FontAwesome6
+      name="truck-front"
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
   manifests: (customStyles?: TabIconStyle) => (
     <Ionicons
-      name="clipboard-outline"
+      name="document-text-sharp"
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
   reports: (customStyles?: TabIconStyle) => (
-    <Ionicons
-      name="documents-outline"
+    <MaterialCommunityIcons
+      name="microsoft-excel"
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
 };
 
 export const manifestStatus = ["unassigned", "active", "completed"];
-
-const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

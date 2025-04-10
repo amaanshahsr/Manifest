@@ -1,4 +1,3 @@
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import React from "react";
 import { Text, TextInput, TextInputProps, View } from "react-native";
 
@@ -28,7 +27,7 @@ const InputField = <T extends string | number>({
         <TextInput
           keyboardType={keyboardType}
           placeholder={placeholder}
-          className="border-[0.7px] relative text-base rounded-lg p-4 h-14 border-zinc-300 bg-white mt-2 placeholder:text-gray-400 font-geistMedium"
+          className="border-[0.7px] relative text-base rounded-lg p-2 h-14 border-zinc-300 bg-white mt-2 placeholder:text-gray-400 font-geistMedium"
           onChangeText={handleTextChange}
           value={String(value)}
         />

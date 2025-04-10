@@ -9,6 +9,7 @@ import useReturnToHome from "@/hooks/useReturnToHome";
 import { useSQLiteContext } from "expo-sqlite";
 import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 import PageHeader from "../common/pageHeader";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function CompanyForm() {
   useReturnToHome({ route: "/companies" });
@@ -96,14 +97,13 @@ export default function CompanyForm() {
   }, [companyId, companies?.length]);
 
   return (
-    <View>
+    <View className="flex-1 bg-white ">
       <PageHeader
         backRoute="/(tabs)/manifests"
-        title={`${
-          companyId === "new" ? "Add New Company" : "Edit Company Details"
-        }`}
-      ></PageHeader>
-      <View className="mt-5 px-6">
+        title={companyId === "new" ? "Add New Company" : "Edit Company Details"}
+      />
+
+      <View className="mt-5 px-6 gap-4">
         <InputField
           value={companyName}
           onChangeText={setCompanyName}
@@ -113,15 +113,25 @@ export default function CompanyForm() {
 
         <Pressable
           onPress={handleSave}
-          className="bg-neutral-900 px-3 py-4 rounded-lg flex items-center justify-center mt-auto"
+          className="bg-neutral-900 px-4 py-4 rounded-2xl flex-row items-center justify-center gap-2 space-x-2"
         >
-          <Text className="text-white font-geistSemiBold ">Save</Text>
+          <MaterialCommunityIcons
+            name="content-save-outline"
+            size={18}
+            color="white"
+          />
+          <Text className="text-white font-geistSemiBold text-base">Save</Text>
         </Pressable>
+
         <Pressable
-          onPress={() => router?.push("/companies")}
-          className="bg-gray-100 px-3 py-4 rounded-lg flex items-center justify-center mt-3"
+          onPress={() => router.push("/companies")}
+          className="bg-gray-100 px-4 py-4 rounded-2xl flex-row items-center justify-center gap-2 space-x-2"
         >
-          <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
+          <Ionicons name="arrow-back-sharp" size={24} color="black" />
+
+          <Text className="text-neutral-700 font-geistSemiBold text-base">
+            Back
+          </Text>
         </Pressable>
       </View>
     </View>

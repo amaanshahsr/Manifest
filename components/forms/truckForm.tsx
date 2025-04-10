@@ -20,6 +20,7 @@ import useCleanupOnExit from "@/hooks/useCleanupOnExit";
 import { StatusBadge } from "../truck/truckStatusBadge";
 import { Switch } from "../truck/switch";
 import PageHeader from "../common/pageHeader";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 const TruckForm = () => {
   useReturnToHome({ route: "/trucks" });
@@ -178,17 +179,28 @@ const TruckForm = () => {
         >
           <StatusBadge status={status} />
         </Switch>
+
         <Pressable
           onPress={handleSave}
-          className="bg-neutral-900 px-3 py-4 rounded-lg mt-56 flex items-center justify-center "
+          className="bg-neutral-900 px-4 py-4 rounded-2xl flex-row items-center justify-center gap-2 space-x-2"
         >
-          <Text className="text-white font-geistSemiBold ">Save</Text>
+          <MaterialCommunityIcons
+            name="content-save-outline"
+            size={18}
+            color="white"
+          />
+          <Text className="text-white font-geistSemiBold text-base">Save</Text>
         </Pressable>
+
         <Pressable
           onPress={() => router?.push("/trucks")}
-          className="bg-gray-100 px-3 py-4 rounded-lg flex items-center justify-center mt-3"
+          className="bg-gray-100 px-4 py-4 rounded-2xl flex-row items-center justify-center gap-2 space-x-2"
         >
-          <Text className="text-neutral-600 font-geistSemiBold ">Back</Text>
+          <Ionicons name="arrow-back-sharp" size={24} color="black" />
+
+          <Text className="text-neutral-700 font-geistSemiBold text-base">
+            Back
+          </Text>
         </Pressable>
       </View>
     </View>
