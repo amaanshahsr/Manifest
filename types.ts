@@ -83,6 +83,17 @@ export interface ManifestWithAssignedVehicleRegistration {
 }
 [];
 
+export interface CompletedManifests {
+  manifestId: number;
+  status: "completed" | "active" | "unassigned";
+  completedOn: Date | null;
+  createdAt: Date;
+  companyId: number | null;
+  assignedTo: number | null;
+  registration: string;
+  companyName: string;
+}
+
 export type DayItem = {
   date: number;
   day: string;
