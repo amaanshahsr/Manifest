@@ -82,3 +82,11 @@ export interface ManifestWithAssignedVehicleRegistration {
   completedOn: Date | null;
 }
 [];
+
+export type DayItem = {
+  date: number;
+  day: string;
+  fullDate: string;
+  isToday: boolean;
+  isOverflowDate: boolean;
+};

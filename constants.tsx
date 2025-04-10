@@ -44,3 +44,5 @@ export const tabBarIcons = {
 };
 
 export const manifestStatus = ["unassigned", "active", "completed"];
+
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

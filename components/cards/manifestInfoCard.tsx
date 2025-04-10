@@ -9,20 +9,7 @@ interface ManifestInfoCardProps {
 }
 
 export const ManifestCard = ({ manifest }: ManifestInfoCardProps) => {
-  const { id, manifestId, status, createdAt } = manifest;
-
-  const formatStatus = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-  const getStatusColor = () => {
-    switch (status) {
-      case "active":
-        return "bg-green-600";
-      case "completed":
-        return "bg-blue-600";
-      default:
-        return "bg-orange-600"; // unassigned
-    }
-  };
+  const { manifestId, status, createdAt } = manifest;
 
   return (
     <View
