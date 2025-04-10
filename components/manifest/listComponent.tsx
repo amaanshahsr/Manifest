@@ -33,13 +33,6 @@ export const ListComponent = ({
     setRefreshing(false); // Stop refreshing
   };
 
-  if (refreshing) {
-    return (
-      <View className="w-full flex-1 bg-red-600">
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
   return (
     <FlashList
       refreshControl={
@@ -52,13 +45,11 @@ export const ListComponent = ({
       data={comapaniesWithActiveManifests?.filter((company) =>
         company?.companyName?.includes(search?.trim())
       )}
-      ListEmptyComponent={() => {
-        return (
-          <View className="w-full h-full ">
-            <NoResultsFound text="No Companies found." />
-          </View>
-        );
-      }}
+      ListEmptyComponent={
+        <View className="w-full h-full ">
+          <NoResultsFound text="No Companies found." />
+        </View>
+      }
       contentContainerStyle={{
         paddingTop: 12, // 👈 top space before the first item
         paddingBottom: 24, // 👈 bottom space after the last item (optional)
