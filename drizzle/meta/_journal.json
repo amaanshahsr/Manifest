@@ -15,6 +15,13 @@
       "when": 1742712335335,
       "tag": "0001_motionless_moondragon",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1744273082565,
+      "tag": "0002_watery_yellow_claw",
+      "breakpoints": true
     }
   ]
 }
