@@ -3,15 +3,8 @@ import { useManifestStore } from "@/store/useManifestStore";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useSQLiteContext } from "expo-sqlite";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Button,
-  TouchableOpacity,
-  RefreshControl,
-} from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { View, Text, ActivityIndicator, RefreshControl } from "react-native";
 import StickyHeader from "@/components/manifest/stickyHeader";
 
 import { Manifest } from "@/db/schema";
@@ -43,6 +36,12 @@ const Manifests = () => {
     // setFilteredmanifestsSortedByCompany(manifestsSortedByCompany?.result);
     handleFiltered();
   }, [manifestsSortedByCompany?.result]);
+
+  // const stickyHeaderIndices = useMemo(() => {
+  //   return Object.keys(manifestsSortedByCompany?.companyPositions || {}).map(
+  //     (company) => manifestsSortedByCompany.companyPositions[company]
+  //   );
+  // }, [manifestsSortedByCompany]);
 
   const [refreshing, setRefreshing] = useState(false); // State for refresh control
 
@@ -139,7 +138,7 @@ const Manifests = () => {
       </PageHeader>
 
       <FlashList
-        // stickyHeaderIndices={manifestsSortedByCompany?.companyPositions?.map((item)=>item?.)}
+        // stickyHeaderIndices={stickyHeaderIndices}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }

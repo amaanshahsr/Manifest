@@ -20,7 +20,7 @@ const ListComponent = ({
 }: ReportListComponentProps) => {
   return (
     <View className="flex-1 px-4">
-      {completedManifests?.length && (
+      {completedManifests?.length ? (
         <Pressable
           style={{
             gap: 8,
@@ -46,7 +46,7 @@ const ListComponent = ({
           </Text>
           <Feather name="download" size={18} color="white" className="mr-2" />
         </Pressable>
-      )}
+      ) : null}
       <FlashList
         ListEmptyComponent={
           <View className="flex items-center justify-center p-6">

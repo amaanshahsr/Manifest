@@ -225,7 +225,7 @@ const Index = () => {
     <View className="flex-1 w-full h-full relative">
       <View>
         <CustomModal ref={modalRef} snapPoint="60%">
-          <DatePicker handlePress={handlePress} />
+          <DatePicker handlePress={handlePress} initialDate={currentDate} />
         </CustomModal>
       </View>
       <PageHeader

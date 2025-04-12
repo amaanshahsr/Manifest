@@ -108,7 +108,7 @@ const CustomModal = forwardRef<ModalRef, CustomModalProps>(
         if (e.translationY > 0) {
           translateY.value = e.translationY;
         } else {
-          translateY.value = withSpring(-15, springConfig);
+          translateY.value = withSpring(-20, springConfig);
         }
       })
       .onEnd((e) => {

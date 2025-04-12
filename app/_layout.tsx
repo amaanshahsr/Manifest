@@ -42,8 +42,10 @@ const RootLayout = () => {
   }
   if (error) {
     return (
-      <View>
-        <Text>Migration Error </Text>
+      <View className="w-full h-full flex-1 flex items-center justify-center space-y-4">
+        <Text className="text-lg font-geistMedium text-red-600">
+          Migration Error. Please try again.
+        </Text>
       </View>
     );
   }
@@ -52,8 +54,11 @@ const RootLayout = () => {
     <GestureHandlerRootView>
       <Suspense
         fallback={
-          <View className="w-full h-full flex-1">
-            <ActivityIndicator size="large" />
+          <View className="w-full h-full flex-1 flex items-center justify-center space-y-4">
+            <ActivityIndicator size="large" color="#4B5563" />
+            <Text className="text-lg font-geistMedium text-gray-600">
+              Loading, please wait...
+            </Text>
           </View>
         }
       >

@@ -44,7 +44,7 @@ const EditTruckStatus = () => {
           assignedTo: manifests.assignedTo,
           companyId: manifests.companyId,
           createdAt: manifests?.createdAt,
-          companyName: companies.companyName, // Add companyName from the companies table
+          companyName: companies?.companyName, // Add companyName from the companies table
         },
       })
       .from(manifests)
@@ -117,18 +117,6 @@ const EditTruckStatus = () => {
 
   return (
     <View className="flex-1 w-full  relative">
-      {/* <Pressable
-        onPress={() => {
-          markManifestCompleted();
-        }}
-        className="flex flex-row  justify-center bg-stone-950 mt-3 p-3 gap-2 rounded-lg"
-      >
-        <Text className="text-white font-geistSemiBold text-base">Save</Text>
-        <Feather name="arrow-right" size={20} color="white" />
-      </Pressable>
-      <Pressable>
-        <Ionicons name="filter-circle-sharp" size={40} color="black" />
-      </Pressable> */}
       <FlashList
         contentContainerStyle={{
           paddingTop: 2, // 👈 top space before the first item
@@ -148,7 +136,3 @@ const EditTruckStatus = () => {
 };
 
 export default EditTruckStatus;
-
-interface StatusToggleProps {
-  status: ManifestStatus;
-}

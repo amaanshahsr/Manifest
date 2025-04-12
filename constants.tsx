@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { TabIconStyle } from "./types";
 import {
+  AntDesign,
   FontAwesome5,
   FontAwesome6,
   MaterialCommunityIcons,
@@ -12,8 +13,8 @@ export const tabBarIcons = {
   index: (
     customStyles?: TabIconStyle // ? Swap the default styles for a Custom size and color recieved as arguments
   ) => (
-    <Ionicons
-      name="home-outline"
+    <AntDesign
+      name="home"
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
@@ -44,3 +45,5 @@ export const tabBarIcons = {
 };
 
 export const manifestStatus = ["unassigned", "active", "completed"];
+
+export const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
