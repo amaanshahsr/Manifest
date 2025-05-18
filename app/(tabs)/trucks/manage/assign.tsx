@@ -1,5 +1,6 @@
 import ManifestSelectableCard from "@/components/cards/manifestSelectableCard";
 import NoResultsFound from "@/components/common/noResultsFound";
+import PageHeader from "@/components/common/pageHeader";
 import ToastMessage from "@/components/common/ToastMessage";
 import { AssignStickyHeader } from "@/components/truck/assignStickyHeader";
 import { manifests, companies as company_table } from "@/db/schema";
@@ -7,7 +8,7 @@ import { useCompanyStore } from "@/store/useCompanyStore";
 import { useManifestStore } from "@/store/useManifestStore";
 import { useTruckStore } from "@/store/useTruckStore";
 import { toast } from "@backpackapp-io/react-native-toast";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
@@ -30,7 +31,10 @@ const AssignTrucks = () => {
   const { fetchCompanyWithActiveManifests } = useCompanyStore();
   const { fetchTrucksWithActiveManifests } = useTruckStore();
 
-  const { id } = useLocalSearchParams();
+  const { id: combinedId } = useLocalSearchParams();
+
+  const id = combinedId?.toString().split("#")[0];
+  const truckName = combinedId?.toString().split("#")[1];
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
@@ -138,6 +142,16 @@ const AssignTrucks = () => {
 
   return (
     <View className="flex-1 w-full  relative">
+      <PageHeader
+        headerRightItem={
+          <Pressable
+            className={` bg-neutral-800 rounded-full p-3 flex flex-row items-center gap-2`}
+          >
+            <AntDesign name="filter" size={20} color="white" />
+          </Pressable>
+        }
+        title={truckName}
+      />
       <AssignButton
         save={handleSave}
         text={step}
@@ -227,7 +241,7 @@ const AssignButton = ({ save, text, visible }: AssignButtonProps) => {
       className="absolute bottom-1 w-full z-[9999] "
     >
       <Pressable
-        onPress={() => save()}
+        onPress={save}
         className={` bg-neutral-800 w-full z-[9999] rounded-lg p-4 flex flex-row justify-center items-center gap-2`}
       >
         <Text className="font-geistMedium text-white ">{`${

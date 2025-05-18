@@ -26,14 +26,10 @@ import NoResultsFound from "@/components/common/noResultsFound";
 import TruckBottomSheetModal, {
   TruckModalRef,
 } from "@/components/truck/truckBottomSheetModal";
-import { useIsFocused } from "@react-navigation/native";
 
 export default function App() {
-  const {
-    trucksWithActiveManifests: trucks,
-    fetchTrucksWithActiveManifests,
-    loading,
-  } = useTruckStore();
+  const { trucksWithActiveManifests: trucks, fetchTrucksWithActiveManifests } =
+    useTruckStore();
   const db = useSQLiteContext();
   const [search, setSearch] = useState("");
   const modalRef = useRef<TruckModalRef>(null);

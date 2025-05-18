@@ -41,19 +41,20 @@ const ManageLayout = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100 p-2 pt-10">
-      <Switch
-        key="bitch"
-        options={optionsForSwitch}
-        status={currentPath}
-        handleStatus={handleStatus}
-      />
+    <Slot />
+    // <SafeAreaView className="flex-1 bg-gray-100 p-2 pt-10">
+    //   <Switch
+    //     key="bitch"
+    //     options={optionsForSwitch}
+    //     status={currentPath}
+    //     handleStatus={handleStatus}
+    //   />
 
-      {/*Outlet that  Renders the nested route (assign.tsx or edit.tsx) */}
-      <View className="flex-1">
-        <Slot />
-      </View>
-    </SafeAreaView>
+    //   {/*Outlet that  Renders the nested route (assign.tsx or edit.tsx) */}
+    //   <View className="flex-1">
+    //     <Slot />
+    //   </View>
+    // </SafeAreaView>
   );
 };
 

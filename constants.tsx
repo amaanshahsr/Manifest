@@ -42,6 +42,12 @@ export const tabBarIcons = {
       {...(customStyles ? customStyles : defaultIconStyle)}
     />
   ),
+  trips: (customStyles?: TabIconStyle) => (
+    <FontAwesome6
+      name="location-arrow"
+      {...(customStyles ? customStyles : defaultIconStyle)}
+    />
+  ),
 };
 
 export const manifestStatus = ["unassigned", "active", "completed"];

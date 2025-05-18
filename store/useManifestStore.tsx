@@ -2,8 +2,9 @@ import { companies, Manifest, manifests } from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { create } from "zustand";
 import * as SQLite from "expo-sqlite";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 
+type ManifestStatus = "unassigned" | "active" | "completed";
 export interface ManifestState {
   manifests: Manifest[];
   loading: boolean;
@@ -13,7 +14,11 @@ export interface ManifestState {
   };
   fetchManifests: (db: SQLite.SQLiteDatabase) => Promise<void>;
   addManifest: (newManifest: Manifest) => void;
-  fetchManifestsSortedByCompany: (db: SQLite.SQLiteDatabase) => Promise<void>;
+  fetchManifestsSortedByCompany: (
+    db: SQLite.SQLiteDatabase,
+    selectedStatus?: ManifestStatus[],
+    selectedCompanies?: string[]
+  ) => Promise<void>;
   fetchUnassignedManifestsSortedByCompany: (
     db: SQLite.SQLiteDatabase
   ) => Promise<void>;
@@ -32,16 +37,12 @@ export const useManifestStore = create<ManifestState>((set) => ({
     set({ loading: true });
     const drizzleDb = drizzle(db);
     const result = await drizzleDb
-      .select() // Select data from the database
-      .from(manifests) // From the `manifests` table
-      .leftJoin(companies, eq(manifests.companyId, companies.id)) // Left join with the `companies` table on `companyId`
-      .where(
-        and(
-          eq(manifests.status, "unassigned") // Filter rows where `status` is "unassigned"
-        )
-      )
-      .execute(); // Execute the query and return the results
-
+      .select()
+      .from(manifests)
+      .leftJoin(companies, eq(manifests.companyId, companies.id))
+      .where(eq(manifests.status, "unassigned"))
+      .execute();
+    // Execute the query and return the results
     // Format the query result for FlatList: group manifests under their respective company headers
 
     const formattedResult = result?.reduce<{
@@ -75,22 +76,40 @@ export const useManifestStore = create<ManifestState>((set) => ({
       },
       { result: [], companyPositions: {} }
     );
+    console.log("unassignedmanifestsorted", formattedResult);
+
     set({ loading: false });
     set({ unassignedManifests: formattedResult });
   },
 
-  fetchManifestsSortedByCompany: async (db) => {
+  fetchManifestsSortedByCompany: async (
+    db,
+    selectedStatus = [],
+    selectedCompanies = []
+  ) => {
     set({ loading: true });
-
     const drizzleDb = drizzle(db);
+
     try {
       // Fetch data from the database
       const result = await drizzleDb
         .select()
         .from(manifests)
-        .leftJoin(companies, eq(manifests.companyId, companies.id)) // Join companies table
-        .execute();
+        .leftJoin(companies, eq(manifests.companyId, companies.id))
+        .where(
+          and(
+            // Filter by status using inArray
+            selectedStatus.length > 0
+              ? inArray(manifests.status, selectedStatus)
+              : undefined,
 
+            // Filter by company name using inArray
+            selectedCompanies.length > 0
+              ? inArray(companies.companyName, selectedCompanies)
+              : undefined
+          )
+        )
+        .execute();
       // Pass  the result for formatting used in flashlist
 
       const formattedResult = result?.reduce<{

@@ -2,10 +2,12 @@ import { ManifestWithCompanyName, TrucksWithActiveManifests } from "@/types";
 import Feather from "@expo/vector-icons/Feather";
 import { Route, useRouter } from "expo-router";
 import React from "react";
-import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import * as Haptics from "expo-haptics";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import Animated from "react-native-reanimated";
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 interface TruckInfoCardProps {
   truck: TrucksWithActiveManifests;
   toggleTruckDetails: (data: ManifestWithCompanyName[]) => void;
@@ -19,7 +21,7 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
   const manifestCount = manifests?.length;
 
   return (
-    <View
+    <Animated.View
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -52,7 +54,14 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
       <Text className="font-geistMedium text-base mt-1 mb-2 text-neutral-600">
         Driver: {driverName as string}
       </Text>
-      <Pressable className="flex flex-row justify-between items-center pt-4">
+      <Pressable
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingTop: 16, // Tailwind pt-4 = 1rem = 16px
+        }}
+      >
         <TouchableOpacity
           onPress={() => (manifestCount ? toggleTruckDetails(manifests) : null)}
         >
@@ -86,23 +95,33 @@ const TruckInfoCard: React.FC<TruckInfoCardProps> = ({
         </View>
       </Pressable>
       <View className="w-full border-t border-zinc-300 mt-5">
-        <Pressable
+        <AnimatedPressable
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             router?.push({
               pathname: `/trucks/manage/assign` as Route,
-              params: { id: id?.toString() },
+              params: { id: (id + "#" + truck?.registration)?.toString() },
             });
           }}
-          className="flex flex-row  justify-center bg-stone-950 mt-3 p-3 gap-3 rounded-lg"
+          style={[
+            {
+              flexDirection: "row",
+              justifyContent: "center",
+              backgroundColor: "#0c0a09", // stone-950
+              marginTop: 12, // mt-3 = 0.75rem = 12px
+              padding: 12, // p-3 = 0.75rem = 12px
+              gap: 12, // gap-3 = 0.75rem = 12px
+              borderRadius: 10, // rounded-lg = 0.5rem = 8px, but Expo/React Native uses exact px
+            },
+          ]}
         >
           <Text className="text-white font-geistSemiBold text-base">
-            Manage
+            Assign Manifests
           </Text>
-          <Ionicons name="book-outline" size={20} color="white" />
-        </Pressable>
+          <Ionicons name="add-circle-sharp" size={20} color="white" />
+        </AnimatedPressable>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
